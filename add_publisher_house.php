@@ -9,6 +9,7 @@
 					echo 'Nie wypełniono pól';
 			}	
 			else{
+				$_POST['name'] = Clear($_POST['name']);
 				mysql_query('INSERT INTO publisher_houses
 							(publisher_house_name)
 							VALUES

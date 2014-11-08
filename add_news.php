@@ -11,6 +11,8 @@
 					echo 'Nie wypełniono pól';
 			}	
 			else{
+				$_POST['title'] = Clear($_POST['title']);
+				$_POST['text'] = Clear($_POST['text']);
 				mysql_query('INSERT INTO news
 							(new_title,
 							new_text,

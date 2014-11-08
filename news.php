@@ -14,7 +14,13 @@
 				echo 'Brak newsów<br>';
 		}else
 			while($row = mysql_fetch_assoc($result)) {
-					echo $row['new_title'].' '.$row['new_date'].' '.$row['new_text'].'<br>' ;
+					echo $row['new_title'].' '.$row['new_date'].' '.$row['new_text'];
+					if(CheckAdmin()){
+						echo 'Usuń<br>';
+					}
+					else{
+						echo '<br>';
+					}
 			}		
 		echo '</p>
 			</div>

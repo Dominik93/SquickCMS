@@ -10,6 +10,8 @@
 					echo 'Nie wypełniono pól';
 			}	
 			else{
+				$_POST['name'] = Clear($_POST['name']);
+				$_POST['surname'] = Clear($_POST['surname']);
 				mysql_query('INSERT INTO authors
 							(author_name,
 							author_surname)
