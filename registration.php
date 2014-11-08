@@ -2,7 +2,7 @@
 	include "layout.php";
 	include "config.php";
 	function Registration(){	
-		if(UserIsAdmin()){
+		if(CheckAdmin()){
 			if(isset($_POST['login'])) {
 				$_POST['name'] = Clear($_POST['name']);
 				$_POST['surname'] = Clear($_POST['surname']);

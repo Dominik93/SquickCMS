@@ -35,7 +35,7 @@
 	function Content(){
 		$user = GetUserData();
 		echo '<div id="content">';
-		if($user['acces_right_name'] == 'admin'){
+		if(ChceckAdmin()){
 			AddPublisherHouse();
 		}
 		else{
