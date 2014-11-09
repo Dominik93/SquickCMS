@@ -82,7 +82,7 @@
 					<tr><td>Powtórz hasło:</td><td><input type="password" value="'.$_POST['password2'].'" name= "password2" placeholder="Hasło" required/></td></tr>
 					<tr><td>Imie:</td><td><input type="text" value="'.$_POST['name'].'" name= "name" placeholder="Imie" required/></td></tr>
 					<tr><td>Nazwisko:</td><td><input type="text" value="'.$_POST['surname'].'" name= "surname" placeholder="Nazwisko" required/></td></tr>
-					<tr><td>Data ważności konta:</td><td><input type="date" value="'.$_POST['date'].'" name= "date" placeholder="Data" required/></td></tr>
+					<tr><td>Data ważności konta:</td><td><input type="date" value="'.$_POST['date'].'" name= "date" placeholder="YYYY-MM-DD" required/></td></tr>
 					<tr><td>Adres:</td><td><input type="text" value="'.$_POST['adres'].'" name= "adres" placeholder="Adres" required/></td></tr>
 				</table>
 				<input type="submit" value="Zarejestruj czytelnika">

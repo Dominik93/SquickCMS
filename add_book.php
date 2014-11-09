@@ -25,12 +25,12 @@
 				$_POST['premiere'] = Clear($_POST['premiere']);
 				$_POST['number'] = Clear($_POST['number']);
 				$_POST['author'] = Clear($_POST['author']);
-				$result =  mysql_query('SELECT * FROM dslusarz_baza.publisher_houses WHERE publisher_houses.publisher_house_name = "'.$_POST['publisher_house'].'"') or die(mysql_error());
+				$result =  mysql_query('SELECT * FROM dslusarz_baza.publisher_houses WHERE publisher_houses.publisher_house_name = "'.$_POST['publisher_house'].'";') or die('d'.mysql_error());
 				if(mysql_num_rows($result) > 0){
 					$rowPH = mysql_fetch_array($result);
 				}else{
-					mysql_query('INSERT INTO dslusarz_baza.publisher_houses (publisher_houses.publisher_house_name) VALUES("'.$_POST['publisher_house'].'"') or die(mysql_error());
-					$result =  mysql_query('SELECT * FROM dslusarz_baza.publisher_houses WHERE publisher_houses.publisher_house_name = "'.$_POST['publisher_house'].'"') or die(mysql_error());
+					mysql_query('INSERT INTO dslusarz_baza.publisher_houses (publisher_houses.publisher_house_name) VALUES("'.$_POST['publisher_house'].'");') or die('c'.mysql_error());
+					$result =  mysql_query('SELECT * FROM dslusarz_baza.publisher_houses WHERE publisher_houses.publisher_house_name = "'.$_POST['publisher_house'].'";') or die('e'.mysql_error());
 					$rowPH = mysql_fetch_array($result);
 				}
 				mysql_query('INSERT INTO `dslusarz_baza`.`books`
@@ -50,7 +50,7 @@
 									"'.$_POST['premiere'].'",
 									"'.$_POST['number'].'");
 								') or die(' blad'.mysql_error());
-				$result =  mysql_query('SELECT * FROM dslusarz_baza.books WHERE books.book_isbn = "'.$_POST['isbn'].'"') or die(mysql_error());
+				$result =  mysql_query('SELECT * FROM dslusarz_baza.books WHERE books.book_isbn = "'.$_POST['isbn'].'"') or die('r'.mysql_error());
 				$rowB = mysql_fetch_array($result);
 				$authors = $_POST['author'];
 				$authors = explode(";", $authors);
@@ -58,12 +58,12 @@
 					$date = explode(' ', $author);
 					$name = $date[0];
 					$surname = $date[1];
-					$result =  mysql_query('SELECT * FROM dslusarz_baza.authors WHERE authors.author_name = "'.$name.'" and authors.author_surname = "'.$surname.'" ') or die(mysql_error());
+					$result =  mysql_query('SELECT * FROM dslusarz_baza.authors WHERE authors.author_name = "'.$name.'" and authors.author_surname = "'.$surname.'" ') or die('u'.mysql_error());
 					if(mysql_num_rows($result) > 0){
 						$rowA = mysql_fetch_array($result);
 					}else{
-						mysql_query('INSERT INTO authors (authors.author_name, authors.author_surname) VALUES("'.$name.'", "'.$surname.'");') or die(mysql_error());
-						$result =  mysql_query('SELECT * FROM dslusarz_baza.authors WHERE authors.author_name = "'.$name.'" and authors.author_surname = "'.$surname.'" ') or die(mysql_error());
+						mysql_query('INSERT INTO authors (authors.author_name, authors.author_surname) VALUES("'.$name.'", "'.$surname.'");') or die('m'.mysql_error());
+						$result =  mysql_query('SELECT * FROM dslusarz_baza.authors WHERE authors.author_name = "'.$name.'" and authors.author_surname = "'.$surname.'" ') or die('p'.mysql_error());
 						$rowA = mysql_fetch_array($result);
 					}
 					mysql_query('INSERT INTO `dslusarz_baza`.`authors_books`
@@ -73,11 +73,19 @@
 								('.$rowA[0].',
 								'.$rowB[0].');
 								') or die(mysql_error());
-					echo 'Dodano ksiażke.';
 				}	
+				echo '<p>Dodano ksiażke.</p>';
 			}
 			DbClose();
 		}
+		$_POST['isbn'] = null;
+		$_POST['title'] = null;
+		$_POST['publisher_house'] = null;
+		$_POST['nr_page'] = null;
+		$_POST['edition'] = null;
+		$_POST['premiere'] = null;
+		$_POST['number'] = null;
+		$_POST['author'] = null;
 		ShowBookForm();
 	}
 	/*
