@@ -2,21 +2,6 @@
 	include "layout.php";
 	include "config.php";	
 	
-	function ShowDetailsAdmin($user){
-		echo '
-			<div id="content">
-				<p>
-					ID: '.$user['admin_id'].'<br>
-					Imie: '.$user['admin_name'].'<br>
-					Nazwisko: '.$user['admin_surname'].'<br>
-					Login: '.$user['admin_login'].'<br>
-					Email: '.$user['admin_email'].'<br>
-					Prawa: '.$user['acces_right_name'].'<br>
-				</p>
-			</div>
-		';
-	}
-	
 	function ShowDetailsReaders($user){
 		echo '
 			<div id="content">
@@ -35,21 +20,17 @@
 	}
 	
 	function Content(){
-		$user = GetUserData();
-		if(!CheckUser()){
+		$user = GetReaderData($_GET[user]);
+		if(!CheckAdmin()){
 			echo '
 			<div id="content">
-				<p>Nie jesteś zalogowany!</p>
+				<p>Nie masz dostępu!</p>
 			</div>
 			';
 		}else{
-			if(CheckAdmin()){
-				ShowDetailsAdmin($user);
-			}
-			else if(CheckUser()){
-				ShowDetailsReaders($user);
-			}
+			ShowDetailsReaders($user);
 		}
+		
 	}
 ?>
 

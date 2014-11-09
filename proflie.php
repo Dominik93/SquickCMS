@@ -35,7 +35,7 @@
 	}
 	
 	function Content(){
-		$user = GetUserData();
+		$user = GetUserData($_GET[user]);
 		if(!CheckUser()){
 			echo '
 			<div id="content">

@@ -26,7 +26,7 @@
 		<form action="add_publisher_house.php" method="post">
 			<table>
 				<tr> <td colspan = 2 align="center">Dodaj wydawnictwo:</tf><tr>
-				<tr><td>Imie:</td><td><input type="text" value="'.$_POST['name'].'" name="name" placeholder="Nazwa" required/></td></tr>
+				<tr><td>Nazwa:</td><td><input type="text" value="'.$_POST['name'].'" name="name" placeholder="Nazwa" required/></td></tr>
 			</table>
 			<input type="submit" value="Dodaj wydawnictwo">
 		</form>
@@ -36,7 +36,7 @@
 	function Content(){
 		$user = GetUserData();
 		echo '<div id="content">';
-		if(ChceckAdmin()){
+		if(CheckAdmin()){
 			AddPublisherHouse();
 		}
 		else{

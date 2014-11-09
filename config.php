@@ -35,8 +35,15 @@ function Codepass($password) {
     return sha1(md5($password).'#!%Rgd64');
 }
 
-function CheckLogin() {
+function CheckUser() {
 	if($_SESSION['logged'] && ($_SESSION['ip'] == $_SERVER['REMOTE_ADDR'])) {
+		return true;
+	}
+	return false;
+}
+
+function CheckActiveUser() {
+	if($_SESSION['logged'] && ($_SESSION['ip'] == $_SERVER['REMOTE_ADDR']) && ($_SESSION['acces_right'] == "reader")) {
 		return true;
 	}
 	return false;
@@ -55,24 +62,53 @@ function CheckAdmin() {
 	return false;
  }
  
-// funkcja na pobranie danych usera
+function GetAdminData($admin_id = -1){
+	DbConnect();
+    if($admin_id == -1) {
+        $admin_id = $_SESSION['user_id'];
+    }
+	$result = mysql_query('SELECT admins.*, acces_rights.acces_right_name FROM admins
+		join acces_rights on acces_rights.acces_right_id = admins.admin_acces_right_id
+		WHERE admin_id = "'.$admin_id.'" LIMIT 1;') or die(mysql_error());
+	DbClose();
+	if(!$result){
+        return false;
+    }
+    return mysql_fetch_assoc($result);
+} 
+ 
+function GetReaderData($reader_id = -1){
+	DbConnect();
+    if($reader_id == -1) {
+        $reader_id = $_SESSION['user_id'];
+    }
+	$result = mysql_query('SELECT readers.*, acces_rights.acces_right_name FROM readers
+		join acces_rights on acces_rights.acces_right_id = readers.reader_acces_right_id
+		WHERE reader_id = "'.$reader_id.'" LIMIT 1;') or die(mysql_error());
+	DbClose();
+	if(!$result){
+        return false;
+    }
+    return mysql_fetch_assoc($result);
+} 
+ 
 function GetUserData($user_id = -1) {
 	DbConnect();
     // jeśli nie podamy id usera to podstawiamy id aktualnie zalogowanego
     if($user_id == -1) {
         $user_id = $_SESSION['user_id'];
     }
-	if($_SESSION['acces_right'] == "admin"){
+	if(CheckAdmin()){
 		$result = mysql_query('SELECT admins.*, acces_rights.acces_right_name FROM admins
 		join acces_rights on acces_rights.acces_right_id = admins.admin_acces_right_id
 		WHERE admin_id = "'.$user_id.'" LIMIT 1;') or die(mysql_error());
 	}
-	else if($_SESSION['acces_right'] == "reader"){
+	else if(CheckUser()){
 		$result = mysql_query('SELECT readers.*, acces_rights.acces_right_name FROM readers
 		join acces_rights on acces_rights.acces_right_id = readers.reader_acces_right_id
 		WHERE reader_id = "'.$user_id.'" LIMIT 1;') or die(mysql_error());
 	}
-	else if($_SESSION['acces_right'] == "none"){
+	else{
 		$result = false;
 	}
 	DbClose();
@@ -97,7 +133,7 @@ if(!isset($_SESSION['logged'])) {
 				`session_user`,
 				`session_logged`,
 				`session_acces_right`)
-					VALUES ('.$_SERVER['REMOTE_ADDR'].', '.$_SESSION['user_id'].', "0", "none", )')
+					VALUES ("'.$_SERVER['REMOTE_ADDR'].'", '.$_SESSION['user_id'].', "0", "none")')
 					or die(mysql_error());
 	DbClose();
 }

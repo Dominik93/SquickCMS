@@ -46,6 +46,7 @@
 				<li><a href="add_publisher_house.php">Dodaj wydawnictwo</a></li>
 				<li><a href="add_author.php">Dodaj autora</a></li>
 				<li><a href="manage_borrows.php">Zarządaj wypożyczeniami</a></li>
+				<li><a href="logged.php">Lista zalogowanych</a></li>
 				<li><a href="logout.php">Wyloguj</a></li>
 			</ul>
 			';
@@ -69,12 +70,12 @@
 		<div id="panel">
 			<div id="panelName">Panel użytkownika</div>
 		';
-		if(CheckLogin()){
+		if(CheckUser()){
 			$user = GetUserData();
-			if($user['acces_right_name'] == 'admin'){
+			if(CheckAdmin()){
 				AdminPanel($user);
 			}
-			else if ($user['acces_right_name'] == 'activeReader'){
+			else if (CheckUser()){
 				ReaderPanel($user);
 			}
 			else{
