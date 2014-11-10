@@ -16,6 +16,7 @@
 	}
 	
 	function Menu(){
+		
 		echo '
 			<div id="menu">
 				<p>
@@ -30,6 +31,7 @@
 				</p>
 			</div>
 		';
+
 	}
 	
 	function AdminPanel($user){

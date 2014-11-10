@@ -1,6 +1,7 @@
 <?php
 	include "layout.php";
 	include "config.php";
+	
 	function Registration(){	
 		if(CheckAdmin()){
 			if(isset($_POST['login'])) {
@@ -71,13 +72,13 @@
 	}
 	
 	function ShowRegistrationForm(){
-	echo '
+		echo '
 		<div id="registration" align="center">
 			<form action="registration.php" method="post">
 				<table>
 					<tr>Dodaj czytelnika</tr>
-					<tr><td>Login:</td><td><input type="text" value="'.$_POST['login'].'" name="login" placeholder="Login" required/></td></tr>
-					<tr><td>E-mail:</td><td><input type="email" value="'.$_POST['email'].'" name= "email" placeholder="E-mail" required/></td></tr>
+					<tr><td>Login:</td><td><input id="login" type="text" value="'.$_POST['login'].'" name="login" placeholder="Login" required/><span id="status_login"></span></td></tr>
+					<tr><td>E-mail:</td><td><input id="email" type="email" value="'.$_POST['email'].'" name= "email" placeholder="E-mail" required/><span id="status_email"></span></td></tr>
 					<tr><td>Hasło:</td><td><input type="password" value="'.$_POST['password1'].'" name= "password1" placeholder="Hasło" required/></td></tr>
 					<tr><td>Powtórz hasło:</td><td><input type="password" value="'.$_POST['password2'].'" name= "password2" placeholder="Hasło" required/></td></tr>
 					<tr><td>Imie:</td><td><input type="text" value="'.$_POST['name'].'" name= "name" placeholder="Imie" required/></td></tr>
@@ -88,8 +89,7 @@
 				<input type="submit" value="Zarejestruj czytelnika">
 			</form>
 		</div>';
-}
-	
+	}
 ?>
 
 <!DOCTYPE html>
@@ -97,7 +97,79 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<link rel="stylesheet" type="text/css" href="layout.css">
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.0/jquery.min.js" type="text/javascript"></script>
 		<title>Biblioteka PAI</title>
+	
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("#login").change(function(){
+				var login = $("#login").val();
+				var msgbox = $("#status_login");
+
+				if(login.length > 4){
+					$("#status").html('Sprawdzanie dostępności.');
+					$.ajax({
+						type: "POST",
+						url: "check_username.php",
+						data: "login="+ login,
+						success: function(msg){
+							$("#status_login").ajaxComplete(function(event, request){
+								if(msg == 'OK'){
+									$("#login").removeClass("red");
+									$("#login").addClass("green");
+									msgbox.html('<font color="Green">Dostępny</font>');
+								}else{
+									$("#login").removeClass("green");
+									$("#login").addClass("red");
+									msgbox.html(msg);
+								}
+							});
+						}
+					});
+				}else{
+					$("#login").addClass("red");
+					$("#status_login").html('<font color="#cc0000">Za mało znaków</font>');
+				}
+				return false;
+			});
+			$("#email").change(function(){
+				var email = $("#email").val();
+				var msgbox = $("#status_email");
+				if(email.length > 4){
+					$("#status_email").html('Sprawdzanie dostępności.');
+					$.ajax({
+						type: "POST",
+						url: "check_username.php",
+						data: "email="+ email,
+						success: function(msg){
+							$("#status_email").ajaxComplete(function(event, request){
+								if(msg == 'OK'){
+									$("#email").removeClass("red");
+									$("#email").addClass("green");
+									msgbox.html('<font color="Green">Dostępny</font>');
+								}else if(msg == 'Niedostępny'){
+									$("#email").removeClass("green");
+									$("#email").addClass("red");
+									msgbox.html('<font color="Red">Niedostepny</font>');
+								}else{
+									$("#email").removeClass("green");
+									$("#email").addClass("red");
+									msgbox.html('<font color="Red">Niepoprawny</font>');
+								}
+							});
+						}
+					});
+				}else{
+					$("#email").addClass("red");
+					$("#status_email").html('<font color="#cc0000">Za mało znaków</font>');
+				}
+				return false;
+			});
+			
+		});
+	</script>
+	
+	
 	</head>
 	<body>
 		<?php

@@ -15,7 +15,7 @@
 					<tr> <td>ID</td> <td>Login</td> <td>Email</td> <td>Imie</td> <td>Nazwisko</td> </tr>
 				';
 			while($row = mysql_fetch_assoc($result)) {
-				echo '<tr onClick="location.href=\'http://192.168.1.103/~dominik/Library/profile.php?user='.$row['reader_id'].'\'" /> <td>'.$row['reader_id'].'</td> <td>'.$row['reader_login'].'</td> <td>'.$row['reader_email'].'</td> <td>'.$row['reader_name'].'</td> <td>'.$row['reader_surname'].'</td> </tr>';
+				echo '<tr onClick="location.href=\'http://localhost/~dominik/Library/profile.php?user='.$row['reader_id'].'\'" /> <td>'.$row['reader_id'].'</td> <td>'.$row['reader_login'].'</td> <td>'.$row['reader_email'].'</td> <td>'.$row['reader_name'].'</td> <td>'.$row['reader_surname'].'</td> </tr>';
 			}
 			echo '</table>';
 		}

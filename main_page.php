@@ -19,7 +19,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<link rel="stylesheet" type="text/css" href="layout.css">
-		<title>Biblioteka PAI</title>
+		<title>Biblioteka PAI</title>		
 	</head>
 	<body>
 		<?php

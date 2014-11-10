@@ -110,3 +110,32 @@ body {
 #usersTable td {
     border: 1px solid black;
 }
+
+#status_login
+{
+font-size:11px;
+margin-left:10px;
+}
+.green
+{
+background-color:#CEFFCE;
+}
+.red
+{
+background-color:#FFD9D9;
+}
+
+#status_email
+{
+font-size:11px;
+margin-left:10px;
+}
+.green
+{
+background-color:#CEFFCE;
+}
+.red
+{
+background-color:#FFD9D9;
+}
+
