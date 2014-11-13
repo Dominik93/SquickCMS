@@ -26,6 +26,7 @@
 						<li><a href="opening_hours.php">Godziny otwarcia</a></li>
 						<li><a href="regulations.php">Regulamin</a></li>
 						<li><a href="contact.php">Kontakt</a></li>
+						<li><a href="help.php">Pomoc</a></li>
 					</ul>
 				</p>
 			</div>
