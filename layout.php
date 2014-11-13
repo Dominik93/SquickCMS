@@ -7,7 +7,6 @@
 			</a>
 		';
 	}
-	
 	function Canvas(){
 		echo '<div id="canvas">';
 			Panel();

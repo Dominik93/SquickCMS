@@ -2,6 +2,17 @@
 	include "layout.php";
 	include "config.php";	
 	
+	if(!empty($_GET['usun'])){
+		DbConnect();
+		mysql_query('DELETE FROM readers where readers.reader_id = '.$_GET['usun'].'');
+		DbClose();
+	}
+	if(!empty($_GET['konto'])){
+		DbConnect();
+		mysql_query('UPDATE readers set readers.reader_active_account = '.date('Y-M-D').' where readers.reader_id = '.$_GET['usun'].'');
+		DbClose();
+	}
+	
 	function ShowDetailsReaders($user){
 		echo '
 			<div id="content">
@@ -14,6 +25,7 @@
 					Konto aktywne do: '.$user['reader_active_account'].'<br>
 					Adres: '.$user['reader_address'].'<br>	
 					Prawa: '.$user['acces_right_name'].'<br>					
+					<a>Edytuj</a>, <a href="profile.php?usun='.$user['reader_id'].'">Usuń</a>, <a href="profile.php?konto='.$user['reader_id'].'">Przedłuż ważność konta</a>
 				</p>
 			</div>
 		';

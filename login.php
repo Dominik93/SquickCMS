@@ -41,6 +41,9 @@
 									VALUES ("'.$_SERVER['REMOTE_ADDR'].'", '.$row['reader_id'].', "1", "reader")')
 									or die(mysql_error());
 						echo '<p>Witaj jesteś czytelnikiem, zostałeś poprawnie zalogowany! Możesz teraz przejść na <a href="main_page.php">stronę główną</a>.</p>';
+						
+						// !!! sprawdzanie czy reader ma aktywne konto jak nie to wpisac mu disavtive
+					
 					}else{
 						echo '<p>Podany login i/lub hasło jest nieprawidłowe.</p>';
 						ShowLoginForm();

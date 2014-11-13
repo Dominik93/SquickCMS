@@ -2,6 +2,13 @@
 	include "config.php";
 	include "layout.php";
 	
+	if(!empty($_GET['id'])){
+		DbConnect();
+		//dodac autoryzacje
+		mysql_query('DELETE from news where new_id = '.$id.';')or die(mysql_error());
+		DbClose();
+	}
+	
 	function Content(){
 		DbConnect();
 		$result = mysql_query('SELECT * FROM dslusarz_baza.news LIMIT 10')
@@ -16,7 +23,7 @@
 			while($row = mysql_fetch_assoc($result)) {
 					echo $row['new_title'].' '.$row['new_date'].' '.$row['new_text'];
 					if(CheckAdmin()){
-						echo 'Usuń<br>';
+						echo ' <a href="news.php?id='.$row['new_id'].'">Usuń</a><br>';
 					}
 					else{
 						echo '<br>';

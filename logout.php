@@ -10,6 +10,7 @@
 	mysql_query('DELETE FROM dslusarz_baza.sessions
 		WHERE session_ip = "'.$_SERVER['REMOTE_ADDR'].'";') or die(mysql_error());
 	DbClose();
+	
 	function Content(){
 		echo '
 			<div id="content">

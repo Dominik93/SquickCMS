@@ -12,7 +12,6 @@
 				$_POST['email'] = Clear($_POST['email']);
 				$_POST['login'] = Clear($_POST['login']);
 				$_POST['adres'] = Clear($_POST['adres']);
-				$_POST['date'] = Clear($_POST['date']);
 			
 				if(empty($_POST['name']) 
 					|| empty($_POST['password1']) 
@@ -21,7 +20,6 @@
 					|| empty($_POST['surname'])
 					|| empty($_POST['email'])
 					|| empty($_POST['adres'])
-					|| empty($_POST['date'])
 					) {
 						echo '<p>Musisz wypełnić wszystkie pola.</p>';
 				} elseif($_POST['password1'] != $_POST['password2']) {
@@ -44,7 +42,7 @@
 						$dodaj = false;
 					}
 					if($dodaj) {
-						$result = mysql_query('SELECT * FROM acces_rights WHERE acces_right_name = "activeReader";') or die(mysql_error());
+						$result = mysql_query('SELECT * FROM acces_rights WHERE acces_right_name = "activeReader";') or die('blad '.mysql_error());
 		
 						if(mysql_num_rows($result) == 0) {
 								die('Błąd');
@@ -52,7 +50,7 @@
 						$row = mysql_fetch_assoc($result);		
 						mysql_query('INSERT INTO readers 
 										(reader_name, reader_surname, reader_login, reader_password, reader_email, reader_address, reader_active_account, reader_acces_right_id)
-								VALUES ("'.$_POST['name'].'", "'.$_POST['surname'].'", "'.$_POST['login'].'", "'.Codepass($_POST['password1']).'", "'.$_POST['email'].'", "'.$_POST['adres'].'", "'.$_POST['date'].'", '.$row['acces_right_id'].');') or die(mysql_error());
+								VALUES ("'.$_POST['name'].'", "'.$_POST['surname'].'", "'.$_POST['login'].'", "'.Codepass($_POST['password1']).'", "'.$_POST['email'].'", "'.$_POST['adres'].'", "'.date('Y-m-d').'", '.$row['acces_right_id'].');') or die('blad2 '.mysql_error());
 						echo '<p>Czytelnik Został poprawnie zarejestrowany! Możesz się teraz wrócić na <a href="main_page.php">stronę główną</a>.</p>';
 					}
 					DbClose();
@@ -83,10 +81,11 @@
 					<tr><td>Powtórz hasło:</td><td><input type="password" value="'.$_POST['password2'].'" name= "password2" placeholder="Hasło" required/></td></tr>
 					<tr><td>Imie:</td><td><input type="text" value="'.$_POST['name'].'" name= "name" placeholder="Imie" required/></td></tr>
 					<tr><td>Nazwisko:</td><td><input type="text" value="'.$_POST['surname'].'" name= "surname" placeholder="Nazwisko" required/></td></tr>
-					<tr><td>Data ważności konta:</td><td><input type="date" value="'.$_POST['date'].'" name= "date" placeholder="YYYY-MM-DD" required/></td></tr>
 					<tr><td>Adres:</td><td><input type="text" value="'.$_POST['adres'].'" name= "adres" placeholder="Adres" required/></td></tr>
 				</table>
 				<input type="submit" value="Zarejestruj czytelnika">
+				
+				
 			</form>
 		</div>';
 	}
@@ -101,6 +100,11 @@
 		<title>Biblioteka PAI</title>
 	
 	<script type="text/javascript">
+		/*
+			disable button when all field is not full
+			
+		*/
+	
 		$(document).ready(function(){
 			$("#login").change(function(){
 				var login = $("#login").val();
@@ -110,7 +114,7 @@
 					$("#status").html('Sprawdzanie dostępności.');
 					$.ajax({
 						type: "POST",
-						url: "check_username.php",
+						url: "check.php",
 						data: "login="+ login,
 						success: function(msg){
 							$("#status_login").ajaxComplete(function(event, request){
@@ -118,10 +122,10 @@
 									$("#login").removeClass("red");
 									$("#login").addClass("green");
 									msgbox.html('<font color="Green">Dostępny</font>');
-								}else{
+								}else if(msg == 'Niedostępny'){
 									$("#login").removeClass("green");
 									$("#login").addClass("red");
-									msgbox.html(msg);
+									msgbox.html('<font color="Red">Niedostepny</font>');
 								}
 							});
 						}
@@ -139,7 +143,7 @@
 					$("#status_email").html('Sprawdzanie dostępności.');
 					$.ajax({
 						type: "POST",
-						url: "check_username.php",
+						url: "check.php",
 						data: "email="+ email,
 						success: function(msg){
 							$("#status_email").ajaxComplete(function(event, request){
