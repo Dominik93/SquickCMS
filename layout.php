@@ -15,7 +15,6 @@
 	}
 	
 	function Menu(){
-		
 		echo '
 			<div id="menu">
 				<p>
@@ -43,10 +42,10 @@
 				<li><a href="your_profile.php">Twój profil</a></li>
 				<li><a href="add_news.php">Dodaj news</a></li>
 				<li><a href="registration.php">Zarejestruj czytelnika</a></li>
-				<li><a href="manage_users.php">Zarządzaj użytkownikami</a></li>
-				<li><a href="add_book.php">Dodaj ksiażke</a></li>
-				<li><a href="add_publisher_house.php">Dodaj wydawnictwo</a></li>
-				<li><a href="add_author.php">Dodaj autora</a></li>
+				<li><a href="registration_admin.php">Utwórz administratora</a></li>
+				<li><a href="manage_admins.php">Zarządzaj adminami</a></li>
+				<li><a href="manage_users.php">Zarządzaj czytelnikami</a></li>
+				<li><a href="manage_books.php">Zarządzaj ksiażkami</a></li>
 				<li><a href="manage_borrows.php">Zarządaj wypożyczeniami</a></li>
 				<li><a href="logged.php">Lista zalogowanych</a></li>
 				<li><a href="logout.php">Wyloguj</a></li>
@@ -97,6 +96,7 @@
 			';
 		}
 		echo '
+			'.session_id().'
 			'.$_SESSION['logged'].'
 			'.$_SESSION['user_id'].'
 			'.$_SESSION['ip'].'

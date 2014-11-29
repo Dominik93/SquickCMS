@@ -123,6 +123,7 @@ session_start();
  
 // jeśli nie ma jeszcze sesji "logged" i "user_id" to wypełniamy je domyślnymi danymi
 if(!isset($_SESSION['logged'])) {
+	$_SESSION['id'] = session_id();
     $_SESSION['logged'] = false;
     $_SESSION['user_id'] = -1;
 	$_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];

@@ -11,7 +11,7 @@
 			if(empty($_POST['premiere'])) $_POST['premiere'] = "%";
 			if(empty($_POST['author'])) $_POST['author'] = "%";
 			DbConnect();
-			echo 'SELECT books.*, publisher_houses.publisher_house_name, authors.* FROM books 
+			/*echo 'SELECT books.*, publisher_houses.publisher_house_name, authors.* FROM books 
 								JOIN publisher_houses ON publisher_houses.publisher_house_id = books.book_publisher_house_id
 								JOIN authors_books ON authors_books.book_id = books.book_id
 								JOIN authors ON authors_books.author_id = authors.author_id
@@ -19,7 +19,7 @@
 								(books.book_isbn LIKE \''.$_POST['isbn'].'\') AND
 								(books.book_title LIKE \''.$_POST['title'].'\') AND
 								(publisher_houses.publisher_house_name LIKE \''.$_POST['publisher_house'].'\') AND
-								(books.book_edition LIKE \''.$_POST['edition'].'\')
+								(books.book_edition LIKE \''.$_POST['edition'].'\')*/
 								;';
 			$result = mysql_query('SELECT books.*, publisher_houses.publisher_house_name, authors.* FROM books 
 								JOIN publisher_houses ON publisher_houses.publisher_house_id = books.book_publisher_house_id

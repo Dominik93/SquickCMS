@@ -2,6 +2,7 @@
 	include "layout.php";
 	include "config.php";	
 	session_start();
+	$_SESSION['id'] = session_id();
 	$_SESSION['logged'] = false;
 	$_SESSION['user_id'] = -1;
 	$_SESSION['acces_right'] = "none";
