@@ -28,8 +28,8 @@ class Controller extends ElementContainer{
         $this->actualElement++;
     }
     public function getUsersFromDb(){
-        $fetchTable=mysqli_query($this->database->databaseConnectionHandler,"SELECT * FROM Users_with_Ranks");
-        while($record=mysqli_fetch_array($fetchTable)){
+        $allUsers=mysqli_query($this->database->databaseConnectionHandler,"SELECT * FROM Users_with_Ranks");
+        while($record=mysqli_fetch_array($allUsers)){
                     $actualUser=new User();
                     $actualUser->setValue(
                         $record['User_ID'],
@@ -41,6 +41,28 @@ class Controller extends ElementContainer{
                     );
                     $this->addElement($actualUser);
         }
+    }
+    public function getMapsFromDb(){
+        $allMaps=  mysqli_query($this->database->databaseConnectionHandler,"SELECT * FROM Maps");
+        while($record=  mysqli_fetch_array($allMaps)){
+            $actualMap=new Map($record['Name'], $record['ID']);
+            $mapCoords=  mysqli_query($this->database->databaseConnectionHandler,"SELECT * FROM Coords WHERE ID_Coords=".$record['ID']);
+            while($coords= mysqli_fetch_array($mapCoords)){
+                $actualCoords=new Coords($coords["About_Place"], $coords["X_Coords"], $coords["Y_Coords"], $coords["ID"]);
+                $actualMap->addCoords($actualCoords);
+            }
+            $this->addElement($actualMap);
+        }
+    }
+    public function addMapToDb($map, $user_id){
+        mysqli_query($this->database->databaseConnectionHandler, "INSERT INTO Maps (Name, ID_Author) VALUES ('".$map."', '".$user_id."')");
+    }
+    public function addCoordsToDb($id, $description, $x, $y, $map_id){
+        mysqli_query($this->database->databaseConnectionHandler, "INSERT INTO Coords (ID, About_Place, X_Coords, Y_Coords, ID_Coords) "
+                . "VALUES ('".$id."','".$description."', '".$x."', '".$y."', '".$map_id."')");
+    }
+    public function delCoordsInDb($id){
+        mysqli_query($this->database->databaseConnectionHandler, "DELETE FROM Coords WHERE ID='".$id."'");
     }
     /*public function removeActualElement(){
         $this->elements[$actualElement]=NULL;
