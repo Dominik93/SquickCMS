@@ -41,7 +41,7 @@
 			<ul>
 				<li><a href="your_profile.php">Twój profil</a></li>
 				<li><a href="add_news.php">Dodaj news</a></li>
-				<li><a href="registration.php">Zarejestruj czytelnika</a></li>
+				<li><a href="registration_reader.php">Zarejestruj czytelnika</a></li>
 				<li><a href="registration_admin.php">Utwórz administratora</a></li>
 				<li><a href="manage_admins.php">Zarządzaj adminami</a></li>
 				<li><a href="manage_users.php">Zarządzaj czytelnikami</a></li>

@@ -4,7 +4,6 @@
 	
 	function AddNews(){
 		if(isset($_POST['title'])){
-			DbConnect();
 			$czas = date('Y-m-d');
 			if(empty($_POST['title']) ||
 				empty($_POST['text'])){
@@ -13,17 +12,9 @@
 			else{
 				$_POST['title'] = Clear($_POST['title']);
 				$_POST['text'] = Clear($_POST['text']);
-				mysql_query('INSERT INTO news
-							(new_title,
-							new_text,
-							new_date)
-							VALUES
-							("'.$_POST['title'].'",
-							"'.$_POST['text'].'",
-							"'.$czas.'");')or die(mysql_error());
+				$_SESSION['controller']->addNew($_POST['title'], $_POST['text'], $czas);
 				echo '<p>Dodano news</p>';
 			}
-			DbClose();
 		}
 		ShowNewsForm();
 	}

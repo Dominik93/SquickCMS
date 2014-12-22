@@ -8,8 +8,10 @@
 	$_SESSION['acces_right'] = "none";
 	$_SESSION['ip'] = null;
 	DbConnect();
+	mysql_query('UPDATE sessions SET session_logged = 0, session_user = -1, session_acces_right = "none" where session_id = "'.session_id().'"') or die(mysql_error());
+	/*					
 	mysql_query('DELETE FROM dslusarz_baza.sessions
-		WHERE session_ip = "'.$_SERVER['REMOTE_ADDR'].'";') or die(mysql_error());
+		WHERE session_ip = "'.$_SERVER['REMOTE_ADDR'].'";') or die(mysql_error());*/
 	DbClose();
 	
 	function Content(){

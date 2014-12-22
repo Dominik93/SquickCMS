@@ -11,16 +11,6 @@
 			if(empty($_POST['premiere'])) $_POST['premiere'] = "%";
 			if(empty($_POST['author'])) $_POST['author'] = "%";
 			DbConnect();
-			/*echo 'SELECT books.*, publisher_houses.publisher_house_name, authors.* FROM books 
-								JOIN publisher_houses ON publisher_houses.publisher_house_id = books.book_publisher_house_id
-								JOIN authors_books ON authors_books.book_id = books.book_id
-								JOIN authors ON authors_books.author_id = authors.author_id
-								WHERE 
-								(books.book_isbn LIKE \''.$_POST['isbn'].'\') AND
-								(books.book_title LIKE \''.$_POST['title'].'\') AND
-								(publisher_houses.publisher_house_name LIKE \''.$_POST['publisher_house'].'\') AND
-								(books.book_edition LIKE \''.$_POST['edition'].'\')*/
-								;';
 			$result = mysql_query('SELECT books.*, publisher_houses.publisher_house_name, authors.* FROM books 
 								JOIN publisher_houses ON publisher_houses.publisher_house_id = books.book_publisher_house_id
 								JOIN authors_books ON authors_books.book_id = books.book_id
@@ -38,16 +28,25 @@
 				echo 'Brak książek.<br>';
 			}else{
 				while($row = mysql_fetch_assoc($result)) {
+					$resultAuthors = mysql_query('SELECT authors.* from authors join authors_books on authors_books.author_id = authors.author_id join books on books.book_id = authors_books.book_id where books.book_id = '.$row['book_id'].';') or die(mysql_error());
+					$autorzy = "";
+					if(mysql_num_rows($resultAuthors) == 0) {
+						echo 'Brak autorów bład<br>';
+					}else			
+						while($rowA = mysql_fetch_assoc($resultAuthors)) {
+							$autorzy = $autorzy.' '.$rowA['author_name'].' '.$rowA['author_surname'].', ';
+						}
 					echo '<p>
 							ID: '.$row['book_id'].'<br>
 							ISBN: '.$row['book_isbn'].'<br>
-							Autor: '.$row['author_name'].' '.$row['author_surname'].'<br>
+							Autor: '.$autorzy.'<br>
 							Tytuł: '.$row['book_title'].'<br>
 							Wydawca: '.$row['publisher_house_name'].'<br>
 							Ilość stron: '.$row['book_nr_page'].'<br>
 							Wydanie: '.$row['book_edition'].'<br>
 							Rok wydania: '.$row['book_premiere'].'<br>
 							Ilość sztuk: '.$row['book_number'].'<br>
+							<a href="book.php?book='.$row['book_id'].'">Przejdź do książki</a>
 						</p>';
 				}
 			}

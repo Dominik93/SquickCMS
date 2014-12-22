@@ -47,14 +47,12 @@
 					}
 					if($dodaj) {
 						$result = mysql_query('SELECT * FROM acces_rights WHERE acces_right_name = "activeReader";') or die('blad '.mysql_error());
-		
 						if(mysql_num_rows($result) == 0) {
 								die('Błąd');
 						}
-						$row = mysql_fetch_assoc($result);		
-						mysql_query('INSERT INTO readers 
-										(reader_name, reader_surname, reader_login, reader_password, reader_email, reader_address, reader_active_account, reader_acces_right_id)
-								VALUES ("'.$_POST['name'].'", "'.$_POST['surname'].'", "'.$_POST['login'].'", "'.Codepass($_POST['password1']).'", "'.$_POST['email'].'", "'.$_POST['adres'].'", "'.date('Y-m-d').'", '.$row['acces_right_id'].');') or die('blad2 '.mysql_error());
+						$row = mysql_fetch_assoc($result);	
+						DbClose();
+						$controller->addReader($_POST['name'], $_POST['surname'], $_POST['login'], $_POST['password1'], $_POST['email'], $_POST['adres'], date('Y-m-d'), $row['acces_right_id']);
 						echo '<p>Czytelnik Został poprawnie zarejestrowany! Możesz się teraz wrócić na <a href="main_page.php">stronę główną</a>.</p>';
 					}
 					DbClose();
@@ -76,7 +74,7 @@
 	function ShowRegistrationForm(){
 		echo '
 		<div id="registration" align="center">
-			<form action="registration.php" method="post">
+			<form action="registration_reader.php" method="post">
 				<table>
 					<tr>Dodaj czytelnika</tr>
 					<tr><td>Login:</td><td><input id="login" type="text" value="'.$_POST['login'].'" name="login" placeholder="Login" required/><span id="status_login"></span></td></tr>
@@ -193,7 +191,6 @@
 			
 			$("#surname").change(function(){
 				document.getElementById("submit").disabled = !allFill() || !$password || !$email || !$login;
-				alert(!allFill() +' '+ !$password +' '+ !$email +' '+ !$login);
 			});
 			$("#name").change(function(){
 				document.getElementById("submit").disabled = !allFill() || !$password || !$email || !$login;

@@ -14,7 +14,13 @@
 		}else			
 			while($rowA = mysql_fetch_assoc($resultAuthors)) {
 				$autorzy = $autorzy.' '.$rowA['author_name'].' '.$rowA['author_surname'].', ';
-			}
+			}	
+		$resultFreeBook = mysql_query('SELECT * FROM free_books where book_id = '.$book.';') or die(mysql_error());
+		$rowFreeBook = mysql_fetch_assoc($resultFreeBook);
+		if ($rowFreeBook['free_books'] == 0)
+			$active = "disabled";
+		if (!CheckActiveUser())
+			$active = "disabled";
 		echo '
 			<div id="content">
 				<p>
@@ -26,8 +32,11 @@
 					Premiera: '.$row['book_premiere'].'<br>
 					Wydanie: '.$row['book_edition'].'<br>
 					Ilość stron: '.$row['book_nr_page'].'<br>
-					Ilość egzemplarzy: '.$row['book_number'].'<br>
-					
+					Ilość egzemplarzy: '.$rowFreeBook['free_books'].'<br>
+					<form action="book.php?book='.$row['book_id'].'" method="post">
+					pole typu hiden 
+					<input type="submit" name="order" '.$active.' value="Zamów">
+					</form>
 				</p>
 			</div>
 		';
@@ -35,16 +44,23 @@
 	}
 	
 	function Content(){
-		if(!CheckAdmin()){
+		$user = GetReaderData();
+		if(!CheckUser()){
 			echo '
 			<div id="content">
 				<p>Nie masz dostępu!</p>
 			</div>
 			';
 		}else{
-			ShowDetailsBook($_GET['book']);
+		echo $_POST['order'];
+			if(!is_null($_POST['order'])){
+			DbConnect();
+			mysql_query('INSERT INTO borrows (borrow_book_id, borrow_reader_id, borrow_date_borrow, borrow_return) 
+				VALUES('.$_GET['book'].', '.$user['reader_id'].', "'.date('Y-m-d').'", "'.date('Y-m-d').'");') or die(mysql_error());
+			DbClose();
+			}else
+				ShowDetailsBook($_GET['book']);
 		}
-		
 	}
 ?>
 

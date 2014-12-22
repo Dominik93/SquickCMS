@@ -15,14 +15,15 @@
 					$_SESSION['user_id'] = $row['admin_id'];
 					$_SESSION['acces_right'] = "admin";
 					$_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
-					mysql_query('INSERT INTO `dslusarz_baza`.`sessions`
+					mysql_query('UPDATE sessions SET session_user = '.$row['admin_id'].', session_logged = 1, session_acces_right = "admin" where session_id = "'.session_id().'"') or die(mysql_error());
+					/*mysql_query('INSERT INTO `dslusarz_baza`.`sessions`
 								(`session_ip`,
 								`session_user`,
 								`session_logged`,
 								`session_acces_right`)
 									VALUES ("'.$_SERVER['REMOTE_ADDR'].'", '.$row['admin_id'].', "1", "admin")')
 									or die(mysql_error());
-					
+					*/
 					echo '<p>Witaj jesteś adminem, zostałeś poprawnie zalogowany! Możesz teraz przejść na <a href="main_page.php">stronę główną</a>.</p>';
 					header('Location: main_page.php');
 				} else {
@@ -33,15 +34,16 @@
 						$_SESSION['user_id'] = $row['reader_id'];
 						$_SESSION['acces_right'] = "reader";
 						$_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
-						mysql_query('INSERT INTO `dslusarz_baza`.`sessions`
+						mysql_query('UPDATE sessions SET session_logged = 1, session_user = '.$row['reader_id'].', session_acces_right = "reader" where session_id = "'.session_id().'"') or die(mysql_error());
+						/*mysql_query('INSERT INTO `dslusarz_baza`.`sessions`
 								(`session_ip`,
 								`session_user`,
 								`session_logged`,
 								`session_acces_right`)
 									VALUES ("'.$_SERVER['REMOTE_ADDR'].'", '.$row['reader_id'].', "1", "reader")')
-									or die(mysql_error());
+									or die(mysql_error());*/
 						echo '<p>Witaj jesteś czytelnikiem, zostałeś poprawnie zalogowany! Możesz teraz przejść na <a href="main_page.php">stronę główną</a>.</p>';
-						
+						header('Location: main_page.php');
 						// !!! sprawdzanie czy reader ma aktywne konto jak nie to wpisac mu disavtive
 					
 					}else{

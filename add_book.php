@@ -29,27 +29,13 @@
 				if(mysql_num_rows($result) > 0){
 					$rowPH = mysql_fetch_array($result);
 				}else{
-					mysql_query('INSERT INTO dslusarz_baza.publisher_houses (publisher_houses.publisher_house_name) VALUES("'.$_POST['publisher_house'].'");') or die(mysql_error());
+					$controller->addPublisherHouse($_POST['publisher_house']);
 					$result =  mysql_query('SELECT * FROM dslusarz_baza.publisher_houses WHERE publisher_houses.publisher_house_name = "'.$_POST['publisher_house'].'";') or die(mysql_error());
 					$rowPH = mysql_fetch_array($result);
 				}
-				mysql_query('INSERT INTO `dslusarz_baza`.`books`
-									(`book_isbn`,
-									`book_title`,
-									`book_publisher_house_id`,
-									`book_nr_page`,
-									`book_edition`,
-									`book_premiere`,
-									`book_number`)
-									VALUES
-									("'.$_POST['isbn'].'",
-									"'.$_POST['title'].'",
-									"'.$rowPH[0].'",
-									"'.$_POST['nr_page'].'",
-									"'.$_POST['edition'].'",
-									"'.$_POST['premiere'].'",
-									"'.$_POST['number'].'");
-								') or die(' blad'.mysql_error());
+				
+				$controller->addBook($_POST['isbn'], $_POST['title'], $rowPH[0], $_POST['nr_page'], $_POST['edition'], $_POST['premiere'], $_POST['number']);
+				
 				$result =  mysql_query('SELECT * FROM dslusarz_baza.books WHERE books.book_isbn = "'.$_POST['isbn'].'"') or die(mysql_error());
 				$rowB = mysql_fetch_array($result);
 				$authors = $_POST['author'];

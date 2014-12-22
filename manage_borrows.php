@@ -3,8 +3,10 @@
 	include "config.php";	
 	
 	function ShowUsers(){
-		$result = $controller->selectReaders();
-		if(mysqli_num_rows($result) == 0) {
+		DbConnect();
+		$result = mysql_query('SELECT *, acces_rights.acces_right_name FROM readers join acces_rights on acces_rights.acces_right_id = readers.reader_acces_right_id ;') or die(mysql_error());
+		DbClose();
+		if(mysql_num_rows($result) == 0) {
 			echo 'Brak użytkowników<br>';
 		}else{
 			echo '
@@ -12,7 +14,7 @@
 				<table>
 					<tr> <td>ID</td> <td>Login</td> <td>Email</td> <td>Imie</td> <td>Nazwisko</td> </tr>
 				';
-			while($row = mysqli_fetch_assoc($result)) {
+			while($row = mysql_fetch_assoc($result)) {
 				echo '<tr onClick="location.href=\'http://localhost/~dominik/Library/profile_readers.php?id='.$row['reader_id'].'\'" /> <td>'.$row['reader_id'].'</td> <td>'.$row['reader_login'].'</td> <td>'.$row['reader_email'].'</td> <td>'.$row['reader_name'].'</td> <td>'.$row['reader_surname'].'</td> </tr>';
 			}
 			echo '<tr> <td align="center" colspan = 5 ><a href="registration_reader.php">Dodaj</a></td> </tr></table>';
