@@ -1,25 +1,22 @@
 <?php
+
+	include "config.php";
 	include "layout.php";
-	include "config.php";	
 	session_start();
 	$_SESSION['id'] = session_id();
 	$_SESSION['logged'] = false;
 	$_SESSION['user_id'] = -1;
-	$_SESSION['acces_right'] = "none";
+	$_SESSION['acces_right'] = "user";
 	$_SESSION['ip'] = null;
-	DbConnect();
-	mysql_query('UPDATE sessions SET session_logged = 0, session_user = -1, session_acces_right = "none" where session_id = "'.session_id().'"') or die(mysql_error());
-	/*					
-	mysql_query('DELETE FROM dslusarz_baza.sessions
-		WHERE session_ip = "'.$_SERVER['REMOTE_ADDR'].'";') or die(mysql_error());*/
-	DbClose();
+	$_SESSION['user'] = serialize(new User(new Controller()));
 	
 	function Content(){
+		$user = unserialize($_SESSION['user']);
 		echo '
 			<div id="content">
-				<p>
-					Zostałeś wylogowany. Przejdz na <a href="main_page">strone główną</a>.
-				</p>
+		';
+		echo $user->logout();
+		echo'
 			</div>
 		';
 	}

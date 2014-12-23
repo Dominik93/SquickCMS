@@ -1,13 +1,13 @@
 <?php
-	include "layout.php";
+
 	include "config.php";	
+	include "layout.php";
 	
 	function Content(){
+		$user = unserialize($_SESSION['user']);
 		echo '
 			<div id="content">
-				<p>
-					Tu bedzie regulamin!;p
-				</p>
+			'.$user->showRegulation().'
 			</div>
 		';
 	}

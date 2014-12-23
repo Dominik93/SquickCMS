@@ -3,10 +3,24 @@ include "database.php";
 
 class Controller{
 
-	public $mysql;
+	private $mysql;
 
 	public function __construct(){
 		$this->mysql = new Mysql('localhost', 'root', '', 'dslusarz_baza');
+	}
+	
+	public function wypisz(){
+		echo "jestem kontrollerem";
+	}
+	
+	public function clear($text){
+		if(get_magic_quotes_gpc()) {
+			$text = stripslashes($text);
+		}
+		$text = trim($text);
+		$text = mysql_real_escape_string($text);
+		$text = htmlspecialchars($text);
+		return $text;
 	}
 	
 	public function addReader($link ,$name, $surname, $login, $password, $email, $adres, $right){
@@ -104,9 +118,27 @@ class Controller{
 		$this->mysql->Close();
 	}
 	
+	public function deleteFromTable($table, $record, $id){
+		$this->mysql->Connect();
+		mysqli_query($this->mysql->baseLink, 'DELETE FROM '.$table.' WHERE '.$record.' = '.$id.';') or die(mysqli_error($this->mysql->baseLink));
+		$this->mysql->Close();
+	}
+	
 	public function deleteAdmin($adminId){
 		$this->mysql->Connect();
 		mysqli_query($this->mysql->baseLink, 'DELETE FROM admins where admins.admin_id = '.$adminId.';') or die(mysqli_error());
+		$this->mysql->Close();
+	}
+	
+	public function updateSession($id, $logged, $acces_right, $session_id){
+		$this->mysql->Connect();
+		mysqli_query($this->mysql->baseLink,
+		'UPDATE sessions SET
+		session_user = '.$id.',
+		session_logged = '. $logged.',
+		session_acces_right = "'.$acces_right.'"
+		where session_id = "'.$session_id.'";')
+		or die(mysqli_error());
 		$this->mysql->Close();
 	}
 	
@@ -116,6 +148,38 @@ class Controller{
 					reader_active_account = "'.$data.'"
 					where reader_id = '.$readerId.';');
 		$this->mysql->Close();
+	}
+	
+	public function getReaderData($reader_id = -1){
+		$this->mysql->Connect();
+		if($reader_id == -1) {
+			$reader_id = $_SESSION['user_id'];
+		}
+		$result = mysqli_query($this->mysql->baseLink,
+			'SELECT readers.*, acces_rights.acces_right_name FROM readers
+			join acces_rights on acces_rights.acces_right_id = readers.reader_acces_right_id
+			WHERE reader_id = "'.$reader_id.'" LIMIT 1;')
+		or die(mysqli_error($this->mysql->baseLink));
+		$this->mysql->Close();
+		if(!$result){
+			return false;
+		}
+		return mysql_fetch_assoc($result);
+	}
+	
+	public function getAdminData($admin_id = -1){
+		$this->mysql->Connect();
+		if($admin_id == -1) {
+			$admin_id = $_SESSION['user_id'];
+		}
+		$result = mysqli_query($this->mysql->baseLink, 'SELECT admins.*, acces_rights.acces_right_name FROM admins
+			join acces_rights on acces_rights.acces_right_id = admins.admin_acces_right_id
+			WHERE admin_id = "'.$admin_id.'" LIMIT 1;') or die(mysqli_error($this->mysql->baseLink));
+		$this->mysql->Close();
+		if(!$result){
+			return false;
+		}
+		return mysqli_fetch_assoc($result);
 	}
 	
 	public function addSession($sessionID, $sessionIP, $sesssionUser){
@@ -156,41 +220,28 @@ class Controller{
 		return $result;
 	}
 	
-	public function getReaderData($reader_id = -1){
-		$this->mysql->Connect();
-		if($reader_id == -1) {
-			$reader_id = $_SESSION['user_id'];
-		}
-		$result = mysqli_query($this->mysql->baseLink,
-			'SELECT readers.*, acces_rights.acces_right_name FROM readers
-			join acces_rights on acces_rights.acces_right_id = readers.reader_acces_right_id
-			WHERE reader_id = "'.$reader_id.'" LIMIT 1;')
-		or die(mysqli_error($this->mysql->baseLink));
-		$this->mysql->Close();
-		if(!$result){
-			return false;
-		}
-		return mysql_fetch_assoc($result);
-	}
-	
-	public function getAdminData($admin_id = -1){
-		$this->mysql->Connect();
-		if($admin_id == -1) {
-			$admin_id = $_SESSION['user_id'];
-		}
-		$result = mysqli_query($this->mysql->baseLink, 'SELECT admins.*, acces_rights.acces_right_name FROM admins
-			join acces_rights on acces_rights.acces_right_id = admins.admin_acces_right_id
-			WHERE admin_id = "'.$admin_id.'" LIMIT 1;') or die(mysqli_error($this->mysql->baseLink));
-		$this->mysql->Close();
-		if(!$result){
-			return false;
-		}
-		return mysql_fetch_assoc($result);
-	}
-	
 	public function selectAdmins(){
 		$this->mysql->Connect();
 		$result = mysqli_query($this->mysql->baseLink, 'SELECT *, acces_rights.acces_right_name FROM admins join acces_rights on acces_rights.acces_right_id = admins.admin_acces_right_id ;')or die(mysqli_error($this->mysql->baseLink));
+		$this->mysql->Close();
+		return $result;
+	}
+	
+	public function selectAccessRights(){
+		$this->mysql->Connect();
+		$result = mysqli_query($this->mysql->baseLink,
+		'SELECT * FROM acces_rights WHERE acces_right_name = "activeReader";')
+		or die(mysqli_error($this->mysql->baseLink));
+		$this->mysql->Close();
+		return $result;
+	}
+	
+	public function selectExistingUser($from, $record, $login, $email){
+		$this->mysql->Connect();
+		$result = mysqli_query($this->mysql->baseLink,
+		'SELECT Count('.$record.'_id) FROM '.$from.'
+		WHERE '.$record.'_login = "'.$login.'" OR '.$record.'_email = "'.$email.'";')
+		or die(mysqli_error($this->mysql->baseLink));
 		$this->mysql->Close();
 		return $result;
 	}
@@ -236,13 +287,25 @@ class Controller{
 		$this->mysql->Close();
 		return $result;
 	}
-	/*
-	public function selectBorrow(){
+	
+	public function validationLoginAdmin($login, $password){
 		$this->mysql->Connect();
-		$result = mysqli_query($this->mysql->baseLink, )or die(mysqli_error($this->mysql->baseLink));
+		$result = mysqli_query($this->mysql->baseLink,
+		'SELECT admin_id FROM admins WHERE admin_login = "'.$login.'" AND admin_password = "'.Codepass($password).'" LIMIT 1;')
+		or die(mysqli_error($this->mysql->baseLink));
 		$this->mysql->Close();
 		return $result;
-	}*/
+	}
+	
+	public function validationLoginReader($login, $password){
+		$this->mysql->Connect();
+		$result = mysqli_query($this->mysql->baseLink,
+		'SELECT reader_id FROM readers WHERE reader_login = "'.$login.'" AND reader_password = "'.Codepass($password).'" LIMIT 1;')
+		or die(mysqli_error($this->mysql->baseLink));
+		$this->mysql->Close();
+		return $result;
+	}
+	
 }
 
 ?>

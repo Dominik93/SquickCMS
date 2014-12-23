@@ -1,16 +1,13 @@
 <?php
-	include "layout.php";
+
 	include "config.php";	
+	include "layout.php";
 	
 	function Content(){
+		$user = unserialize($_SESSION['user']);
 		echo '
 			<div id="content">
-				<p>
-					Godziny otwarcia:<br>
-					Pon - Pt: 7:00 - 18:00<br>
-					Sob: 9:00 - 15:00<br>
-					Nd: Nieczynne
-				</p>
+			'.$user->showHours().'
 			</div>
 		';
 	}

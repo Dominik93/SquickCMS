@@ -3,36 +3,13 @@
 	include "layout.php";
 	
 	if(!empty($_GET['id'])){
-		DbConnect();
 		//dodac autoryzacje
-		mysql_query('DELETE from news where new_id = '.$id.';')or die(mysql_error());
-		DbClose();
+		$controller->deleteFromTable("news", "new_id", $id);
 	}
 	
 	function Content(){
-		DbConnect();
-		$result = mysql_query('SELECT * FROM dslusarz_baza.news LIMIT 10')
-		or die(mysql_error());
-		
-		echo '
-			<div id="content">
-				<p>';
-		if(mysql_num_rows($result) == 0) {
-				echo 'Brak newsów<br>';
-		}else
-			while($row = mysql_fetch_assoc($result)) {
-					echo $row['new_title'].' '.$row['new_date'].' '.$row['new_text'];
-					if(CheckAdmin()){
-						echo ' <a href="news.php?id='.$row['new_id'].'">Usuń</a><br>';
-					}
-					else{
-						echo '<br>';
-					}
-			}		
-		echo '</p>
-			</div>
-		';
-		DbClose();
+		$user = unserialize($_SESSION['user']);
+		echo '<div id="content">'.$user->showNews().'</div>';
 	}
 ?>
 

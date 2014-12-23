@@ -56,29 +56,11 @@
 		}
 	}
 	
-	function ShowBookForm(){
-		echo '<div id="search" align="center">
-		<form action="search.php" method="post">
-			<table>
-				<tr> <td colspan = 2 align="center">Szukaj książki:</tf><tr>
-				<tr><td>ISBN:</td><td><input type="text" value="'.$_POST['isbn'].'" name="isbn" placeholder="ISBN"/></td></tr>
-				<tr><td>Tytuł:</td><td><input type="text" value="'.$_POST['title'].'" name="title" placeholder="Tytuł"/></td></tr>
-				<tr><td>Wydawca:</td><td><input type="text" value="'.$_POST['publisher_house'].'" name="publisher_house" placeholder="Wydawca"/></td></tr>
-				<tr><td>Wydanie:</td><td><input type="text" value="'.$_POST['edition'].'" name="edition" placeholder="Wydanie"/></td></tr>
-				<tr><td>Rok wydania:</td><td><input type="text" value="'.$_POST['premiere'].'" name="premiere" placeholder="Rok Wydania"/></td></tr>
-				<tr><td>Autor:</td><td><input type="text" value="'.$_POST['author'].'" name="author" placeholder="Imie Nazwisko;"/></td></tr>
-			</table>
-			<input type="submit" value="Szukaj ksiażki">
-		</form>
-	</div>';
-	}
-	
 	function Content(){
+		$user = unserialize($_SESSION['user']);
 		echo '
 			<div id="content">
-				<p>';
-					ShearchBook();
-		echo '</p>
+			'.$user->showSearch().'
 			</div>
 		';
 	}

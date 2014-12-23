@@ -4,13 +4,13 @@
 	include "layout.php";
 	
 	function Content(){
-		echo '
-			<div id="content">
-				<p>
-					Witaj na stronie Biblioteki PAI!<br> Życzymy miłej zabawy z książkami☺
-				</p>
-			</div>
-		';
+            echo '
+		<div id="content">
+                    <p>
+                       Witaj na stronie Biblioteki PAI!<br> Życzymy miłej zabawy z książkami☺
+                    </p>
+        	</div>
+            ';
 	}
 ?>
 

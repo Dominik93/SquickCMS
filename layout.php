@@ -1,7 +1,7 @@
 <?php
 	function Logo(){
 		echo '
-			<a href="main_page.php">
+			<a href="index.php">
 				<div id="logo" align="center">
 				</div>
 			</a>
@@ -9,6 +9,7 @@
 	}
 	function Canvas(){
 		echo '<div id="canvas">';
+                
 			Panel();
 			Content();
 		echo '</div>';
@@ -19,7 +20,7 @@
 			<div id="menu">
 				<p>
 					<ul class="menu_poziome">
-						<li><a href="main_page.php">Strona główna</a></li>
+						<li><a href="index.php">Strona główna</a></li>
 						<li><a href="news.php">Aktualności</a></li>
 						<li><a href="search.php">Szukaj pozycji</a></li>
 						<li><a href="opening_hours.php">Godziny otwarcia</a></li>
@@ -30,78 +31,12 @@
 				</p>
 			</div>
 		';
-
-	}
-	
-	function AdminPanel($user){
-		echo '
-			<p align="center">
-				Witamy '.$user['admin_name'].'!
-			</p>
-			<ul>
-				<li><a href="your_profile.php">Twój profil</a></li>
-				<li><a href="add_news.php">Dodaj news</a></li>
-				<li><a href="registration_reader.php">Zarejestruj czytelnika</a></li>
-				<li><a href="registration_admin.php">Utwórz administratora</a></li>
-				<li><a href="manage_admins.php">Zarządzaj adminami</a></li>
-				<li><a href="manage_users.php">Zarządzaj czytelnikami</a></li>
-				<li><a href="manage_books.php">Zarządzaj ksiażkami</a></li>
-				<li><a href="manage_borrows.php">Zarządaj wypożyczeniami</a></li>
-				<li><a href="logged.php">Lista zalogowanych</a></li>
-				<li><a href="logout.php">Wyloguj</a></li>
-			</ul>
-			';
-	}
-	
-	function ReaderPanel($user){
-		echo '
-			<p align="center">
-				Witamy '.$user['reader_name'].'!
-			</p>
-			<ul>
-				<li><a href="your_profile.php">Twój profil</a></li>
-				<li><a href="main_page.php">Twoje wypożyczenia</a></li>
-				<li><a href="logout.php">Wyloguj</a></li>
-			</ul>
-		';
 	}
 	
 	function Panel(){
-		echo '
-		<div id="panel">
-			<div id="panelName">Panel użytkownika</div>
-		';
-		if(CheckUser()){
-			$user = GetUserData();
-			if(CheckAdmin()){
-				AdminPanel($user);
-			}
-			else if (CheckUser()){
-				ReaderPanel($user);
-			}
-			else{
-				echo '<p align="center">
-							bład!
-						</p>';
-			}
-		}
-		else{
-			echo '
-					<p align="center">
-						Nie jesteś zalogowany!
-					</p>
-					<ul>
-						<li><a href="login.php">Zaloguj się</a></li>
-					</ul>
-			';
-		}
-		echo '
-			'.session_id().'
-			'.$_SESSION['logged'].'
-			'.$_SESSION['user_id'].'
-			'.$_SESSION['ip'].'
-			'.$_SESSION['acces_right'].'
-			</div>
-		';
+		$user = unserialize($_SESSION['user']);
+		echo '<div id="panel">'.
+                        $user->showOptionPanel()
+                     .'</div>';
 	}
 ?>

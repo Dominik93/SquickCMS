@@ -1,15 +1,13 @@
 <?php
-	include "layout.php";
+
 	include "config.php";	
+	include "layout.php";
+        
 	function Content(){
+		$user = unserialize($_SESSION['user']);
 		echo '
 			<div id="content">
-				<p>
-					Biblioteka PAI<br>
-					Adres: ul. Ulica Miasto<br> 000-000 Miasto<br>
-					Telefon: 123456789<br>
-					E-mail: mail@bpai.com
-				</p>
+			'.$user->showContact().'
 			</div>
 		';
 	}

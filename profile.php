@@ -1,10 +1,13 @@
 <?php
+
 	include "config.php";	
 	include "layout.php";
-
+	
 	function Content(){
 		$user = unserialize($_SESSION['user']);
-		echo '<div id="content">'.$user->showLogged().'</div>';
+		echo '<div id="content">'.
+				$user->showAccount().'</div>
+			';
 	}
 ?>
 
