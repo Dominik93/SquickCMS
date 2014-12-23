@@ -5,11 +5,7 @@
 	
 	function Content(){
 		$user = unserialize($_SESSION['user']);
-		echo '
-			<div id="content">
-			'.$user->showHours().'
-			</div>
-		';
+		echo '<div id="content">'.$user->showHours().'</div>';
 	}
 ?>
 

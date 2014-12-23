@@ -92,7 +92,10 @@ class User implements IUser{
 		$_SESSION['user_id'] = $row['reader_id'];
 		$_SESSION['acces_right'] = "reader";
 		$_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
-		$_SESSION['user'] = serialize(new Reader($row['reader_id'], new Controller()));
+                /*
+                 * trzeba dopisać active w klasie, ma pobierać z bazy czy user jest active czy nie
+                 */
+		$_SESSION['user'] = serialize(new Reader($row['reader_id'], $this->isActive(), new Controller()));
 		$this->controller->updateSession($row['reader_id'], 1, "reader", session_id());
                     return '<p>Witaj jesteś czytelnikiem, zostałeś poprawnie zalogowany! Możesz teraz przejść na <a href="index.php">stronę główną</a>.</p>';
 		}else{
@@ -100,7 +103,50 @@ class User implements IUser{
 		}
             }
         }
-        
+        public function session(){
+            $this->controller->updateSessionAction();
+        }
+        public function search($isbn, $title, $publisher_house, $edition, $premiere, $author) {
+            $books = "";
+            if(empty($isbn)) $isbn = "%";
+            if(empty($title)) $title = "%";
+            else $title = '%'.$title.'%';
+            if(empty($publisher_house)) $publisher_house = "%";
+            if(empty($edition)) $edition = "%";
+            if(empty($premiere)) $premiere = "%";
+            if(empty($author)) $author = "%";
+            $result = $this->controller->selectSearchedBook($isbn, $title, $publisher_house, $edition, $premiere, $author);
+            if(mysqli_num_rows($result) == 0) {
+		return 'Brak książek';
+            }else{
+                while($row = mysqli_fetch_assoc($result)) {
+                    $resultAuthors = $this->controller->selectAuthors($row['book_id']);
+                    $autorzy = "";
+                    if(mysqli_num_rows($resultAuthors) == 0) {
+                        die('Brak autorów bład');
+                    }
+                    else{			
+			while($rowA = mysqli_fetch_assoc($resultAuthors)) {
+                            $autorzy = $autorzy.' '.$rowA['author_name'].' '.$rowA['author_surname'].', ';
+			}
+			$books = $books.'<p>
+							ID: '.$row['book_id'].'<br>
+							ISBN: '.$row['book_isbn'].'<br>
+							Autor: '.$autorzy.'<br>
+							Tytuł: '.$row['book_title'].'<br>
+							Wydawca: '.$row['publisher_house_name'].'<br>
+							Ilość stron: '.$row['book_nr_page'].'<br>
+							Wydanie: '.$row['book_edition'].'<br>
+							Rok wydania: '.$row['book_premiere'].'<br>
+							Ilość sztuk: '.$row['book_number'].'<br>
+							<a href="book.php?book='.$row['book_id'].'">Przejdź do książki</a>
+						</p>';
+                        }
+                }
+            }
+            return $books;
+        }
+
         public function showOptionPanel(){
 		return '
 			<div id="panelName">Panel użytkownika</div>
@@ -151,6 +197,24 @@ class User implements IUser{
 	}
 	public function showAllBooks() {
             return 'Brak dostepu';
+        }
+        public function showBookAdd() {
+            return 'Brak dostepu';
+        }
+        public function addBook($isbn, $title, $publisher_house, $nr_page, $edition, $premiere, $number, $author) {
+            return 'Brak dostepu';
+        }
+        public function showAllAdmins() {
+            return 'Brak dostępu';
+        }
+        public function addAdmin($name, $surname, $password1, $password2, $email, $login) {
+             return 'Brak dostępu';
+        }
+        public function showRegistrationAdmin() {
+             return 'Brak dostępu';
+        }
+        public function isActive(){
+            return false;
         }
 }
 ?>

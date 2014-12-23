@@ -1,22 +1,18 @@
 <?php
-
 	include "config.php";
 	include "layout.php";
 	
 	function Content(){
             $user = unserialize($_SESSION['user']);
-            echo '<div id="content">'.$user->showRegistrationReader().'<br>'.$done.'</div>';
-            
-            if(isset($_POST['login'])) {
-                echo $user->addReader($_POST['login'],
-					$_POST['email'],
-					$_POST['name'],
-					$_POST['surname'],
-					$_POST['password'],
-					$_POST['password2'],
-					$_POST['adres']);			
+            echo '<div id="content">';
+            echo $user->showRegistrationAdmin();
+            if(isset($_POST['login'])){
+                echo $user->addAdmin($_POST['name'], $_POST['surname'], $_POST['password1'], $_POST['password2'], $_POST['email'], $_POST['login']);
             }
+            
+            echo '</div>';
 	}
+
 ?>
 
 <!DOCTYPE html>
@@ -35,7 +31,6 @@
 				document.getElementById("login").value != "" &&
 				document.getElementById("password1").value != "" &&
 				document.getElementById("password2").value != "" &&
-				document.getElementById("adres").value != "" &&
 				document.getElementById("email").value != "" 
 				) return true;
 			return false;

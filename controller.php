@@ -9,10 +9,6 @@ class Controller{
 		$this->mysql = new Mysql('localhost', 'root', '', 'dslusarz_baza');
 	}
 	
-	public function wypisz(){
-		echo "jestem kontrollerem";
-	}
-	
 	public function clear($text){
 		if(get_magic_quotes_gpc()) {
 			$text = stripslashes($text);
@@ -22,10 +18,12 @@ class Controller{
 		$text = htmlspecialchars($text);
 		return $text;
 	}
-	
-	public function addReader($link ,$name, $surname, $login, $password, $email, $adres, $right){
+	/*
+         * add function
+         */
+	public function addReader($name, $surname, $login, $password, $email, $adres, $right){
 		$this->mysql->Connect();
-		mysqli_query($mysql->baseLink, 'INSERT INTO readers 
+		mysqli_query($this->mysql->baseLink, 'INSERT INTO readers 
 					(reader_name, reader_surname,
 					reader_login, reader_password,
 					reader_email, reader_address,
@@ -50,7 +48,7 @@ class Controller{
 
 	public function addBook($isbn, $title, $publisherHouse, $nrPage, $edtiotion, $premiere, $number){
 		$this->mysql->Connect();
-		mysqli_query($this->mysql->baseLink, 'INSERT INTO `dslusarz_baza`.`books`
+		mysqli_query($this->mysql->baseLink, 'INSERT INTO books
 									(`book_isbn`,
 									`book_title`,
 									`book_publisher_house_id`,
@@ -72,7 +70,7 @@ class Controller{
 	
 	public function addPublisherHouse($publisherHouse){
 		$this->mysql->Connect();
-		mysqli_query($this->mysql->baseLink, 'INSERT INTO dslusarz_baza.publisher_houses (publisher_houses.publisher_house_name) VALUES("'.$publicherHouse.'");');
+		mysqli_query($this->mysql->baseLink, 'INSERT INTO publisher_houses (publisher_houses.publisher_house_name) VALUES("'.$publisherHouse.'");');
 		$this->mysql->Close();
 	}
 	
@@ -82,6 +80,19 @@ class Controller{
 		$this->mysql->Close();
 	}
 	
+        public function addConnectionBetwenAuthorAndBook($authorId,$bookId){
+            $this->mysql->Connect();
+            mysqli_query($this->mysql->baseLink, 
+                    'INSERT INTO `dslusarz_baza`.`authors_books`
+						(`author_id`,
+						`book_id`)
+						VALUES
+						('.$authorId.',
+						'.$bookId.');
+						') or die(mysqli_error($this->mysql->baseLink));
+            $this->mysql->Close();
+        }
+        
 	public function addBorrow($book, $user, $date){
 		$this->mysql->Connect();
 		$dateReturn = date_create(date('Y-m-d'));
@@ -111,7 +122,26 @@ class Controller{
 							"'.$czas.'");');
 		$this->mysql->Close();
 	}
-	
+        
+        public function addSession($sessionID, $sessionIP, $sesssionUser){
+		$this->mysql->Connect();
+		mysqli_query($this->mysql->baseLink, 'INSERT INTO sessions
+											(`session_id`,
+											`session_ip`,
+											`session_user`,
+											`session_logged`,
+											`session_acces_right`)
+											VALUES 
+											("'.$sessionID.'",
+											"'.$sessionIP.'",
+											'.$sesssionUser.',
+											"0",
+											"none")');
+		$this->mysql->Close();
+	}
+	/*
+         * delete function
+         */
 	public function deleteReader($readerId){
 		$this->mysql->Connect();
 		mysqli_query($this->mysql->baseLink, 'DELETE FROM readers WHERE readers.reader_id = '.$readerId.';') or die(mysqli_error($this->mysql->baseLink));
@@ -129,7 +159,9 @@ class Controller{
 		mysqli_query($this->mysql->baseLink, 'DELETE FROM admins where admins.admin_id = '.$adminId.';') or die(mysqli_error());
 		$this->mysql->Close();
 	}
-	
+	/*
+         * update function
+         */
 	public function updateSession($id, $logged, $acces_right, $session_id){
 		$this->mysql->Connect();
 		mysqli_query($this->mysql->baseLink,
@@ -138,10 +170,19 @@ class Controller{
 		session_logged = '. $logged.',
 		session_acces_right = "'.$acces_right.'"
 		where session_id = "'.$session_id.'";')
-		or die(mysqli_error());
+		or die(mysqli_error($this->mysql->baseLink));
 		$this->mysql->Close();
 	}
 	
+        public function updateSessionAction(){
+            $this->mysql->Connect();
+            mysqli_query($this->mysql->baseLink,
+		'UPDATE sessions SET
+		session_last_action = \''.date('Y-m-d H:i:s').'\';')
+            or die(mysqli_error($this->mysql->baseLink));
+            $this->mysql->Close();
+        }
+        
 	public function updateReader($readerId, $data){
 		$this->mysql->Connect();
 		mysqli_query($this->mysql->baseLink, 'UPDATE readers SET 
@@ -149,7 +190,9 @@ class Controller{
 					where reader_id = '.$readerId.';');
 		$this->mysql->Close();
 	}
-	
+	/*
+         * get function
+         */
 	public function getReaderData($reader_id = -1){
 		$this->mysql->Connect();
 		if($reader_id == -1) {
@@ -164,7 +207,7 @@ class Controller{
 		if(!$result){
 			return false;
 		}
-		return mysql_fetch_assoc($result);
+		return mysqli_fetch_assoc($result);
 	}
 	
 	public function getAdminData($admin_id = -1){
@@ -181,24 +224,9 @@ class Controller{
 		}
 		return mysqli_fetch_assoc($result);
 	}
-	
-	public function addSession($sessionID, $sessionIP, $sesssionUser){
-		$this->mysql->Connect();
-		mysqli_query($this->mysql->baseLink, 'INSERT INTO `dslusarz_baza`.`sessions`
-											(`session_id`,
-											`session_ip`,
-											`session_user`,
-											`session_logged`,
-											`session_acces_right`)
-											VALUES 
-											("'.$sessionID.'",
-											"'.$sessionIP.'",
-											'.$sesssionUser.',
-											"0",
-											"none")');
-		$this->mysql->Close();
-	}
-
+	/*
+         * select function
+         */
 	public function selectBooks(){
 		$this->mysql->Connect();
 		$result = mysqli_query($this->mysql->baseLink, 'SELECT books.*, publisher_houses.publisher_house_name FROM books join publisher_houses on publisher_houses.publisher_house_id = books.book_publisher_house_id;')or die(mysqli_error($this->mysql->baseLink));
@@ -206,6 +234,27 @@ class Controller{
 		return $result;
 	}
 	
+        public function selectSearchedBook($isbn, $title, $publisher_house, $edition, $author){
+                $this->mysql->Connect();
+		$result = mysqli_query($this->mysql->baseLink,
+                        'SELECT books.*, publisher_houses.publisher_house_name, authors.* FROM books 
+								JOIN publisher_houses ON publisher_houses.publisher_house_id = books.book_publisher_house_id
+								JOIN authors_books ON authors_books.book_id = books.book_id
+								JOIN authors ON authors_books.author_id = authors.author_id
+								WHERE 
+								(books.book_isbn LIKE \''.$isbn.'\') AND
+								(books.book_title LIKE \''.$title.'\') AND
+								(publisher_houses.publisher_house_name LIKE \''.$publisher_house.'\') AND
+								(books.book_edition LIKE \''.$edition.'\') AND
+								(authors.author_name LIKE \''.$author.'\' OR authors.author_surname LIKE \''.$author.'\' )
+								GROUP BY books.book_id;
+								')
+                        or die(mysqli_error($this->mysql->baseLink));
+		$this->mysql->Close();
+		return $result;
+            
+        }
+        
 	public function selectAuthors($bookId){
 		$this->mysql->Connect();
 		$result = mysqli_query($this->mysql->baseLink, 'SELECT authors.* from authors join authors_books on authors_books.author_id = authors.author_id join books on books.book_id = authors_books.book_id where books.book_id = '.$bookId.';')or die(mysqli_error($this->mysql->baseLink));
@@ -248,7 +297,7 @@ class Controller{
 	
 	public function selectNews($limit = 10){
 		$this->mysql->Connect();
-		$result = mysqli_query($this->mysql->baseLink, 'SELECT * FROM dslusarz_baza.news LIMIT '.$limit.';')or die(mysqli_error($this->mysql->baseLink));
+		$result = mysqli_query($this->mysql->baseLink, 'SELECT * FROM news LIMIT '.$limit.';')or die(mysqli_error($this->mysql->baseLink));
 		$this->mysql->Close();
 		return $result;
 	}
@@ -281,6 +330,33 @@ class Controller{
 		return $result;
 	}
 	
+        public function selectPublisherHouse($publisher_house){
+            $this->mysql->Connect();
+            $result = mysqli_query($this->mysql->baseLink, 
+                    'SELECT * FROM publisher_houses WHERE publisher_houses.publisher_house_name = "'.$publisher_house.'";')
+                    or die(mysqli_error($this->mysql->baseLink));
+            $this->mysql->Close();
+            return $result;
+        }
+        
+        public function selectBook($isbn){
+            $this->mysql->Connect();
+            $result = mysqli_query($this->mysql->baseLink, 
+                    'SELECT * FROM books WHERE books.book_isbn = "'.$isbn.'";')
+                    or die(mysqli_error($this->mysql->baseLink));
+            $this->mysql->Close();
+            return $result;
+        }
+        
+        public function selectAuthor($name, $surname){
+            $this->mysql->Connect();
+            $result = mysqli_query($this->mysql->baseLink, 
+                    'SELECT * FROM authors WHERE authors.author_name = "'.$name.'" and authors.author_surname = "'.$surname.'";')
+                    or die(mysqli_error($this->mysql->baseLink));
+            $this->mysql->Close();
+            return $result;
+        }
+        
 	public function selectSession(){
 		$this->mysql->Connect();
 		$result = mysqli_query($this->mysql->baseLink, 'SELECT * FROM sessions;')or die(mysqli_error($this->mysql->baseLink));

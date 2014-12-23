@@ -3,16 +3,13 @@ include "user.php";
 
 class Admin extends User{
 	
-	public function __construct($id, $c){
+    public function __construct($id, $c){
 		$this->userID = $id;
 		$this->controller = $c;
 	}
-        public function showOptionPanel(){
+    public function showOptionPanel(){
 		$userData = $this->getData();
-		return '
-			<p align="center">
-				Witamy '.$userData['admin_name'].'!
-			</p>
+		return '<p align="center">Witamy '.$userData['admin_name'].'!</p>
 			<ul>
 				<li><a href="profile.php">Twój profil</a></li>
 				<li><a href="add_news.php">Dodaj news</a></li>
@@ -25,14 +22,11 @@ class Admin extends User{
 				<li><a href="logged.php">Lista zalogowanych</a></li>
 				<li><a href="logout.php">Wyloguj</a></li>
 			</ul>
-			session id =
-                        '.session_id().' logger = 
-			'.$_SESSION['logged'].' userid =
-			'.$_SESSION['user_id'].' ip =
+			session id = '.session_id().' logger = '.$_SESSION['logged'].' userid = '.$_SESSION['user_id'].' ip =
 			'.$_SESSION['ip'].' access = 
 			'.$_SESSION['acces_right'].'';	
 	}
-	public function showNews(){
+    public function showNews(){
 		$result = $this->controller->selectNews($limit = 10);
 		$news = "";
 		$news = $news.'<p>';
@@ -46,10 +40,10 @@ class Admin extends User{
 		$news = $news.'</p>';
 		return $news;
 	}
-        public function getData(){
+    public function getData(){
 		return $this->controller->getAdminData();
 	}
-        public function showLogged(){
+    public function showLogged(){
 		$result = $this->controller->selectSession();
 		$logged = "";
 		if(mysqli_num_rows($result) == 0) {
@@ -67,7 +61,7 @@ class Admin extends User{
 		}
 		return $logged;
 	}
-	public function showRegistrationReader(){
+    public function showRegistrationReader(){
 		return '<div id="registration" align="center">
 			<form action="registration_reader.php" method="post">
 				<table>
@@ -84,7 +78,7 @@ class Admin extends User{
 			</form>
 		</div>';
 	}
-	public function showAllUsers() {
+    public function showAllUsers() {
             $users = "";
             $result = $this->controller->selectReaders();
             if(mysqli_num_rows($result) == 0) {
@@ -102,7 +96,7 @@ class Admin extends User{
 		}
                 return $users;
         }
-	public function addReader($login, $email, $name, $surname, $password1, $password2, $adres){
+    public function addReader($login, $email, $name, $surname, $password1, $password2, $adres){
 		$login = $this->controller->clear($login);
 		$email = $this->controller->clear($email);
 		$name = $this->controller->clear($name);
@@ -120,47 +114,50 @@ class Admin extends User{
 			|| empty($adres)
 		){
 			return '<p>Musisz wypełnić wszystkie pola.</p>';
-		}elseif($password1 != $password2) {
+		}
+                elseif($password1 != $password2) {
 			return '<p>Podane hasła różnią się od siebie.</p>';
-		}elseif(filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+		}
+                elseif(filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 			return '<p>Podany email jest nieprawidłowy.</p>';
-		}else{
-			$resultUser = $this->controller->selectExistingUser("readers", "reader", $login, $email);
-			$rowU = mysqli_fetch_row($resultUser);
-			if($rowU[0] > 0) {
-				return '<p>Już istnieje użytkownik z takim loginem lub adresem e-mail.</p>';
-			}
-			if(strlen($login) < 4){
-				return '<p>Za mało znaków.</p>';
-			}
-			$resultAdmin = $this->controller->selectExistingUser("admins", "admin", $login, $email);
-			$rowA = mysqli_fetch_row($resultAdmin);
-			if($rowA[0] > 0) {
-				return '<p>Już istnieje użytkownik z takim loginem lub adresem e-mail.</p>';
-			}
-			$resultAccessRgihts = $this->controller->selectAccessRights();
-			if(mysqli_num_rows($resultAccessRgihts) == 0) {
-				die('Błąd');
-			}
-			$rowAR = mysqli_fetch_assoc($resultAccessRgihts);	
-			$this->controller->addReader($name, $surname, $login, $password1, $email, $adres, date('Y-m-d'), $rowAR['acces_right_id']);
-			return '<p>Czytelnik Został poprawnie zarejestrowany! Możesz się teraz wrócić na <a href="main_page.php">stronę główną</a>.</p>';
-
+		}
+                else{
+                    $resultUser = $this->controller->selectExistingUser("readers", "reader", $login, $email);
+                    $rowU = mysqli_fetch_row($resultUser);
+                    if($rowU[0] > 0) {
+                    	return '<p>Już istnieje użytkownik z takim loginem lub adresem e-mail.</p>';
+                    }
+                    if(strlen($login) < 4){
+                    	return '<p>Za mało znaków.</p>';
+                    }
+                    $resultAdmin = $this->controller->selectExistingUser("admins", "admin", $login, $email);
+                    $rowA = mysqli_fetch_row($resultAdmin);
+                    if($rowA[0] > 0) {
+                    	return '<p>Już istnieje użytkownik z takim loginem lub adresem e-mail.</p>';
+                    }
+                    $resultAccessRgihts = $this->controller->selectAccessRights();
+                    if(mysqli_num_rows($resultAccessRgihts) == 0) {
+                    	die('Błąd');
+                    }
+                    $rowAR = mysqli_fetch_assoc($resultAccessRgihts);	
+                    $this->controller->addReader($name, $surname, $login, $password1, $email, $adres, date('Y-m-d'), $rowAR['acces_right_id']);
+                    return '<p>Czytelnik Został poprawnie zarejestrowany! Możesz się teraz wrócić na <a href="main_page.php">stronę główną</a>.</p>';
 		}
 	}
-	public function showAccount(){
-		$userData =  $this->getData();
-		return '<p>
-					ID: '.$userData['admin_id'].'<br>
-					Imie: '.$userData['admin_name'].'<br>
-					Nazwisko: '.$userData['admin_surname'].'<br>
-					Login: '.$userData['admin_login'].'<br>
-					Email: '.$userData['admin_email'].'<br>
-					Prawa: '.$userData['acces_right_name'].'<br>
-				</p>';
+    public function showAccount(){
+        $userData =  $this->getData();
+	return '<p>
+                            ID: '.$userData['admin_id'].'<br>
+                            Imie: '.$userData['admin_name'].'<br>
+                            Nazwisko: '.$userData['admin_surname'].'<br>
+                            Login: '.$userData['admin_login'].'<br>
+                            Email: '.$userData['admin_email'].'<br>
+                            Prawa: '.$userData['acces_right_name'].'<br>
+                        </p>';
 	}
-        public function showAllBooks() {
+    public function showAllBooks() {
             $books = "";
+            $this->session();
             $result = $this->controller->selectBooks();
             if(mysqli_num_rows($result) == 0) {
 			$books = $books.'Brak książek<br>';
@@ -186,7 +183,159 @@ class Admin extends User{
 		}     
             return $books;     
         }
-        
+    public function showBookAdd() {
+            return '<div id="add_book" align="center">
+		<form action="add_book.php" method="post">
+			<table>
+				<tr> <td colspan = 2 align="center">Dodaj książke:</tf><tr>
+				<tr><td>ISBN:</td><td><input type="text" value="'.$_POST['isbn'].'" name="isbn" placeholder="ISBN" required/></td></tr>
+				<tr><td>Tytuł:</td><td><input type="text" value="'.$_POST['title'].'" name="title" placeholder="Tytuł" required/></td></tr>
+				<tr><td>Wydawca:</td><td><input type="text" value="'.$_POST['publisher_house'].'" name="publisher_house" placeholder="Wydawca" required/></td></tr>
+				<tr><td>Ilość stron:</td><td><input type="text" value="'.$_POST['nr_page'].'" name="nr_page" placeholder="Ilość stron" required/></td></tr>
+				<tr><td>Wydanie:</td><td><input type="text" value="'.$_POST['edition'].'" name="edition" placeholder="Wydanie" required/></td></tr>
+				<tr><td>Rok wydania:</td><td><input type="text" value="'.$_POST['premiere'].'" name="premiere" placeholder="Rok Wydania" required/></td></tr>
+				<tr><td>Ilość egzemplarzy:</td><td><input type="text" value="'.$_POST['number'].'" name="number" placeholder="Ilość egzemplarzy" required/></td></tr>
+				<tr><td>Autor:</td><td><input type="text" value="'.$_POST['author'].'" name="author" placeholder="Imie Nazwisko;" required/></td></tr>
+			</table>
+			<input type="submit" value="Dodaj ksiażke">
+		</form>
+	</div>';
+        }
+    public function addBook($isbn, $title, $publisher_house, $nr_page, $edition, $premiere, $number, $author) {
+            if(empty($isbn) ||
+		empty($title) ||
+		empty($publisher_house) ||
+		empty($nr_page) ||
+		empty($edition) ||
+		empty($premiere) ||
+		empty($number) ||
+		empty($author)){
+		return 'Nie wypełniono pól';
+            }	
+            else{
+		$isbn = $this->controller->Clear($isbn);
+		$title = $this->controller->Clear($title);
+		$publisher_house = $this->controller->Clear($publisher_house);
+		$nr_page = $this->controller->Clear($nr_page);
+		$edition = $this->controller->Clear($edition);
+		$premiere = $this->controller->Clear($premiere);
+		$number = $this->controller->Clear($number);
+		$author = $this->controller->Clear($author);
+                
+                $result = $this->controller->selectBook($isbn);
+                if(mysqli_num_rows($result) > 0){
+                    return 'Książka już istnieje';
+		}
+                
+		$result = $this->controller->selectPublisherHouse($publisher_house);
+		if(mysqli_num_rows($result) > 0){
+                    $rowPH = mysql_fetch_array($result);
+		}
+                else{
+                    $this->controller->addPublisherHouse($publisher_house);
+                    $result = $this->controller->selectPublisherHouse($publisher_house);
+                    $rowPH = mysqli_fetch_array($result);
+		}
+		$this->controller->addBook($isbn, $title, $rowPH[0], $nr_page, $edition, $premiere, $number);
+		$result = $this->controller->selectBook($isbn);
+		$rowB = mysqli_fetch_array($result);
+		$authors = $author;
+		$authors = explode(";", $authors);
+		foreach($authors as $author){
+                	$date = explode(' ', $author);
+                        $name = $date[0];
+			$surname = $date[1];
+			$result = $this->controller->selectAuthor($name, $surname);
+			if(mysqli_num_rows($result) > 0){
+				$rowA = mysql_fetch_array($result);
+			}else{
+                            $this->controller->addAuthor($name, $surname);
+                            $result = $this->controller->selectAuthor($name, $surname);
+                            $rowA = mysqli_fetch_array($result);
+			}
+                        $this->controller->addConnectionBetwenAuthorAndBook($rowA[0], $rowB[0]);
+		}	
+		return '<p>Dodano ksiażke.</p>';
+            }
+        }
+    public function showAllAdmins(){
+            $admins = "";
+            $result = $this->controller->selectAdmins();
+            if(mysqli_num_rows($result) == 0) {
+			$admins = $admins.'Brak użytkowników<br>';
+		}else{
+			$admins = $admins. '
+				<div id="usersTable" align="center">
+				<table>
+					<tr> <td>ID</td> <td>Login</td> <td>Email</td> <td>Imie</td> <td>Nazwisko</td> </tr>
+				';
+			while($row = mysqli_fetch_assoc($result)) {
+				$admins = $admins. '<tr onClick="location.href=\'http://localhost/~dominik/Library/profile_admins.php?id='.$row['admin_id'].'\'" /> <td>'.$row['admin_id'].'</td> <td>'.$row['admin_login'].'</td> <td>'.$row['admin_email'].'</td> <td>'.$row['admin_name'].'</td> <td>'.$row['admin_surname'].'</td> </tr>';
+			}
+			$admins = $admins. '<tr> <td align="center" colspan = 5 ><a href="registration_admin.php">Dodaj</a></td> </tr></table></div>';
+		}
+            return $admins;
+        }
+    public function addAdmin($name, $surname, $password1, $password2, $email, $login) {
+            $name = $this->controller->Clear($name);
+            $surname = $this->controller->Clear($surname);
+            $password1 = $this->controller->Clear($password1);
+            $password2 = $this->controller->Clear($password2);
+            $email = $this->controller->Clear($email);
+            $login = $this->controller->Clear($login);
+            if(empty($name) 
+		|| empty($password1) 
+		|| empty($password2) 
+		|| empty($login)
+		|| empty($surname)
+		|| empty($email)){
+                return '<p>Musisz wypełnić wszystkie pola.</p>';
+            }
+            elseif($password1 !=  $password2) {
+		return '<p>Podane hasła różnią się od siebie.</p>';
+            } 
+            elseif(filter_var($email, FILTER_VALIDATE_EMAIL) === false){
+		return '<p>Podany email jest nieprawidłowy.</p>';
+            }
+            else{
+                $resultUser = $this->controller->selectExistingUser("readers", "reader", $login, $email);
+                $rowU = mysqli_fetch_row($resultUser);
+                if($rowU[0] > 0) {
+                    return '<p>Już istnieje użytkownik z takim loginem lub adresem e-mail.</p>';
+                }
+                if(strlen($login) < 4){
+                    return '<p>Za mało znaków.</p>';
+                }
+                $resultAdmin = $this->controller->selectExistingUser("admins", "admin", $login, $email);
+                $rowA = mysqli_fetch_row($resultAdmin);
+                if($rowA[0] > 0) {
+                    return '<p>Już istnieje użytkownik z takim loginem lub adresem e-mail.</p>';
+                }
+                $resultAccessRgihts = $this->controller->selectAccessRights();
+                if(mysqli_num_rows($resultAccessRgihts) == 0) {
+                    die('Błąd');
+                }
+                $rowAR = mysqli_fetch_assoc($resultAccessRgihts);
+                $this->controller->addAdmin($name, $surname, $login, $password1, $email, $rowAR['acces_right_id']);
+                return "<p>Dodano admina</p>";
+            }
+        }
+    public function showRegistrationAdmin() {
+             return '<div id="registration" align="center">
+			<form action="registration_admin.php" method="post">
+				<table>
+					<tr>Dodaj admina</tr>
+					<tr><td>Login:</td><td><input id="login" type="text" value="'.$_POST['login'].'" name="login" placeholder="Login" required/><span id="status_login"></span></td></tr>
+					<tr><td>E-mail:</td><td><input id="email" type="email" value="'.$_POST['email'].'" name="email" placeholder="E-mail" required/><span id="status_email"></span></td></tr>
+					<tr><td>Hasło:</td><td><input id="password1" type="password" value="'.$_POST['password1'].'" name="password1" placeholder="Hasło" required/></td></tr>
+					<tr><td>Powtórz hasło:</td><td><input id="password2" type="password" value="'.$_POST['password2'].'" name="password2" placeholder="Hasło" required/><span id="status_password"></span></td></tr>
+					<tr><td>Imie:</td><td><input id="name" type="text" value="'.$_POST['name'].'" name="name" placeholder="Imie" required/></td></tr>
+					<tr><td>Nazwisko:</td><td><input id="surname" type="text" value="'.$_POST['surname'].'" name="surname" placeholder="Nazwisko" required/></td></tr>
+				</table>
+				<input type="submit" id="submit" value="Zarejestruj admina">
+			</form>
+		</div>';
+        }
 }
 
 class Reader extends User{
@@ -199,7 +348,7 @@ class Reader extends User{
 	}
 	
 	public function showOptionPanel(){
-		$userData = getData();
+		$userData = $this->getData();
 		return '
 			<p align="center">
 				Witamy '.$userData['reader_name'].'!
@@ -217,24 +366,30 @@ class Reader extends User{
 			'.$_SESSION['acces_right'].'';
 	}
 	public function showNews(){
-            parent::showNews();
+            return parent::showNews();
         }
         public function getData(){
-		return $this->controller->getReaderData($id);
+		return $this->controller->getReaderData();
 	}
 	public function showAccount(){
 		$userData =  $this->getData();
 		return '<p>
-					ID: '.$userData['reader_id'].'<br>
-					Imie: '.$userData['reader_name'].'<br>
-					Nazwisko: '.$userData['reader_surname'].'<br>
-					Login: '.$userData['reader_login'].'<br>
-					Email: '.$userData['reader_email'].'<br>
-					Konto aktywne do: '.$userData['reader_active_account'].'<br>
-					Adres: '.$userData['reader_address'].'<br>	
-					Prawa: '.$userData['acces_right_name'].'<br>					
-				</p>';
+                            ID: '.$userData['reader_id'].'<br>
+                            Imie: '.$userData['reader_name'].'<br>
+                            Nazwisko: '.$userData['reader_surname'].'<br>
+                            Login: '.$userData['reader_login'].'<br>
+                            Email: '.$userData['reader_email'].'<br>
+                            Konto aktywne do: '.$userData['reader_active_account'].'<br>
+                            Adres: '.$userData['reader_address'].'<br>	
+                            Prawa: '.$userData['acces_right_name'].'<br>					
+			</p>';
 	}
-        
+        public function isActive(){
+            $date = $this->controller->getReaderData();
+            if($date['acces_right_name'] == active)
+                return true;
+            else
+                return false;
+        }
 }
 ?>

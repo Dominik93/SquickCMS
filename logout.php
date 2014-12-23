@@ -12,13 +12,7 @@
 	
 	function Content(){
 		$user = unserialize($_SESSION['user']);
-		echo '
-			<div id="content">
-		';
-		echo $user->logout();
-		echo'
-			</div>
-		';
+		echo '<div id="content">'.$user->logout().'</div>';
 	}
 ?>
 

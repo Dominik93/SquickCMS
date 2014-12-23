@@ -5,11 +5,13 @@
 
 	function Content(){
 		$user = unserialize($_SESSION['user']);
-		echo '<div id="content">'.$user->showLogin();
+		
                 if(isset($_POST['login'])){
-                    echo $user->login($_POST['login'], $_POST['password']);
+                    echo '<div id="content">'.$user->login($_POST['login'], $_POST['password']).'</div>';
                 }
-                echo '</div>';
+                else {
+                    echo '<div id="content">'.$user->showLogin().'</div>';
+                }
                 
 	}
 ?>
