@@ -35,6 +35,10 @@ interface IUser{
         public function isActive();
         public function showBook($bookID);
         public function orderBook($bookID);
-        public function showAllBorrows();            
+        public function showAllBorrows();    
+        public function showAddNews();
+        public function addNews($title, $text);
+        public function showAdmin($adminID);
+        public function showReader($readerID);
 }
 ?>

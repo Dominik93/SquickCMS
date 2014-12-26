@@ -5,8 +5,8 @@ class User implements IUser{
 	protected $userID;
 	protected $controller;
 	
-	public function __construct($c){
-		$this->userID = -1;
+	public function __construct($c, $u = -1){
+		$this->userID = $u;
 		$this->controller = $c;
 	}
         public function showMainPage(){
@@ -81,10 +81,15 @@ class User implements IUser{
 		$_SESSION['user_id'] = $row['admin_id'];
 		$_SESSION['acces_right'] = "admin";
 		$_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
-		$_SESSION['user'] = serialize(new Admin($row['admin_id'], new Controller()));
-		$this->controller->updateSession($row['admin_id'], 1, "admin", session_id());	
-                    return '<p>Witaj jesteś adminem, zostałeś poprawnie zalogowany! Możesz teraz przejść na <a href="index.php">stronę główną</a>.</p>';
-            }else{
+		$_SESSION['user'] = serialize(new Admin(new Controller(), $u = $row['admin_id']));
+                $this->controller->updateTable("sessions", 
+                        array(array("session_user", $row['admin_id']),
+                              array("session_logged", 1),
+                              array("session_acces_right", "admin")),
+                        array(array("session_id", session_id(), "")));
+                return '<p>Witaj jesteś adminem, zostałeś poprawnie zalogowany! Możesz teraz przejść na <a href="index.php">stronę główną</a>.</p>';
+            }
+            else{
 		$result = $this->controller->validationLoginReader($login, $password);
 		if(mysqli_num_rows($result) > 0) {
 		$row = mysqli_fetch_assoc($result);
@@ -95,16 +100,17 @@ class User implements IUser{
                 /*
                  * trzeba dopisać active w klasie, ma pobierać z bazy czy user jest active czy nie
                  */
-		$_SESSION['user'] = serialize(new Reader($row['reader_id'], $this->isActive(), new Controller()));
-		$this->controller->updateSession($row['reader_id'], 1, "reader", session_id());
-                    return '<p>Witaj jesteś czytelnikiem, zostałeś poprawnie zalogowany! Możesz teraz przejść na <a href="index.php">stronę główną</a>.</p>';
-		}else{
+		$_SESSION['user'] = serialize(new Reader($this->isActive(), new Controller(), $u = $row['reader_id']));
+		$this->controller->updateTable("sessions", 
+                        array("session_user", "session_logged", "session_acces_right"),
+                        array($row['reader_id'], 1, "reader"),
+                        array(array("session_id", session_id(), "")));
+                return '<p>Witaj jesteś czytelnikiem, zostałeś poprawnie zalogowany! Możesz teraz przejść na <a href="index.php">stronę główną</a>.</p>';
+		}
+                else{
                     return '<p>Podany login i/lub hasło jest nieprawidłowe.</p>';
 		}
             }
-        }
-        public function session(){
-            $this->controller->updateSessionAction();
         }
         public function search($isbn, $title, $publisher_house, $edition, $premiere, $author) {
             $books = "";
@@ -153,6 +159,9 @@ class User implements IUser{
              */
             return $session;
         }
+        public function session(){
+            $this->controller->updateSessionAction($this->userID, "user");
+        }
 
         public function showOptionPanel(){
 		return '
@@ -168,7 +177,8 @@ class User implements IUser{
 			'.$_SESSION['logged'].' userid =
 			'.$_SESSION['user_id'].' ip =
 			'.$_SESSION['ip'].' access = 
-			'.$_SESSION['acces_right'].'';
+			'.$_SESSION['acces_right'].' class.userID =
+                        '.$this->userID.'';
 	}
         public function showNews(){
 		$result = $this->controller->selectNews($limit = 10);
@@ -221,36 +231,27 @@ class User implements IUser{
              return 'Brak dostępu';
         }
         public function isActive(){
-            return false;
+            return true;
         }
-        public function showBook($bookID) {
-            $active = "disabled";
+        public function showBook($bookID, $active = "disabled") {
             $result = $this->controller->selectBookByID($bookID);
             $row = mysqli_fetch_assoc($result);
             $resultAuthors = $this->controller->selectAuthors($bookID);
-            $autorzy = "";
-            if(mysqli_num_rows($resultAuthors) == 0) {
-		die("Błąd");
-            }
-            else{			
-		while($rowA = mysqli_fetch_assoc($resultAuthors)) {
-                    $autorzy = $autorzy.' '.$rowA['author_name'].' '.$rowA['author_surname'].', ';
-		}
-            }
             $resultFreeBook = $this->controller->selectFreeBooks($bookID);
             $rowFreeBook = mysqli_fetch_assoc($resultFreeBook);
             return '<p>
 					ID: '.$row['book_id'].'<br>
 					ISBN: '.$row['book_isbn'].'<br>
 					Tytuł: '.$row['book_title'].'<br>
-					Autorzy: '.$autorzy.'<br>
+					Autorzy: '.$this->controller->authorsToString($resultAuthors).'<br>
 					Wydawnictwo: '.$row['publisher_house_name'].'<br>
 					Premiera: '.$row['book_premiere'].'<br>
 					Wydanie: '.$row['book_edition'].'<br>
 					Ilość stron: '.$row['book_nr_page'].'<br>
 					Ilość egzemplarzy: '.$rowFreeBook['free_books'].'<br>
 					<form align="center" action="book.php?book='.$row['book_id'].'" method="post">
-					<input type="submit" name="order" '.$active.' value="Zamów">
+                                        <input type="hidden" name="orderHidden" value="1" />		
+                                        <input type="submit" name="order" '.$active.' value="Zamów">
 					</form>
 				</p>';
         }
@@ -259,6 +260,43 @@ class User implements IUser{
         }
         public function showAllBorrows(){
             return 'Brak dostepu';
+        }
+        public function showAddNews(){
+            return "Brak dostępu";
+        }
+        public function addNews($title, $text){
+            return "Brak dostępu";
+        }
+        public function showAdmin($adminID){}
+        public function showReader($readerID){}
+
+        
+        public function templateTable($array, $arrayTable, $table, $tableStyle, $link = null, $join = null, $where = null){
+            $result = $this->controller->selectFromJoinWhere($table, $j = $join, $wh = $where);
+            if(mysqli_num_rows($result) == 0) {
+		return 'Brak danych';
+            }
+            $return = '<div id="'.$tableStyle.'" align="center">
+                            <table>
+                                <tr>';
+            foreach ($array as $s){
+                $return = $return.'<td>'.$s.'</td>';
+            }
+            $return = $return.'</tr>';
+            while($row = mysqli_fetch_array($result)) {
+                if($link == null){
+                   $return = $return.'<tr>'.$row['reader_id'].'</tr>';
+                }
+                else{
+                    $return = $return.'<tr onClick="location.href=\'http://localhost/~dominik/Library/'.$link.'='.$row[0].'\'" />';
+                }
+		for($i = 0; $i< count($array); $i++){
+                    $return = $return.'<td>'.$row[$arrayTable[$i]].'</td>';
+                }
+                $return = $return.'<tr>';
+            }
+            $return = $return.'</table></div>';
+            return $return;
         }
 }
 ?>

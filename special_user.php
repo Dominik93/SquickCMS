@@ -2,14 +2,16 @@
 include "user.php";
 
 class Admin extends User{
-	
-    public function __construct($id, $c){
-		$this->userID = $id;
-		$this->controller = $c;
-	}
+
+    public function __construct($c, $u = -1) {
+        parent::__construct($c, $u);
+    }
+    public function session(){
+            $this->controller->updateSessionAction($this->userID, "admin");
+    }
     public function showOptionPanel(){
 		$userData = $this->getData();
-		return '<p align="center">Witamy '.$userData['admin_name'].'!</p>
+		return '<div id="panelName">Panel użytkownika</div><p align="center">Witamy '.$userData['admin_name'].'!</p>
 			<ul>
 				<li><a href="profile.php">Twój profil</a></li>
 				<li><a href="add_news.php">Dodaj news</a></li>
@@ -24,7 +26,8 @@ class Admin extends User{
 			</ul>
 			session id = '.session_id().' logger = '.$_SESSION['logged'].' userid = '.$_SESSION['user_id'].' ip =
 			'.$_SESSION['ip'].' access = 
-			'.$_SESSION['acces_right'].'';	
+			'.$_SESSION['acces_right'].' class.userID =
+                        '.$this->userID.'';	
 	}
     public function showNews(){
 		$result = $this->controller->selectNews($limit = 10);
@@ -41,8 +44,8 @@ class Admin extends User{
 		return $news;
 	}
     public function getData(){
-		return $this->controller->getAdminData();
-	}
+	return $this->controller->getAdminData();
+    }
     public function showLogged(){
 		$result = $this->controller->selectSession();
 		$logged = "";
@@ -65,36 +68,45 @@ class Admin extends User{
 		return '<div id="registration" align="center">
 			<form action="registration_reader.php" method="post">
 				<table>
-					<tr>Dodaj czytelnika</tr>
-					<tr><td>Login:</td><td><input id="login" type="text" value="'.$_POST['login'].'" name="login" placeholder="Login" required/><span id="status_login"></span></td></tr>
-					<tr><td>E-mail:</td><td><input id="email" type="email" value="'.$_POST['email'].'" name="email" placeholder="E-mail" required/><span id="status_email"></span></td></tr>
-					<tr><td>Hasło:</td><td><input id="password1" type="password" value="'.$_POST['password1'].'" name="password1" placeholder="Hasło" required/></td></tr>
-					<tr><td>Powtórz hasło:</td><td><input id="password2" type="password" value="'.$_POST['password2'].'" name="password2" placeholder="Hasło" required/><span id="status_password"></span></td></tr>
-					<tr><td>Imie:</td><td><input id="name" type="text" value="'.$_POST['name'].'" name="name" placeholder="Imie" required/></td></tr>
-					<tr><td>Nazwisko:</td><td><input id="surname" type="text" value="'.$_POST['surname'].'" name="surname" placeholder="Nazwisko" required/></td></tr>
-					<tr><td>Adres:</td><td><input id="adres" type="text" value="'.$_POST['adres'].'" name="adres" placeholder="Adres" required/></td></tr>
+                                        <tr>Dodaj czytelnika</tr>
+					<tr>
+                                            <td>Login:</td>
+                                            <td><input id="login" type="text" value="'.$_POST['login'].'" name="login" placeholder="Login" required/><span id="status_login"></span></td>
+                                        </tr>
+					<tr>
+                                            <td>E-mail:</td>
+                                            <td><input id="email" type="email" value="'.$_POST['email'].'" name="email" placeholder="E-mail" required/><span id="status_email"></span>
+                                        </td></tr>
+					<tr>
+                                            <td>Hasło:</td>
+                                            <td><input id="password1" type="password" value="'.$_POST['password1'].'" name="password1" placeholder="Hasło" required/></td>
+                                        </tr>
+					<tr>
+                                            <td>Powtórz hasło:</td>
+                                            <td><input id="password2" type="password" value="'.$_POST['password2'].'" name="password2" placeholder="Hasło" required/><span id="status_password"></span></td>
+                                        </tr>
+					<tr>
+                                            <td>Imie:</td>
+                                            <td><input id="name" type="text" value="'.$_POST['name'].'" name="name" placeholder="Imie" required/></td>
+                                        </tr>
+					<tr>
+                                            <td>Nazwisko:</td>
+                                            <td><input id="surname" type="text" value="'.$_POST['surname'].'" name="surname" placeholder="Nazwisko" required/></td>
+                                        </tr>
+					<tr>
+                                            <td>Adres:</td>
+                                            <td><input id="adres" type="text" value="'.$_POST['adres'].'" name="adres" placeholder="Adres" required/></td>
+                                        </tr>
 				</table>
 				<input type="submit" id="submit" value="Zarejestruj czytelnika">
 			</form>
 		</div>';
 	}
     public function showAllUsers() {
-            $users = "";
-            $result = $this->controller->selectReaders();
-            if(mysqli_num_rows($result) == 0) {
-			$users = $users.'Brak użytkowników<br>';
-		}else{
-			$users = $users. '
-				<div id="usersTable" align="center">
-				<table>
-					<tr> <td>ID</td> <td>Login</td> <td>Email</td> <td>Imie</td> <td>Nazwisko</td> </tr>
-				';
-			while($row = mysqli_fetch_assoc($result)) {
-				$users = $users. '<tr onClick="location.href=\'http://localhost/~dominik/Library/profile_readers.php?id='.$row['reader_id'].'\'" /> <td>'.$row['reader_id'].'</td> <td>'.$row['reader_login'].'</td> <td>'.$row['reader_email'].'</td> <td>'.$row['reader_name'].'</td> <td>'.$row['reader_surname'].'</td> </tr>';
-			}
-			$users = $users. '<tr> <td align="center" colspan = 5 ><a href="registration_reader.php">Dodaj</a></td> </tr></table></div>';
-		}
-                return $users;
+        return '<p>'.$this->templateTable(array("ID", "Login", "Email", "Imie", "Nazwisko"),
+                                        array("reader_id", "reader_login", "reader_email", "reader_name", "reader_surname"),
+                                        "readers", "usersTable", "profile_readers.php?id" ).
+                '<p><a href="registration_reader.php">Dodaj</a></p>';
         }
     public function addReader($login, $email, $name, $surname, $password1, $password2, $adres){
 		$login = $this->controller->clear($login);
@@ -139,8 +151,10 @@ class Admin extends User{
                     if(mysqli_num_rows($resultAccessRgihts) == 0) {
                     	die('Błąd');
                     }
-                    $rowAR = mysqli_fetch_assoc($resultAccessRgihts);	
-                    $this->controller->addReader($name, $surname, $login, $password1, $email, $adres, date('Y-m-d'), $rowAR['acces_right_id']);
+                    $rowAR = mysqli_fetch_assoc($resultAccessRgihts);
+                    $this->controller->insertInto("readers", 
+                            array("reader_name", "reader_surname", "reader_login", "reader_password", "reader_email", "reader_address", "reader_active_account", "reader_acces_right_id"),
+                            array($name, $surname, $login, Codepass($password1), $email, $adres, date('Y-m-d'), $rowAR['acces_right_id']));
                     return '<p>Czytelnik Został poprawnie zarejestrowany! Możesz się teraz wrócić na <a href="main_page.php">stronę główną</a>.</p>';
 		}
 	}
@@ -161,25 +175,28 @@ class Admin extends User{
             $result = $this->controller->selectBooks();
             if(mysqli_num_rows($result) == 0) {
 			$books = $books.'Brak książek<br>';
-            }else{
+            }
+            else{
 			$books = $books.'
 				<div id="booksTable" align="center">
-				<table>
+				<p><table>
 					<tr> <td>ID</td> <td>ISBN</td> <td>Tytył</td> <td>Autorzy</td> <td>Wydawca</td> <td>Ilość stron</td> <td>Wydanie</td> <td>Premiera</td> <td>Ilość egzemplarzy</td> </tr>
 				';
 			while($row = mysqli_fetch_assoc($result)) {
 				$resultAuthors =  $this->controller->selectAuthors($row['book_id']);
-				$autorzy = "";
-				if(mysqli_num_rows($resultAuthors) == 0) {
-					die('Brak autorów bład<br>');
-				}else{		
-                                    while($rowA = mysqli_fetch_assoc($resultAuthors)) {
-					$autorzy = $autorzy.' '.$rowA['author_name'].' '.$rowA['author_surname'].', ';
-                                    }
-                                }
-				$books = $books.'<tr onClick="location.href=\'http://localhost/~dominik/Library/book.php?book='.$row['book_id'].'\'" /> <td>'.$row['book_id'].'</td> <td>'.$row['book_isbn'].'</td> <td>'.$row['book_title'].'</td> <td>'.$autorzy.'</td> <td>'.$row['publisher_house_name'].'</td> <td>'.$row['book_nr_page'].'</td> <td>'.$row['book_edition'].'</td> <td>'.$row['book_premiere'].'</td> <td>'.$row['book_number'].'</td> </tr>';
+				$books = $books.'<tr onClick="location.href=\'http://localhost/~dominik/Library/book.php?book='.$row['book_id'].'\'" /> '
+                                                    . '<td>'.$row['book_id'].'</td> '
+                                                    . '<td>'.$row['book_isbn'].'</td> '
+                                                    . '<td>'.$row['book_title'].'</td> '
+                                                    . '<td>'.$this->controller->authorsToString($resultAuthors).'</td> '
+                                                    . '<td>'.$row['publisher_house_name'].'</td>'
+                                                    . ' <td>'.$row['book_nr_page'].'</td>'
+                                                    . ' <td>'.$row['book_edition'].'</td> '
+                                                    . '<td>'.$row['book_premiere'].'</td>'
+                                                    . ' <td>'.$row['book_number'].'</td>'
+                                                . ' </tr>';
 			}
-			$books = $books.'<tr><td align="center" colspan = 9><a href="add_book.php">Dodaj</a></td></tr></table></div>';
+			$books = $books.'</table><p><a href="add_book.php">Dodaj</a></p></div>';
 		}     
             return $books;     
         }
@@ -259,22 +276,10 @@ class Admin extends User{
             }
         }
     public function showAllAdmins(){
-            $admins = "";
-            $result = $this->controller->selectAdmins();
-            if(mysqli_num_rows($result) == 0) {
-			$admins = $admins.'Brak użytkowników<br>';
-		}else{
-			$admins = $admins. '
-				<div id="usersTable" align="center">
-				<table>
-					<tr> <td>ID</td> <td>Login</td> <td>Email</td> <td>Imie</td> <td>Nazwisko</td> </tr>
-				';
-			while($row = mysqli_fetch_assoc($result)) {
-				$admins = $admins. '<tr onClick="location.href=\'http://localhost/~dominik/Library/profile_admins.php?id='.$row['admin_id'].'\'" /> <td>'.$row['admin_id'].'</td> <td>'.$row['admin_login'].'</td> <td>'.$row['admin_email'].'</td> <td>'.$row['admin_name'].'</td> <td>'.$row['admin_surname'].'</td> </tr>';
-			}
-			$admins = $admins. '<tr> <td align="center" colspan = 5 ><a href="registration_admin.php">Dodaj</a></td> </tr></table></div>';
-		}
-            return $admins;
+        return '<p>'.$this->templateTable(array("ID", "Login", "Email", "Imie", "Nazwisko"),
+                                    array("admin_id", "admin_login", "admin_email", "admin_name", "admin_surname"),
+                                    "admins", "usersTable", "profile_admins.php?id").
+                '<p><a href="registration_admin.php">Dodaj</a></p>';
         }
     public function addAdmin($name, $surname, $password1, $password2, $email, $login) {
             $name = $this->controller->Clear($name);
@@ -298,25 +303,23 @@ class Admin extends User{
 		return '<p>Podany email jest nieprawidłowy.</p>';
             }
             else{
-                $resultUser = $this->controller->selectExistingUser("readers", "reader", $login, $email);
-                $rowU = mysqli_fetch_row($resultUser);
-                if($rowU[0] > 0) {
+                if($this->controller->userExist("readers", "reader", $login, $email)){
+                    return '<p>Już istnieje użytkownik z takim loginem lub adresem e-mail.</p>';
+                }
+                elseif($this->controller->userExist("admins", "admin", $login, $email)){
                     return '<p>Już istnieje użytkownik z takim loginem lub adresem e-mail.</p>';
                 }
                 if(strlen($login) < 4){
                     return '<p>Za mało znaków.</p>';
-                }
-                $resultAdmin = $this->controller->selectExistingUser("admins", "admin", $login, $email);
-                $rowA = mysqli_fetch_row($resultAdmin);
-                if($rowA[0] > 0) {
-                    return '<p>Już istnieje użytkownik z takim loginem lub adresem e-mail.</p>';
                 }
                 $resultAccessRgihts = $this->controller->selectAccessRights();
                 if(mysqli_num_rows($resultAccessRgihts) == 0) {
                     die('Błąd');
                 }
                 $rowAR = mysqli_fetch_assoc($resultAccessRgihts);
-                $this->controller->addAdmin($name, $surname, $login, $password1, $email, $rowAR['acces_right_id']);
+                $this->controller->insertInto("admins", 
+                            array("admin_name", "admin_surname", "admin_login", "admin_password", "admin_email", "admin_acces_right_id"),
+                            array($name, $surname, $login, Codepass($password1), $email, $rowAR['acces_right_id']));
                 return "<p>Dodano admina</p>";
             }
         }
@@ -337,50 +340,59 @@ class Admin extends User{
 		</div>';
         }
     public function showAllBorrows(){
-        $borrows = "";
-        $result = $this->controller->selectBorrows();
-        if(mysqli_num_rows($result) == 0) {
-            $borrows =  'Brak wypożyczeń<br>';
-	}
+        return '<p>'.$this->templateTable(array('ID','ID książki','ID czytelnika', 'Data wypożycczenia', 'Data zwrotu', 'Opóźnienie'),
+                                    array('borrow_id','borrow_book_id','borrow_reader_id', 'borrow_date_borrow', 'borrow_return', 'borrow_delay_date'),
+                                    "borrows", "borrowsTable", "borrow.php?borrow");
+    }
+    public function showAddNews(){
+       return '
+            <div id="news" align="center">
+                <form action="add_news.php" method="post">
+                    <table>
+			<tr>
+                            <td colspan = 2 align="center">Dodaj news:</td>
+                        <tr>
+			<tr>
+                            <td>Tytył:</td>
+                            <td><input type="text" value="'.$_POST['title'].'" name="title" placeholder="Tytuł" required/></td>
+                        </tr>
+			<tr>
+                            <td>Tekst:</td>
+                            <td><textarea id="news_input" value="'.$_POST['text'].'" name="text" placeholder="Tekst" required></textarea></td>
+                        </tr>
+                    </table>
+                    <input type="submit" value="Dodaj news">
+		</form>
+            </div>';
+    }
+    public function addNews($title, $text){
+	if(empty($title) ||
+            empty($text)){
+                return 'Nie wypełniono pól';
+        }	
         else{
-            $borrows = '<div id="borrowsTable" align="center">
-                            <table>
-                                <tr> 
-                                    <td>ID</td>
-                                    <td>ID książki</td> 
-                                    <td>ID czytelnika</td> 
-                                    <td>Data wypożyczenia</td> 
-                                    <td>Data zwrotu</td> 
-                                    <td>Opóźnienie</td> 
-                                </tr>';
-            while($row = mysqli_fetch_assoc($result)) {
-		$borrows = $borrows.
-                        '<tr> '
-                            .'<td>'.$row['borrow_id'].'</td> '
-                            .'<td><a href="book.php?book='.$row['borrow_book_id'].'">'.$row['borrow_book_id'].'</a></td>'
-                            .'<td>'.$row['borrow_reader_id'].'</td>'
-                            .'<td>'.$row['borrow_date_borrow'].'</td>'
-                            .'<td>'.$row['borrow_return'].'</td>'
-                            .'<td>'.$row['borrow_delay_date'].'</td>'
-                        .'</tr>';
-            }
-            $borrows = $borrows.'</table></div>';
+            $czas = date('Y-m-d');
+            $title = $this->controller->clear($title);
+            $text =  $this->controller->clear($text);
+            $this->controller->addNew($title, $text, $czas);
+            return '<p>Dodano news</p>';
         }
-        return $borrows;
     }
 }
 
 class Reader extends User{
     private $active;
-	
-    public function __construct($id, $a, $c){
-		$this->userID = $id;
-		$this->active = $a;
-		$this->controller = $c;
-	}
+
+    public function __construct($a, $c, $u = -1){
+	parent::__construct($c, $u);
+        $this->active = $a;
+    }
+    public function session(){
+            $this->controller->updateSessionAction($this->userID, "reader");
+    }
     public function showOptionPanel(){
 		$userData = $this->getData();
-		return '
+		return '<div id="panelName">Panel użytkownika</div>
 			<p align="center">
 				Witamy '.$userData['reader_name'].'!
 			</p>
@@ -394,7 +406,9 @@ class Reader extends User{
 			'.$_SESSION['logged'].' userid =
 			'.$_SESSION['user_id'].' ip =
 			'.$_SESSION['ip'].' access = 
-			'.$_SESSION['acces_right'].'';
+			'.$_SESSION['acces_right'].' class.userID =
+                        '.$this->userID.' class.active =
+                        '.$this->active.'';
 	}
     public function showNews(){
             return parent::showNews();
@@ -422,39 +436,13 @@ class Reader extends User{
             else
                 return false;
         }
-    public function showBook($bookID) {
-            $result = $this->controller->selectBookByID($bookID);
-            $row = mysqli_fetch_assoc($result);
-            $resultAuthors = $this->controller->selectAuthors($bookID);
-            $autorzy = "";
-            if(mysqli_num_rows($resultAuthors) == 0) {
-		echo 'Brak autorów bład<br>';
-            }
-            else{			
-		while($rowA = mysqli_fetch_assoc($resultAuthors)) {
-                    $autorzy = $autorzy.' '.$rowA['author_name'].' '.$rowA['author_surname'].', ';
-		}
-            }
+    public function showBook($bookID, $active = "active"){
             $resultFreeBook = $this->controller->selectFreeBooks($bookID);
-            
             $rowFreeBook = mysqli_fetch_assoc($resultFreeBook);
-            if ($rowFreeBook['free_books'] == 0 || $this->active = false)
-		$active = "disabled";
-            return '<p>
-					ID: '.$row['book_id'].'<br>
-					ISBN: '.$row['book_isbn'].'<br>
-					Tytuł: '.$row['book_title'].'<br>
-					Autorzy: '.$autorzy.'<br>
-					Wydawnictwo: '.$row['publisher_house_name'].'<br>
-					Premiera: '.$row['book_premiere'].'<br>
-					Wydanie: '.$row['book_edition'].'<br>
-					Ilość stron: '.$row['book_nr_page'].'<br>
-					Ilość egzemplarzy: '.$rowFreeBook['free_books'].'<br>
-					<form align="center" action="book.php?book='.$row['book_id'].'" method="post">
-					<input type="hidden" name="orderHidden" value="1" />
-					<input type="submit" name="order" '.$active.' value="Zamów">
-					</form>
-				</p>';
+            if ($rowFreeBook['free_books'] == 0 || $this->active = false){
+                $active = "disabled";
+            }
+            return  parent::showBook($bookID, $active);
         }
     public function orderBook($bookID) {
             $this->controller->addBorrow($bookID, $this->userID);

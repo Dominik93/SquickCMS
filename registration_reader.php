@@ -5,16 +5,17 @@
 	
 	function Content(){
             $user = unserialize($_SESSION['user']);
-            echo '<div id="content">'.$user->showRegistrationReader().'<br>'.$done.'</div>';
-            
             if(isset($_POST['login'])) {
-                echo $user->addReader($_POST['login'],
+                echo '<div id="content">'.$user->addReader($_POST['login'],
 					$_POST['email'],
 					$_POST['name'],
 					$_POST['surname'],
-					$_POST['password'],
+					$_POST['password1'],
 					$_POST['password2'],
-					$_POST['adres']);			
+					$_POST['adres']).'</div>';			
+            }
+            else{
+                echo '<div id="content">'.$user->showRegistrationReader().'</div>';
             }
 	}
 ?>

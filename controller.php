@@ -20,19 +20,83 @@ class Controller{
 	/*
          * add function
          */
-    public function addReader($name, $surname, $login, $password, $email, $adres, $right){
-		$this->mysql->Connect();
-		mysqli_query($this->mysql->baseLink, 'INSERT INTO readers 
-					(reader_name, reader_surname,
-					reader_login, reader_password,
-					reader_email, reader_address,
-					reader_active_account, reader_acces_right_id)
-				VALUES ("'.$name.'", "'.$surname.'",
-				"'.$login.'", "'.Codepass($password).'",
-				"'.$email.'", "'.$adres.'", 
-				"'.date('Y-m-d').'", '.$right.');');
-		$this->mysql->Close();		
-	}
+        
+    public function insertInto($table, $arrayRecordName, $arrayRecord){
+        $this->mysql->Connect();
+        $query = 'INSERT INTO '.$table.' (';
+        for($i = 0; $i < count($arrayRecordName); $i++){
+            $query = $query.$arrayRecordName[$i].',';
+        }
+        $query = substr($query, 0 , strlen($query)-1).') VALUES (';
+        for($i = 0; $i < count($arrayRecord); $i++){
+            $query = $query.'"'.$arrayRecord[$i].'",';
+        }
+        $query = substr($query, 0 , strlen($query)-1).');';
+        echo $query;
+        mysqli_query($this->mysql->baseLink, $query) or die(mysqli_error($this->mysql->baseLink));
+        $this->mysql->Close();
+    }    
+    public function deleteFrom($table, $arrayWhere){
+        $this->mysql->Connect();
+        $query = 'DELETE FROM '.$table;
+        for($i = 0; $i< count($arrayWhere); $i++){
+            $query = $query.' ('.$arrayWhere[$i][0].' = "'.$arrayWhere[$i][1].'") '.$arrayWhere[$i][2];
+        }
+        $query = $query.';';
+	mysqli_query($this->mysql->baseLink, $query) or die(mysqli_error($this->mysql->baseLink));
+	$this->mysql->Close();
+    }
+    public function selectFromJoinWhere($t, $arrayW = null, $arrayJ = null, $arrayWh = null){
+        $this->mysql->Connect();
+        $query = 'SELECT ';
+        if($arrayW != null){
+            
+        }
+        else{
+            $query = $query.'*';
+        }
+        $query = $query.' FROM '.$t.' ';
+        if($arrayJ != null){
+            for($i = 0; $i< count($arrayJ); $i++){
+                $query = $query.'join '.$arrayJ[$i][0].' on '.$arrayJ[$i][1].' = '.$arrayJ[$i][2].',';
+            }
+            $query = substr($query,0, strlen($query)-1);
+        }
+        
+        if($arrayWh != null){
+            $query = $query.' where ';
+            for($i = 0; $i< count($arrayWh); $i++){
+                $query = $query.' ('.$arrayWh[$i][0].' = "'.$arrayWh[$i][1].'") '.$arrayWh[$i][2];
+            }
+        }
+        $query = $query.';';
+        echo $query;
+	$result = mysqli_query($this->mysql->baseLink, $query)
+                or die(mysqli_error($this->mysql->baseLink));
+	$this->mysql->Close();
+	return $result;
+        
+    }
+    public function updateTable($table, $arrayR, $arrayWh = null){
+        $this->mysql->Connect();
+        $query = 'UPDATE '.$table.' SET ';
+        for($i = 0; $i < count($arrayR); $i++){
+            $query = $query.' '.$arrayR[$i][0].' = "'.$arrayR[$i][1].'",';
+        }
+        $query = substr($query, 0 , strlen($query)-1);
+        if($arrayWh != null){
+            $query = $query.' where ';
+            for($i = 0; $i< count($arrayWh); $i++){
+                $query = $query.' ('.$arrayWh[$i][0].' = "'.$arrayWh[$i][1].'") '.$arrayWh[$i][2];
+            }
+        }
+        $query = $query.';';
+        echo $query;
+	mysqli_query($this->mysql->baseLink, $query) or die(mysqli_error($this->mysql->baseLink));
+	$this->mysql->Close();
+    }
+    
+    
     public function addAdmin($name, $surname, $login, $password, $email, $right){
 		$this->mysql->Connect();
 		mysqli_query($this->mysql->baseLink, 'INSERT INTO admins 
@@ -145,9 +209,7 @@ class Controller{
          * delete function
          */
     public function deleteReader($readerId){
-		$this->mysql->Connect();
-		mysqli_query($this->mysql->baseLink, 'DELETE FROM readers WHERE readers.reader_id = '.$readerId.';') or die(mysqli_error($this->mysql->baseLink));
-		$this->mysql->Close();
+		
 	}
     public function deleteFromTable($table, $record, $id){
 		$this->mysql->Connect();
@@ -173,11 +235,11 @@ class Controller{
 		or die(mysqli_error($this->mysql->baseLink));
 		$this->mysql->Close();
 	}
-    public function updateSessionAction(){
+    public function updateSessionAction($ID, $right){
             $this->mysql->Connect();
             mysqli_query($this->mysql->baseLink,
 		'UPDATE sessions SET
-		session_last_action = \''.date('Y-m-d H:i:s').'\';')
+		session_last_action = \''.date('Y-m-d H:i:s').'\' where session_user = '.$ID.' and session_acces_right = "'.$right.'";')
             or die(mysqli_error($this->mysql->baseLink));
             $this->mysql->Close();
         }
@@ -226,7 +288,10 @@ class Controller{
          */
     public function selectBooks(){
 		$this->mysql->Connect();
-		$result = mysqli_query($this->mysql->baseLink, 'SELECT books.*, publisher_houses.publisher_house_name FROM books join publisher_houses on publisher_houses.publisher_house_id = books.book_publisher_house_id;')or die(mysqli_error($this->mysql->baseLink));
+		$result = mysqli_query($this->mysql->baseLink,
+                        'SELECT books.*, publisher_houses.publisher_house_name '
+                        . 'FROM books '
+                        . 'join publisher_houses on publisher_houses.publisher_house_id = books.book_publisher_house_id;')or die(mysqli_error($this->mysql->baseLink));
 		$this->mysql->Close();
 		return $result;
 	}
@@ -324,6 +389,7 @@ class Controller{
 		$this->mysql->Close();
 		return $result;
 	}
+   
     public function selectNews($limit = 10){
 		$this->mysql->Connect();
 		$result = mysqli_query($this->mysql->baseLink, 'SELECT * FROM news LIMIT '.$limit.';')or die(mysqli_error($this->mysql->baseLink));
@@ -384,6 +450,33 @@ class Controller{
 		$this->mysql->Close();
 		return $result;
 	}
+        
+    
+    public function userExist($from, $record, $login, $email){
+	$this->mysql->Connect();
+	$result = mysqli_query($this->mysql->baseLink,
+	'SELECT Count('.$record.'_id) FROM '.$from.'
+	WHERE '.$record.'_login = "'.$login.'" OR '.$record.'_email = "'.$email.'";')
+	or die(mysqli_error($this->mysql->baseLink));
+	$this->mysql->Close();
+        $row = mysqli_fetch_row($resultUser);
+        if($rowU[0] > 0) {
+            return true;
+        }
+	return false;
+    }   
+    public function authorsToString($resultAuthors){
+        $autorzy = "";
+	if(mysqli_num_rows($resultAuthors) == 0) {
+            die('Brak autorów bład');
+	}
+        else{		
+            while($rowA = mysqli_fetch_assoc($resultAuthors)) {
+		$autorzy = $autorzy.' '.$rowA['author_name'].' '.$rowA['author_surname'].',';
+            }
+        }
+        return substr($autorzy,0, strlen($autorzy)-1);
+    }
 }
 
 ?>
