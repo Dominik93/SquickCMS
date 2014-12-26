@@ -14,6 +14,7 @@ interface IUser{
         public function login($login, $password);
         public function session();
         public function search($isbn, $title, $publisher_house, $edition, $premiere, $author);
+        public function checkSession();
         /*
          * childs
          */
@@ -32,5 +33,8 @@ interface IUser{
         public function addAdmin($name, $surname, $password1, $password2, $email, $login);
         public function showRegistrationAdmin();
         public function isActive();
+        public function showBook($bookID);
+        public function orderBook($bookID);
+        public function showAllBorrows();            
 }
 ?>

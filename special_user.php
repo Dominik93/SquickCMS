@@ -336,18 +336,49 @@ class Admin extends User{
 			</form>
 		</div>';
         }
+    public function showAllBorrows(){
+        $borrows = "";
+        $result = $this->controller->selectBorrows();
+        if(mysqli_num_rows($result) == 0) {
+            $borrows =  'Brak wypożyczeń<br>';
+	}
+        else{
+            $borrows = '<div id="borrowsTable" align="center">
+                            <table>
+                                <tr> 
+                                    <td>ID</td>
+                                    <td>ID książki</td> 
+                                    <td>ID czytelnika</td> 
+                                    <td>Data wypożyczenia</td> 
+                                    <td>Data zwrotu</td> 
+                                    <td>Opóźnienie</td> 
+                                </tr>';
+            while($row = mysqli_fetch_assoc($result)) {
+		$borrows = $borrows.
+                        '<tr> '
+                            .'<td>'.$row['borrow_id'].'</td> '
+                            .'<td><a href="book.php?book='.$row['borrow_book_id'].'">'.$row['borrow_book_id'].'</a></td>'
+                            .'<td>'.$row['borrow_reader_id'].'</td>'
+                            .'<td>'.$row['borrow_date_borrow'].'</td>'
+                            .'<td>'.$row['borrow_return'].'</td>'
+                            .'<td>'.$row['borrow_delay_date'].'</td>'
+                        .'</tr>';
+            }
+            $borrows = $borrows.'</table></div>';
+        }
+        return $borrows;
+    }
 }
 
 class Reader extends User{
-	private $active;
+    private $active;
 	
-	public function __construct($id, $a, $c){
+    public function __construct($id, $a, $c){
 		$this->userID = $id;
 		$this->active = $a;
 		$this->controller = $c;
 	}
-	
-	public function showOptionPanel(){
+    public function showOptionPanel(){
 		$userData = $this->getData();
 		return '
 			<p align="center">
@@ -365,13 +396,13 @@ class Reader extends User{
 			'.$_SESSION['ip'].' access = 
 			'.$_SESSION['acces_right'].'';
 	}
-	public function showNews(){
+    public function showNews(){
             return parent::showNews();
         }
-        public function getData(){
+    public function getData(){
 		return $this->controller->getReaderData();
 	}
-	public function showAccount(){
+    public function showAccount(){
 		$userData =  $this->getData();
 		return '<p>
                             ID: '.$userData['reader_id'].'<br>
@@ -384,12 +415,50 @@ class Reader extends User{
                             Prawa: '.$userData['acces_right_name'].'<br>					
 			</p>';
 	}
-        public function isActive(){
+    public function isActive(){
             $date = $this->controller->getReaderData();
             if($date['acces_right_name'] == active)
                 return true;
             else
                 return false;
+        }
+    public function showBook($bookID) {
+            $result = $this->controller->selectBookByID($bookID);
+            $row = mysqli_fetch_assoc($result);
+            $resultAuthors = $this->controller->selectAuthors($bookID);
+            $autorzy = "";
+            if(mysqli_num_rows($resultAuthors) == 0) {
+		echo 'Brak autorów bład<br>';
+            }
+            else{			
+		while($rowA = mysqli_fetch_assoc($resultAuthors)) {
+                    $autorzy = $autorzy.' '.$rowA['author_name'].' '.$rowA['author_surname'].', ';
+		}
+            }
+            $resultFreeBook = $this->controller->selectFreeBooks($bookID);
+            
+            $rowFreeBook = mysqli_fetch_assoc($resultFreeBook);
+            if ($rowFreeBook['free_books'] == 0 || $this->active = false)
+		$active = "disabled";
+            return '<p>
+					ID: '.$row['book_id'].'<br>
+					ISBN: '.$row['book_isbn'].'<br>
+					Tytuł: '.$row['book_title'].'<br>
+					Autorzy: '.$autorzy.'<br>
+					Wydawnictwo: '.$row['publisher_house_name'].'<br>
+					Premiera: '.$row['book_premiere'].'<br>
+					Wydanie: '.$row['book_edition'].'<br>
+					Ilość stron: '.$row['book_nr_page'].'<br>
+					Ilość egzemplarzy: '.$rowFreeBook['free_books'].'<br>
+					<form align="center" action="book.php?book='.$row['book_id'].'" method="post">
+					<input type="hidden" name="orderHidden" value="1" />
+					<input type="submit" name="order" '.$active.' value="Zamów">
+					</form>
+				</p>';
+        }
+    public function orderBook($bookID) {
+            $this->controller->addBorrow($bookID, $this->userID);
+            echo 'Zamówiono książke';
         }
 }
 ?>

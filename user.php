@@ -146,6 +146,13 @@ class User implements IUser{
             }
             return $books;
         }
+        public function checkSession(){
+            $session = true;
+            /*
+             * dopisac porownanie sesji, sesji w bazie danych, i danych z przegladarki
+             */
+            return $session;
+        }
 
         public function showOptionPanel(){
 		return '
@@ -215,6 +222,43 @@ class User implements IUser{
         }
         public function isActive(){
             return false;
+        }
+        public function showBook($bookID) {
+            $active = "disabled";
+            $result = $this->controller->selectBookByID($bookID);
+            $row = mysqli_fetch_assoc($result);
+            $resultAuthors = $this->controller->selectAuthors($bookID);
+            $autorzy = "";
+            if(mysqli_num_rows($resultAuthors) == 0) {
+		die("Błąd");
+            }
+            else{			
+		while($rowA = mysqli_fetch_assoc($resultAuthors)) {
+                    $autorzy = $autorzy.' '.$rowA['author_name'].' '.$rowA['author_surname'].', ';
+		}
+            }
+            $resultFreeBook = $this->controller->selectFreeBooks($bookID);
+            $rowFreeBook = mysqli_fetch_assoc($resultFreeBook);
+            return '<p>
+					ID: '.$row['book_id'].'<br>
+					ISBN: '.$row['book_isbn'].'<br>
+					Tytuł: '.$row['book_title'].'<br>
+					Autorzy: '.$autorzy.'<br>
+					Wydawnictwo: '.$row['publisher_house_name'].'<br>
+					Premiera: '.$row['book_premiere'].'<br>
+					Wydanie: '.$row['book_edition'].'<br>
+					Ilość stron: '.$row['book_nr_page'].'<br>
+					Ilość egzemplarzy: '.$rowFreeBook['free_books'].'<br>
+					<form align="center" action="book.php?book='.$row['book_id'].'" method="post">
+					<input type="submit" name="order" '.$active.' value="Zamów">
+					</form>
+				</p>';
+        }
+        public function orderBook($bookID) {
+            die("Błąd");
+        }
+        public function showAllBorrows(){
+            return 'Brak dostepu';
         }
 }
 ?>
