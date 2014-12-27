@@ -3,24 +3,33 @@ class Backup{
     
     private $path;
     private $dataBase;
+    private $arrayTable;
     
     public function __constuct($path, $dataBase){
         $this->path = $path;
         $this->dataBase = $dataBase;
+        $this->arrayTable = array("users", "ranks", "page_settings", "articles", "galleries", "privilages",
+            "templates", "tasks", "maps", "calendaries", "form", "comments", "ingallery",
+            "photo", "predefinied_areas", "maps_coords", "event", "fields");
     }
     
-    public function createEvent($interval, $arrayTable){
+    public function createEvent($interval, $arrayTable = null){
+        if($arrayTable == null){
+            $arrayTable = $this->arrayTable;
+        }
         $query = 'DELIMITER //
         CREATE EVENT backup
         ON SCHEDULE EVERY '.$interval.'
         STARTS '.date('y-m-d h:i:s').' 
         DO
-        BEGIN';
+        BEGIN
+        ';
         for($i = 0; $i < count($arrayTable); $i++){
             $query = $query.'SELECT * INTO OUTFILE '.$this->path.'/'.$arrayTable[$i].'.sql
                     FROM '.$this->dataBase.'.'.$arrayTable[$i].';';
         }   
-        $query = $query.'END//
+        $query = $query.'
+            END//
         DELIMITER';
         return $query;
     }
