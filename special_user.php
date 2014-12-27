@@ -7,7 +7,12 @@ class Admin extends User{
         parent::__construct($c, $u);
     }
     public function session(){
-            $this->controller->updateSessionAction($this->userID, "admin");
+        $this->controller->updateTableRecordValuesWhere("sessions", 
+                array(array("session_last_action", date('Y-m-d H:i:s'))),
+                array(
+                    array("session_user", $this->userID, "AND"),
+                    array("session_acces_right", "admin", "")
+                    ));
     }
     public function showOptionPanel(){
 		$userData = $this->getData();
@@ -30,16 +35,17 @@ class Admin extends User{
                         '.$this->userID.'';	
 	}
     public function showNews(){
-		$result = $this->controller->selectNews($limit = 10);
+		$result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("news");
 		$news = "";
 		$news = $news.'<p>';
 		if(mysqli_num_rows($result) == 0) {
-				$news = $news.'Brak newsów<br>';
-		}else
+				$news = $news.'Brak newsów';
+		}else{
 			while($row = mysqli_fetch_assoc($result)) {
 				$news = $news.$row['new_title'].' '.$row['new_date'].' '.$row['new_text'];
 				$news = $news.' <a href="news.php?id='.$row['new_id'].'">Usuń</a><br>';
-			}		
+			}	
+                }
 		$news = $news.'</p>';
 		return $news;
 	}
@@ -47,22 +53,9 @@ class Admin extends User{
 	return $this->controller->getAdminData();
     }
     public function showLogged(){
-		$result = $this->controller->selectSession();
-		$logged = "";
-		if(mysqli_num_rows($result) == 0) {
-			$logged = $logged.'Brak zalogowanych<br>';
-		}else{
-			$logged = $logged.'
-				<div id="loggedTable" align="center">
-				<table>
-					<tr> <td>Session ID</td> <td>IP</td> <td>User</td> <td>Logged</td> <td>Rights</td> <td>Last action</td> </tr>
-				';
-			while($row = mysqli_fetch_array($result)) {
-				$logged = $logged.'<tr> <td>'.$row['session_id'].'</td> <td>'.$row['session_ip'].'</td> <td>'.$row['session_user'].'</td> <td>'.$row['session_logged'].'</td> <td>'.$row['session_acces_right'].'</td> <td>'.$row['session_last_action'].'</td> </tr>';
-			}
-                        $logged = $logged.'</table></div>';
-		}
-		return $logged;
+        return '<p>'.$this->templateTable(array("Session ID", "IP", "User", "Logged", "Rights", "Last action"),
+                                        array("session_id", "session_ip", "session_user", "session_logged", "session_acces_right", "session_last_action"),
+                                        "sessions", "loggedTable", "" ).'</p>';
 	}
     public function showRegistrationReader(){
 		return '<div id="registration" align="center">
@@ -147,12 +140,15 @@ class Admin extends User{
                     if($rowA[0] > 0) {
                     	return '<p>Już istnieje użytkownik z takim loginem lub adresem e-mail.</p>';
                     }
-                    $resultAccessRgihts = $this->controller->selectAccessRights();
+                    $resultAccessRgihts = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("acces_rights", 
+                            array("*"),
+                            null,
+                            array(array("acces_right_name", "activeReader", "")));
                     if(mysqli_num_rows($resultAccessRgihts) == 0) {
                     	die('Błąd');
                     }
                     $rowAR = mysqli_fetch_assoc($resultAccessRgihts);
-                    $this->controller->insertInto("readers", 
+                    $this->controller->insertTableRecordValue("readers", 
                             array("reader_name", "reader_surname", "reader_login", "reader_password", "reader_email", "reader_address", "reader_active_account", "reader_acces_right_id"),
                             array($name, $surname, $login, Codepass($password1), $email, $adres, date('Y-m-d'), $rowAR['acces_right_id']));
                     return '<p>Czytelnik Został poprawnie zarejestrowany! Możesz się teraz wrócić na <a href="main_page.php">stronę główną</a>.</p>';
@@ -172,9 +168,11 @@ class Admin extends User{
     public function showAllBooks() {
             $books = "";
             $this->session();
-            $result = $this->controller->selectBooks();
+            $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("books",
+                    array("*"),
+                    array(array("publisher_houses","publisher_houses.publisher_house_id","books.book_publisher_house_id")));
             if(mysqli_num_rows($result) == 0) {
-			$books = $books.'Brak książek<br>';
+			$books = $books.'Brak książek';
             }
             else{
 			$books = $books.'
@@ -183,7 +181,16 @@ class Admin extends User{
 					<tr> <td>ID</td> <td>ISBN</td> <td>Tytył</td> <td>Autorzy</td> <td>Wydawca</td> <td>Ilość stron</td> <td>Wydanie</td> <td>Premiera</td> <td>Ilość egzemplarzy</td> </tr>
 				';
 			while($row = mysqli_fetch_assoc($result)) {
-				$resultAuthors =  $this->controller->selectAuthors($row['book_id']);
+				$resultAuthors = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("authors", 
+                                    array("authors.*"),
+                                    array(
+                                                array("authors_books", "authors_books.author_id", "authors.author_id"),
+                                                array("books", "books.book_id", "authors_books.book_id")
+                                                ),
+                                    array(
+                                                array("books.book_id", "=", $row['book_id'], "")
+                                                )
+                                    );
 				$books = $books.'<tr onClick="location.href=\'http://localhost/~dominik/Library/book.php?book='.$row['book_id'].'\'" /> '
                                                     . '<td>'.$row['book_id'].'</td> '
                                                     . '<td>'.$row['book_isbn'].'</td> '
@@ -239,22 +246,29 @@ class Admin extends User{
 		$number = $this->controller->Clear($number);
 		$author = $this->controller->Clear($author);
                 
-                $result = $this->controller->selectBook($isbn);
+                $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("books", array("*"),
+                        null,
+                        array(array("books.book_isbn", $isbn, "")));
                 if(mysqli_num_rows($result) > 0){
                     return 'Książka już istnieje';
 		}
                 
-		$result = $this->controller->selectPublisherHouse($publisher_house);
+		$result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("publisher_houses", array("*"), null, array(array("publisher_houses.publisher_house_name", $publisher_house,"")));
 		if(mysqli_num_rows($result) > 0){
                     $rowPH = mysql_fetch_array($result);
 		}
                 else{
-                    $this->controller->addPublisherHouse($publisher_house);
-                    $result = $this->controller->selectPublisherHouse($publisher_house);
+                    $this->controller->insertTableRecordValue("publisher_houses", array("publisher_house_name"), array($publisher_house));
+                    $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("publisher_houses", array("*"), null, array(array("publisher_houses.publisher_house_name", $publisher_house,"")));
                     $rowPH = mysqli_fetch_array($result);
 		}
-		$this->controller->addBook($isbn, $title, $rowPH[0], $nr_page, $edition, $premiere, $number);
-		$result = $this->controller->selectBook($isbn);
+                $this->controller->insertTableRecordValue("books",
+                        array("book_isbn", "book_title", "book_publisher_house_id", "book_nr_page", "book_edition", "book_premiere", "book_number"),
+                        array($isbn, $title, $rowPH[0], $nrPage, $edtiotion, $premiere, $number));
+                    
+		$result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("books", array("*"),
+                        null,
+                        array(array("books.book_isbn", $isbn, "")));
 		$rowB = mysqli_fetch_array($result);
 		$authors = $author;
 		$authors = explode(";", $authors);
@@ -262,15 +276,25 @@ class Admin extends User{
                 	$date = explode(' ', $author);
                         $name = $date[0];
 			$surname = $date[1];
-			$result = $this->controller->selectAuthor($name, $surname);
+                        $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("authors", 
+                                array("*"), null,
+                                array(
+                                    array("author_name", $name, "AND"),
+                                    array("author_surname", $surname, "AND")
+                                    ));
 			if(mysqli_num_rows($result) > 0){
 				$rowA = mysql_fetch_array($result);
 			}else{
-                            $this->controller->addAuthor($name, $surname);
-                            $result = $this->controller->selectAuthor($name, $surname);
+                            $this->controller->insertTableRecordValue("authors", array("author_name", "author_surname"), array($name, $surname));
+                            $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("authors", 
+                                array("*"), null,
+                                array(
+                                    array("author_name", $name, "AND"),
+                                    array("author_surname", $surname, "AND")
+                                    ));
                             $rowA = mysqli_fetch_array($result);
 			}
-                        $this->controller->addConnectionBetwenAuthorAndBook($rowA[0], $rowB[0]);
+                        $this->controller->insertTableRecordValue("authors_books", array("author_id", "book_id"),  array($rowA[0], $rowB[0]));
 		}	
 		return '<p>Dodano ksiażke.</p>';
             }
@@ -312,12 +336,15 @@ class Admin extends User{
                 if(strlen($login) < 4){
                     return '<p>Za mało znaków.</p>';
                 }
-                $resultAccessRgihts = $this->controller->selectAccessRights();
+                $resultAccessRgihts = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("acces_rights", 
+                            array("*"),
+                            null,
+                            array(array("acces_right_name", "activeReader", "")));
                 if(mysqli_num_rows($resultAccessRgihts) == 0) {
                     die('Błąd');
                 }
                 $rowAR = mysqli_fetch_assoc($resultAccessRgihts);
-                $this->controller->insertInto("admins", 
+                $this->controller->insertTableRecordValue("admins", 
                             array("admin_name", "admin_surname", "admin_login", "admin_password", "admin_email", "admin_acces_right_id"),
                             array($name, $surname, $login, Codepass($password1), $email, $rowAR['acces_right_id']));
                 return "<p>Dodano admina</p>";
@@ -374,7 +401,9 @@ class Admin extends User{
             $czas = date('Y-m-d');
             $title = $this->controller->clear($title);
             $text =  $this->controller->clear($text);
-            $this->controller->addNew($title, $text, $czas);
+            $this->controller->insertTableRecordValue("news", array("new_title",
+							"new_text",
+							"new_date"),array($title, $text, $czas));
             return '<p>Dodano news</p>';
         }
     }
@@ -388,7 +417,12 @@ class Reader extends User{
         $this->active = $a;
     }
     public function session(){
-            $this->controller->updateSessionAction($this->userID, "reader");
+        $this->controller->updateTableRecordValuesWhere("sessions", 
+                array(array("session_last_action", date('Y-m-d H:i:s'))),
+                array(
+                    array("session_user", $this->userID, "AND"),
+                    array("session_acces_right", "reader", "")
+                    ));
     }
     public function showOptionPanel(){
 		$userData = $this->getData();
@@ -417,7 +451,7 @@ class Reader extends User{
 		return $this->controller->getReaderData();
 	}
     public function showAccount(){
-		$userData =  $this->getData();
+		$userData = $this->getData();
 		return '<p>
                             ID: '.$userData['reader_id'].'<br>
                             Imie: '.$userData['reader_name'].'<br>
@@ -437,7 +471,12 @@ class Reader extends User{
                 return false;
         }
     public function showBook($bookID, $active = "active"){
-            $resultFreeBook = $this->controller->selectFreeBooks($bookID);
+            $resultFreeBook = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("free_books", 
+                        array("*"),
+                        null,
+                        array(
+                              array("book_id", $bookID, " ")
+                              ));
             $rowFreeBook = mysqli_fetch_assoc($resultFreeBook);
             if ($rowFreeBook['free_books'] == 0 || $this->active = false){
                 $active = "disabled";
@@ -445,8 +484,13 @@ class Reader extends User{
             return  parent::showBook($bookID, $active);
         }
     public function orderBook($bookID) {
-            $this->controller->addBorrow($bookID, $this->userID);
-            echo 'Zamówiono książke';
+        $date = date('Y-m-d');
+        $dateReturn = date_create(date('Y-m-d'));
+	date_add($dateReturn, date_interval_create_from_date_string('365 days'));
+        $this->controller->insertTableRecordValue("borrows",
+                array("borrow_book_id", "borrow_reader_id", "borrow_date_borrow", "borrow_return"),
+                array($bookID, $this->userID, $date, $dateReturn));
+        echo 'Zamówiono książke. Odbiór w najbliższych 3 dniach';
         }
 }
 ?>

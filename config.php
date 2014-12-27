@@ -15,7 +15,5 @@ if(!isset($_SESSION['logged'])) {
 	$_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
 	$_SESSION['acces_right'] = "user";
 	$_SESSION['user'] = serialize(new User(new Controller()));
-	$controller = new Controller();
-	$controller->addSession(session_id(), $_SERVER['REMOTE_ADDR'], $_SESSION['user_id']);
 }
 ?>
