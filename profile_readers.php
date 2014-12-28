@@ -35,20 +35,10 @@
 		';
 	}
 	
-	function Content(){
-		
-		if(!CheckAdmin()){
-			echo '
-			<div id="content">
-				<p>Nie masz dostępu!</p>
-			</div>
-			';
-		}else{
-			$user = GetReaderData($_GET[id]);
-			ShowDetailsReaders($user);
-		}
-		
-	}
+    function Content(){
+        $user = unserialize($_SESSION['user']);
+	echo '<div id="content">'.$user->showReader($_GET[id]).'</div>';
+    }
 ?>
 
 <!DOCTYPE html>

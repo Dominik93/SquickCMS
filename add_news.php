@@ -14,7 +14,7 @@
             else{
                 echo '
                     <div id="content">
-                    '.$user->showAddNews().'
+                    '.$user->showAddNewsForm().'
                     </div>
                 ';
             }

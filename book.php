@@ -9,7 +9,7 @@
                 echo '<div id="content">'.$user->orderBook($_GET['book']).'</div>';
             }
             else{
-            echo '<div id="content">'.$user->showBook($_GET['book']).'</div>';
+                echo '<div id="content">'.$user->showBook($_GET['book']).'</div>';
             }
         }
 ?>

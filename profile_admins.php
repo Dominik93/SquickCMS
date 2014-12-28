@@ -24,20 +24,10 @@
 		';
 	}
 	
-	function Content(){
-		
-		if(!CheckAdmin()){
-			echo '
-			<div id="content">
-				<p>Nie masz dostępu!</p>
-			</div>
-			';
-		}else{
-			$admin = GetAdminData($_GET[id]);
-			ShowDetailsAdmin($admin);
-		}
-		
-	}
+    function Content(){
+        $user = unserialize($_SESSION['user']);
+	echo '<div id="content">'.$user->showAdmin($_GET[id]).'</div>';
+    }
 ?>
 
 <!DOCTYPE html>

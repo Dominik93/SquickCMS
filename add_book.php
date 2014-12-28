@@ -5,7 +5,7 @@
 	
 	function Content(){
             $user = unserialize($_SESSION['user']);
-            echo '<div id="content">'.$user->showBookAdd();
+            echo '<div id="content">'.$user->showAddBookForm();
             if(isset($_POST['isbn'])){
                 echo $user->addBook($_POST['isbn'], $_POST['title'], $_POST['publisher_house'], $_POST['nr_page'],
                         $_POST['edition'], $_POST['premiere'], $_POST['number'], $_POST['author']);

@@ -53,21 +53,42 @@ class User implements IUser{
 					Tu bedzie regulamin!;p
 				</p>';
 	}
-        public function logout(){
-            $this->controller->deleteTableWhere("sessions", array(array("session_id", session_id(), "")));
-            return '<p>Zostałeś wylogowany. Przejdz na <a href="index.php">strone główną</a>.</p>';
-	}
         public function showLogin(){
-		return '<div id="login" align="center">
-		<form action="login.php" method="post">
-			<table>
-				<tr> <td colspan = 2 align="center">Logowanie:</tf><tr>
-				<tr><td>Login:</td><td><input type="text" value="'.$_POST['login'].'" name="login" placeholder="Login" required/></td></tr>
-				<tr><td>Hasło:</td><td><input type="password" value="'.$_POST['password'].'" name="password" placeholder="Hasło" required/></td></tr>
-				<tr> <td colspan = 2><a href="remind_password.php">Zapomniałeś hasła?</a></tf><tr>
-			</table>
-			<input type="submit" value="Zaloguj">
-		</form></div>';
+            return $this->templateForm("Logowanie",
+                    array(
+                        array("id", "=", "login"),
+                        array("align", "=", "center")
+                    ),
+                    array(
+                        array("action", "=", "login.php"),
+                        array("method", "=", "post")
+                    ),
+                    array(),
+                    array(
+                        array(
+                            array("type","=","text"),
+                            array("value","=", $_POST["login"]),
+                            array("name","=","login"),
+                            array("placeholder","=","Login"),
+                            array("required","","")
+                            ),
+                        array(
+                            array("type","=","password"),
+                            array("value","=",$_POST["password"]),
+                            array("name","=","password"),
+                            array("placeholder","=","Hasło"),
+                            array("required","","")
+                            )
+                        ),
+                    array(
+                        array("type", "=", "submit"),
+                        array("value", "=", "Zaloguj się")
+                        )
+                    );
+	}
+        public function logout(){
+            $this->controller->deleteTableWhere("sessions", array(array("session_id","=", session_id(), "")));
+            return '<p>Zostałeś wylogowany. Przejdz na <a href="index.php">strone główną</a>.</p>';
 	}
         public function login($login, $password) {
             $login = $this->controller->clear($login);
@@ -96,7 +117,7 @@ class User implements IUser{
                 /*
                  * trzeba dopisać active w klasie, ma pobierać z bazy czy user jest active czy nie
                  */
-		$_SESSION['user'] = serialize(new Reader($this->isActive(), new Controller(), $u = $row['reader_id']));
+		$_SESSION['user'] = serialize(new Reader($this->isActive($row['reader_id']), new Controller(), $u = $row['reader_id']));
                 $this->controller->insertTableRecordValue("sessions", 
                         array("session_id", "session_ip", "session_user", "session_logged", "session_acces_right"),
                         array(session_id(), $_SERVER['REMOTE_ADDR'], $row['reader_id'], 1, "reader" ));
@@ -211,44 +232,41 @@ class User implements IUser{
 		$news = $news.'</p>';
 		return $news;
 	}
-        public function getData(){
-		return $this->Data;
-	}
         public function showLogged(){
 		return 'Brak dostepu';
 	}
+        public function showAdmin($adminID){
+            return "Brak dostepu";
+        }
+        public function showReader($readerID){
+            return "Brak dostepu";
+        }
         public function showRegistrationReader(){
 		return 'Brak dostępu';
 	}
+        public function showRegistrationAdmin() {
+             return 'Brak dostępu';
+        }
+        public function showAccount(){
+		return 'Brak dostępu';
+	}
+        public function showAddBookForm() {
+            return 'Brak dostepu';
+        }
+        public function showAddNewsForm(){
+            return "Brak dostępu";
+        }
         public function showAllUsers() {
             return 'Brak dostępu';
         }
-        public function addReader($login, $email, $name, $surname, $password1, $password2, $adres){
-		return 'Brak dostępu';
-	}
-	public function showAccount(){
-		return 'Brak dostępu';
-	}
 	public function showAllBooks() {
-            return 'Brak dostepu';
-        }
-        public function showBookAdd() {
-            return 'Brak dostepu';
-        }
-        public function addBook($isbn, $title, $publisher_house, $nr_page, $edition, $premiere, $number, $author) {
             return 'Brak dostepu';
         }
         public function showAllAdmins() {
             return 'Brak dostępu';
         }
-        public function addAdmin($name, $surname, $password1, $password2, $email, $login) {
-             return 'Brak dostępu';
-        }
-        public function showRegistrationAdmin() {
-             return 'Brak dostępu';
-        }
-        public function isActive(){
-            return true;
+        public function showAllBorrows(){
+            return 'Brak dostepu';
         }
         public function showBook($bookID, $active = "disabled") {
             $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("books", 
@@ -273,6 +291,12 @@ class User implements IUser{
                               array("book_id","=", $bookID, " ")
                               ));
             $rowFreeBook = mysqli_fetch_assoc($resultFreeBook);
+            if($rowFreeBook['free_books'] == null){
+                $freeBook = $row['book_number'];
+            }
+            else{
+                $freeBook = $rowFreeBook['free_books'];
+            }
             return '<p>
 					ID: '.$row['book_id'].'<br>
 					ISBN: '.$row['book_isbn'].'<br>
@@ -282,49 +306,113 @@ class User implements IUser{
 					Premiera: '.$row['book_premiere'].'<br>
 					Wydanie: '.$row['book_edition'].'<br>
 					Ilość stron: '.$row['book_nr_page'].'<br>
-					Ilość egzemplarzy: '.$rowFreeBook['free_books'].'<br>
+					Ilość dostępnych egzemplarzy: '.$freeBook.'<br>
 					<form align="center" action="book.php?book='.$row['book_id'].'" method="post">
                                         <p><input type="hidden" name="orderHidden" value="1" />		
                                         <input type="submit" name="order" '.$active.' value="Zamów">
 					</form>
 				</p>';
         }
-        public function orderBook($bookID) {
-            die("Błąd");
+        public function showBookLight($bookID) {
+            $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("books", 
+                    array("books.*", "publisher_houses.publisher_house_name"),
+                    array(array("publisher_houses", "publisher_houses.publisher_house_id", "books.book_publisher_house_id")),
+                    array(array("books.book_id","=", $bookID, "")));
+            $row = mysqli_fetch_assoc($result);
+            $resultAuthors = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("authors", 
+                            array("authors.*"),
+                            array(
+                                        array("authors_books", "authors_books.author_id", "authors.author_id"),
+                                        array("books", "books.book_id", "authors_books.book_id")
+                                        ),
+                            array(
+                                        array("books.book_id","=", $row['book_id'], "")
+                                        )
+                            );
+            return '<p>
+					ID: '.$row['book_id'].'<br>
+					ISBN: '.$row['book_isbn'].'<br>
+					Tytuł: '.$row['book_title'].'<br>
+					Autorzy: '.$this->controller->authorsToString($resultAuthors).'<br>
+					Wydawnictwo: '.$row['publisher_house_name'].'<br>
+					Premiera: '.$row['book_premiere'].'<br>
+					Wydanie: '.$row['book_edition'].'<br>
+					Ilość stron: '.$row['book_nr_page'].'<br>
+				</p>';
         }
-        public function showAllBorrows(){
+        public function showBorrow($borrowID){
             return 'Brak dostepu';
         }
-        public function showAddNews(){
-            return "Brak dostępu";
+        public function showMyBorrows(){
+            return "Brak dostepu";
+        }
+        public function addReader($login, $email, $name, $surname, $password1, $password2, $adres){
+		return 'Brak dostępu';
+	}
+        public function addBook($isbn, $title, $publisher_house, $nr_page, $edition, $premiere, $number, $author) {
+            return 'Brak dostepu';
+        }
+        public function addAdmin($name, $surname, $password1, $password2, $email, $login) {
+             return 'Brak dostępu';
         }
         public function addNews($title, $text){
             return "Brak dostępu";
         }
-        public function showAdmin($adminID){}
-        public function showReader($readerID){}
-
-        public function templateForm($name, $arrayDiv, $arrayForm, $arrayFormInput){
-            $form = "<div";
+        public function isActive($ID){
+            $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("readers",
+                    array("acces_right_name"),
+                    array(array("acces_rights", "acces_rights.acces_right_id", "readers.reader_acces_right_id")),
+                    array(array("readers.reader_id", "=", $ID, "")));
+            $row = mysqli_fetch_array($result);
+            if($row['acces_right_name'] == 'activeReader')
+                return 1;
+            else
+                return 0;
+        }
+        public function orderBook($bookID) {
+            die("Błąd");
+        }
+        public function getData($ID){
+		return $this->Data;
+	}
+        
+        public function templateForm($name, $arrayDiv, $arrayForm, $arrayTable, $arrayFormInput, $arraySubmit, $arraySpan = null){
+            $form = '<div';
             for($i = 0; $i < count($arrayDiv); $i++){
-                $form = $form.' '.$arrayDiv[$i][0].'="'.$arrayDiv[$i][1].'"';
+                $form = $form.' '.$arrayDiv[$i][0].' '.$arrayDiv[$i][1].'"'.$arrayDiv[$i][2].'"';
             }
             $form = $form.'><p>'.$name.'</p>';
             $form = $form.'<form';
             for($i = 0; $i < count($arrayForm); $i++){
-                $form = $form.' '.$arrayForm[$i][0].'="'.$arrayForm[$i][1].'"';
+                $form = $form.' '.$arrayForm[$i][0].' '.$arrayForm[$i][1].'"'.$arrayForm[$i][2].'"';
             }
             $form = $form.'>';
             // "isbn" ""
-            
-            for($i = 0; $i < count($arrayFormInput); $i++){
-                $form = $form.'<input';
-                for($j = 0; $j < count($arrayFormInput[$i]); $j++){
-                    $form = $form.' '.$arrayFormInput[$i][$j][0].'="'.$arrayFormInput[$i][$j][1].'"';
-                }  
-                $form = $form.'/><br>';
+            $form = $form.'<table';
+            for($i = 0; $i < count($arrayTable); $i++){
+                $form = $form.' '.$arrayTable[$i][0].' '.$arrayTable[$i][1].'"'.$arrayTable[$i][2].'"';
             }
-            $form = $form.'<input type="submit" valus="'.$name.'">';
+            $form = $form.'>';
+            for($i = 0; $i < count($arrayFormInput); $i++){
+                $form = $form.'<tr>';
+                $form = $form.'<td><input';
+                for($j = 0; $j < count($arrayFormInput[$i]); $j++){
+                    $form = $form.' '.$arrayFormInput[$i][$j][0].''.$arrayFormInput[$i][$j][1].'"'.$arrayFormInput[$i][$j][2].'"';
+                }  
+                if($arraySpan != null){
+                    $form = $form.'/>'.$arraySpan[$i].'</td>';
+                }
+                else{
+                    $form = $form.'/></td>';
+                }    
+                $form = $form.'</tr>';
+            }
+            $form = $form.'</table>';
+            $form = $form.'<input';
+            for($i = 0; $i < count($arraySubmit); $i++){
+                $form = $form.' '.$arraySubmit[$i][0].' '.$arraySubmit[$i][1].'"'.$arraySubmit[$i][2].'"';
+            }
+            $form = $form.'/>';
             $form = $form.'</form></div>';
             return $form;
         }

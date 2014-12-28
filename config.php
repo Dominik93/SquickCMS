@@ -16,4 +16,13 @@ if(!isset($_SESSION['logged'])) {
 	$_SESSION['acces_right'] = "user";
 	$_SESSION['user'] = serialize(new User(new Controller()));
 }
+
+/*
+ * dodac w tabeli borrows 1 pola boolean na odebrano książke
+ * przyciski do borrow odebrano(zmienia wartość) i oddano(usuwa borrow)
+ * 
+ * przegladanie swoich borrows
+ * 
+ * eventy na fees przy przekroczeniu czasu
+ */
 ?>

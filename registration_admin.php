@@ -43,7 +43,7 @@
 					$("#status_email").html('Sprawdzanie dostępności.');
 					$.ajax({
 						type: "POST",
-						url: "check.php",
+						url: "ajax.php",
 						data: "email="+ email,
 						success: function(msg){
 							$("#status_email").ajaxComplete(function(event, request){
@@ -80,7 +80,7 @@
 					$("#status_login").html('Sprawdzanie dostępności.');
 					$.ajax({
 						type: "POST",
-						url: "check.php",
+						url: "ajax.php",
 						data: "login="+ login,
 						success: function(msg){
 							$("#status_login").ajaxComplete(function(event, request){

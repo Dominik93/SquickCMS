@@ -20,7 +20,7 @@ class Controller{
             $query = $query.'"'.$arrayValues[$i].'",';
         }
         $query = substr($query, 0 , strlen($query)-1).');';
-        echo $query;
+        echo $query.'<br>';
         mysqli_query($this->mysql->baseLink, $query) or die(mysqli_error($this->mysql->baseLink));
         $this->mysql->Close();
     }    
@@ -28,10 +28,10 @@ class Controller{
         $this->mysql->Connect();
         $query = 'DELETE FROM '.$table.' WHERE ';
         for($i = 0; $i< count($arrayWhere); $i++){
-            $query = $query.' ('.$arrayWhere[$i][0].' = "'.$arrayWhere[$i][1].'") '.$arrayWhere[$i][2];
+            $query = $query.' ('.$arrayWhere[$i][0].' '.$arrayWhere[$i][1].'"'.$arrayWhere[$i][2].'") '.$arrayWhere[$i][3];
         }
         $query = $query.';';
-        echo $query;
+        //echo $query.'<br>';
         mysqli_query($this->mysql->baseLink, $query) or die(mysqli_error($this->mysql->baseLink));
 	$this->mysql->Close();
     }
@@ -55,7 +55,7 @@ class Controller{
         }
         
         if($arrayWh != null){
-            $query = $query.' where ';
+            $query = $query.' WHERE ';
             for($i = 0; $i< count($arrayWh); $i++){
                 $query = $query.' ('.$arrayWh[$i][0].' '.$arrayWh[$i][1].' "'.$arrayWh[$i][2].'") '.$arrayWh[$i][3];
             }
@@ -71,7 +71,7 @@ class Controller{
             $query = $query.' LIMIT '.$limit;
         }
         $query = $query.';';
-        echo $query;
+        echo $query.'<br>';
 	$result = mysqli_query($this->mysql->baseLink, $query)
                 or die(mysqli_error($this->mysql->baseLink));
 	$this->mysql->Close();
@@ -86,13 +86,13 @@ class Controller{
         }
         $query = substr($query, 0 , strlen($query)-1);
         if($arrayWh != null){
-            $query = $query.' where ';
+            $query = $query.' WHERE ';
             for($i = 0; $i< count($arrayWh); $i++){
-                $query = $query.' ('.$arrayWh[$i][0].' = "'.$arrayWh[$i][1].'") '.$arrayWh[$i][2];
+                $query = $query.' ('.$arrayWh[$i][0].' '.$arrayWh[$i][1].' "'.$arrayWh[$i][2].'") '.$arrayWh[$i][3];
             }
         }
         $query = $query.';';
-        echo $query;
+        echo $query.'<br>';
 	mysqli_query($this->mysql->baseLink, $query) or die(mysqli_error($this->mysql->baseLink));
 	$this->mysql->Close();
     }

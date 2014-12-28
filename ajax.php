@@ -4,6 +4,18 @@ include 'config.php';
 
 $controller = new Controller();
 
+if(isset($_POST['delete'])){
+    $controller->deleteTableWhere("borrows", array(array("borrow_id", "=", $_POST['delete'], "")));
+    echo "OK";
+}
+
+if(isset($_POST['receive'])){
+    $controller->updateTableRecordValuesWhere("borrows",
+            array(array("borrow_received", "1")),
+            array(array("borrow_id", "=", $_POST['receive'], "")));
+    echo "OK";
+}
+
 if(isset($_POST['login'])){
 	$login = $_POST['login'];
 	$login = $controller->Clear($login);
