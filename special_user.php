@@ -15,6 +15,9 @@ class Admin extends User{
                     ));
     }
     public function showOptionPanel(){
+        if(!$this->checkSession()){
+            $this->timeOut();
+        }
 		$userData = $this->getData($this->userID);
 		return '<div id="panelName">Panel użytkownika</div><p align="center">Witamy '.$userData['admin_name'].'!</p>
 			<ul>
@@ -179,7 +182,8 @@ class Admin extends User{
             Email: '.$userData['reader_email'].'<br>
             Konto aktywne do: '.$userData['reader_active_account'].'<br>
             Adres: '.$userData['reader_address'].'<br>	
-            Prawa: '.$userData['acces_right_name'].'<br>					
+            Prawa: '.$userData['acces_right_name'].'<br>
+            <button id="extendAccount">Przedłuż konto</button> <button id="deleteReader">Usuń czytelnika</button> <button id="editReader">Edytuj</button> 
 	</p>';
     }
     public function showBorrow($borrowID){
@@ -288,7 +292,7 @@ class Admin extends User{
                 $resultAccessRgihts = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("acces_rights", 
                             array("*"),
                             null,
-                            array(array("acces_right_name", "activeReader", "")));
+                            array(array("acces_right_name", "admin", "")));
                 if(mysqli_num_rows($resultAccessRgihts) == 0) {
                     die('Błąd');
                 }
@@ -462,6 +466,9 @@ class Reader extends User{
                     ));
     }
     public function showOptionPanel(){
+        if(!$this->checkSession()){
+                $this->timeOut();
+            }
 		$userData = $this->getData($this->userID);
 		return '<div id="panelName">Panel użytkownika</div>
 			<p align="center">

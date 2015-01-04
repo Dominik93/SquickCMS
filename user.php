@@ -190,14 +190,31 @@ class User implements IUser{
             return $books;
         }
         public function checkSession(){
-            $session = true;
+            $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("sessions", null, null, 
+                    array(array("session_id", "=" , session_id(),"")));
+            if(mysqli_num_rows($result) != 1){
+                return false;
+            }
+            $row = mysqli_fetch_assoc($result);
+            if($row['session_ip'] != $_SERVER['REMOTE_ADDR']){
+                return false;
+            }
             /*
              * dopisac porownanie sesji, sesji w bazie danych, i danych z przegladarki
              */
-            return $session;
+            return true;
         }
         public function session(){
             
+        }
+        public function timeOut(){
+            session_start();
+            $_SESSION['id'] = session_id();
+            $_SESSION['logged'] = false;
+            $_SESSION['user_id'] = -1;
+            $_SESSION['acces_right'] = "user";
+            $_SESSION['ip'] = null;
+            $_SESSION['user'] = serialize(new User(new Controller()));
         }
 
         public function showOptionPanel(){
@@ -424,6 +441,10 @@ class User implements IUser{
             $return = '<div id="'.$tableStyle.'" align="center">
                             <table>
                                 <tr>';
+            foreach ($array as $s){
+                $return = $return.'<td align="center"><input style="width: '.(strlen($s)*15).'px;" type="text" id="'.$s.'">'.'</td>';
+            }
+            $return = $return.'</tr><tr>';
             foreach ($array as $s){
                 $return = $return.'<td>'.$s.'</td>';
             }

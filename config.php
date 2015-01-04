@@ -24,5 +24,7 @@ if(!isset($_SESSION['logged'])) {
  * przegladanie swoich borrows
  * 
  * eventy na fees przy przekroczeniu czasu
+ * 
+ * dodanie edytowania użyrkowników
  */
 ?>

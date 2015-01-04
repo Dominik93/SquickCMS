@@ -32,8 +32,10 @@
                                                     if(msg == 'OK'){
                                                         $("#content").html("<p>Oddano książke</p>");
                                                         return true;
+                                                    else{
+                                                        $("#content").html("<p>Błąd</p>");
+                                                        return false;
                                                     }
-                                                    return false;
                                                     });
                             }
 			});
@@ -50,7 +52,10 @@
                                                         $("#content").html("<p>Książka została wydana</p>");
                                                         return true;
                                                     }
-                                                    return false;
+                                                    else{
+                                                        $("#content").html("<p>Błąd</p>");
+                                                        return false;
+                                                    }
                                                     });
                             }
 			});

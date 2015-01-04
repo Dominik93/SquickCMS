@@ -9,6 +9,20 @@ if(isset($_POST['delete'])){
     echo "OK";
 }
 
+if(isset($_POST['deleteReader'])){
+    $controller->deleteTableWhere("readers", array(array("reader_id", "=", $_POST['deleteReader'], "")));
+    echo "OK";
+}
+if(isset($_POST['extendAccount'])){
+    $date = date_create(date('Y-m-d'));
+    date_add($date, date_interval_create_from_date_string('365 days'));    
+    $controller->updateTableRecordValuesWhere("readers", 
+            array(array("reader_active_account", date_format($date,"y-m-d"))),
+            array(array("reader_id", "=", $_POST['extendAccount'], ""))
+            );
+    echo "OK";
+}
+
 if(isset($_POST['receive'])){
     $controller->updateTableRecordValuesWhere("borrows",
             array(array("borrow_received", "1")),

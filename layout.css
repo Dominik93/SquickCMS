@@ -99,6 +99,7 @@ body {
 #usersTable table{
 	border-collapse: collapse;
 }
+
 #usersTable  th{
     border: 1px solid black;
 }
