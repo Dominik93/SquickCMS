@@ -15,7 +15,7 @@ class PageSettings {
     private $settings;
     private $values;
     /*
-     * konstruktor klasy przyjmuje za argument wynik zapytania select * from page_settings
+     * konstruktor klasy przyjmuje za argument wynik zapytania "select * from page_settings"
      */
     public function setResult($result) {
         while($row = mysqli_fetch_assoc($result)){
@@ -24,7 +24,7 @@ class PageSettings {
         }
     }
     /*
-     * konstruktor klasy przyjmuje za argumenty 2 listy jenda z nazwami opcji drógą z warościami
+     * konstruktor klasy przyjmuje za argumenty 2 listy jenda z nazwami opcji drugą z warościami
      */
     public function setArrays($arraySegings, $arrayValues) {
         $this->settings = $arraySegings;
@@ -35,10 +35,10 @@ class PageSettings {
      * metoda dodająca opcje
      * zwraca string query który jest dodaje do bazy danych dodaną opcje
      */
-    public function add($seting, $value){
-        array_push($this->settings, $seting);
+    public function add($setting, $value){
+        array_push($this->settings, $setting);
         array_push($this->values, $value);
-        $query = 'INSERT INTO page_settings (setting_name, setting_value) VALUES ("'.$seting.'", "'.$value.'")';
+        $query = 'INSERT INTO page_settings (setting_name, setting_value) VALUES ("'.$setting.'", "'.$value.'")';
         return $query;
     }
     /*
