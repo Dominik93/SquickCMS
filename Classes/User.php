@@ -1,4 +1,5 @@
 <?php
+
 include_once "Interface/userInterface.php";
 
 class User implements IUser{

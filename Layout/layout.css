@@ -1,14 +1,9 @@
 body {
 	background-color: antiquewhite;
-	/*
-	color: #000;
-	margin: 0;
-	padding: 0;
-	*/
 }
 
 #logo {
-	background-image: url(images/logo.jpg);
+	background-image: url(../images/logo.jpg);
 	background-color: white;
 	background-repeat: no-repeat;
 	background-position: 50%;
@@ -75,7 +70,7 @@ body {
 #panelName{
 	color: white;
 	text-align: center;
-	background-image: url(images/glossy_buttons/panel.png);
+	background-image: url(../images/glossy_buttons/panel.png);
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
 }

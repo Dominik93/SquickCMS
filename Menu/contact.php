@@ -1,10 +1,9 @@
 <?php
-	include "layout.php";
-	include "config.php";	
-
+    include "../config.php";
+    setStartLocation();
     function Content(){
-        $user = unserialize($_SESSION['user']);
-	echo '<div id="content">'.$user->showAdmin($_GET[id]).'</div>';
+	$user = unserialize($_SESSION['user']);
+	echo '<div id="content">'.$user->showContact().'</div>';
     }
 ?>
 
@@ -12,7 +11,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html" charset="utf-8">
-		<link rel="stylesheet" type="text/css" href="layout.css">
+		<link rel="stylesheet" type="text/css" href="Layout/layout.css">
 		<title>Biblioteka PAI</title>
 	</head>
 	<body>

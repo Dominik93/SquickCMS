@@ -1,5 +1,5 @@
 <?php
-include "database.php";
+include_once "Mysql.php";
 
 class Controller{
     private $mysql;

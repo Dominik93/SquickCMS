@@ -1,6 +1,35 @@
 <?php
-include "controller.php";
-include "special_user.php";
+
+echo "includeuje config <br>";
+
+function setStartLocation(){
+    $path = getcwd();
+    echo $path;
+    $pathExplode = explode("\\", $path);
+    echo '<br>';
+    echo var_dump($pathExplode);
+    $i = count($pathExplode) - 1;
+    echo $i;
+    
+    while($pathExplode[$i] != "Library"){
+        array_pop($pathExplode);
+        $i--;
+    }
+    $path = implode("\\", $pathExplode);
+    echo '<br>';
+    echo $path;
+    echo '<br>';
+    chdir($path);
+    echo '<br>';
+    echo getcwd();
+    echo '<br>';
+    return getcwd();
+}
+
+include "Layout/Layout.php";
+include "Classes/Controller.php";
+include "Classes/Admin.php";
+include "Classes/Reader.php";
 
 
 
