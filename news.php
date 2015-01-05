@@ -1,24 +1,17 @@
 <?php
+	include "config.php";
 	include "layout.php";
-	include "config.php";	
 	
 	function Content(){
             $user = unserialize($_SESSION['user']);
-            if(isset($_POST['title'])){
-                echo '
-                    <div id="content">
-                    '.$user->addNews($_POST['title'],$_POST['text']).'
-                    </div>
-                ';
+            if(!empty($_GET['id'])){
+		$user->controller->deleteFromTable("news", "new_id", $id);
             }
             else{
-                echo '
-                    <div id="content">
-                    '.$user->showAddNewsForm().'
-                    </div>
-                ';
+                echo '<div id="content">'.$user->showNews().'</div>';
             }
-	}
+            
+        }
 ?>
 
 <!DOCTYPE html>

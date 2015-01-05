@@ -16,7 +16,7 @@ if(isset($_POST['borrows'])){
                 ));
 }
 
-if (isset($_POST['reader'])){
+if (isset($_POST['users'])){
     echo '<p>'.templateTable($controller, array("ID", "Login", "Email", "Imie", "Nazwisko"),
                                         array("reader_id", "reader_login", "reader_email", "reader_name", "reader_surname"),
                                         "readers", "usersTable", "profile_readers.php?id", null,
@@ -28,20 +28,6 @@ if (isset($_POST['reader'])){
                 array("reader_surname","like",$_POST['N'],"")
             )).
                 '<p><a href="registration_reader.php">Dodaj</a></p>';
-}
-
-if (isset($_POST['admin'])){
-    echo '<p>'.templateTable($controller, array("ID", "Login", "Email", "Imie", "Nazwisko"),
-                                        array("admin_id", "admin_login", "admin_email", "admin_name", "admin_surname"),
-                                        "admins", "usersTable", "profile_admin.php?id", null,
-            array(
-                array("admin_id","like",$_POST['ID'],"and"),
-                array("admin_login","like",$_POST['L'],"and"),
-                array("admin_email","like",$_POST['E'],"and"),
-                array("admin_name","like",$_POST['I'],"and"),
-                array("admin_surname","like",$_POST['N'],"")
-            )).
-                '<p><a href="registration_admin.php">Dodaj</a></p>';
 }
 
 if(isset($_POST['delete'])){

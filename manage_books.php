@@ -1,12 +1,11 @@
 <?php
+	include "config.php";
+	include "layout.php";	
 
-include "config.php";	
-include "layout.php";
-        
-function Content(){
-    $user = unserialize($_SESSION['user']);
-    echo '<div id="content">'.$user->showMyBorrows().'</div>';
-}
+	function Content(){
+            $user = unserialize($_SESSION['user']);
+            echo '<div id="content">'.$user->showAllBooks().'</div>';  
+        }
 ?>
 
 <!DOCTYPE html>
