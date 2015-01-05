@@ -259,12 +259,12 @@ class Admin extends User{
                 '<p><a href="registration_admin.php">Dodaj</a></p>';
         }
     public function addAdmin($name, $surname, $password1, $password2, $email, $login) {
-            $name = $this->controller->Clear($name);
-            $surname = $this->controller->Clear($surname);
-            $password1 = $this->controller->Clear($password1);
-            $password2 = $this->controller->Clear($password2);
-            $email = $this->controller->Clear($email);
-            $login = $this->controller->Clear($login);
+            $name = $this->controller->clear($name);
+            $surname = $this->controller->clear($surname);
+            $password1 = $this->controller->clear($password1);
+            $password2 = $this->controller->clear($password2);
+            $email = $this->controller->clear($email);
+            $login = $this->controller->clear($login);
             if(empty($name) 
 		|| empty($password1) 
 		|| empty($password2) 
@@ -292,7 +292,7 @@ class Admin extends User{
                 $resultAccessRgihts = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("acces_rights", 
                             array("*"),
                             null,
-                            array(array("acces_right_name", "admin", "")));
+                            array(array("acces_right_name","=", "admin", "")));
                 if(mysqli_num_rows($resultAccessRgihts) == 0) {
                     die('Błąd');
                 }
@@ -330,14 +330,14 @@ class Admin extends User{
 		return 'Nie wypełniono pól';
             }	
             else{
-		$isbn = $this->controller->Clear($isbn);
-		$title = $this->controller->Clear($title);
-		$publisher_house = $this->controller->Clear($publisher_house);
-		$nr_page = $this->controller->Clear($nr_page);
-		$edition = $this->controller->Clear($edition);
-		$premiere = $this->controller->Clear($premiere);
-		$number = $this->controller->Clear($number);
-		$author = $this->controller->Clear($author);
+		$isbn = $this->controller->clear($isbn);
+		$title = $this->controller->clear($title);
+		$publisher_house = $this->controller->clear($publisher_house);
+		$nr_page = $this->controller->clear($nr_page);
+		$edition = $this->controller->clear($edition);
+		$premiere = $this->controller->clear($premiere);
+		$number = $this->controller->clear($number);
+		$author = $this->controller->clear($author);
                 
                 $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("books", array("*"),
                         null,
@@ -434,7 +434,7 @@ class Admin extends User{
                     $resultAccessRgihts = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("acces_rights", 
                             array("*"),
                             null,
-                            array(array("acces_right_name", "activeReader", "")));
+                            array(array("acces_right_name","=", "activeReader", "")));
                     if(mysqli_num_rows($resultAccessRgihts) == 0) {
                     	die('Błąd');
                     }

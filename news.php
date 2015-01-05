@@ -2,15 +2,16 @@
 	include "config.php";
 	include "layout.php";
 	
-	if(!empty($_GET['id'])){
-		//dodac autoryzacje
-		$controller->deleteFromTable("news", "new_id", $id);
-	}
-	
 	function Content(){
-		$user = unserialize($_SESSION['user']);
-		echo '<div id="content">'.$user->showNews().'</div>';
-	}
+            $user = unserialize($_SESSION['user']);
+            if(!empty($_GET['id'])){
+		$user->controller->deleteFromTable("news", "new_id", $id);
+            }
+            else{
+                echo '<div id="content">'.$user->showNews().'</div>';
+            }
+            
+        }
 ?>
 
 <!DOCTYPE html>

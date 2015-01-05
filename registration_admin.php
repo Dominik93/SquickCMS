@@ -37,35 +37,31 @@
 		}
 		
 		function checkEmail(){
-				var email = $("#email").val();
-				var msgbox = $("#status_email");
-				if(email.length > 4){
-					$("#status_email").html('Sprawdzanie dostępności.');
-					$.ajax({
-						type: "POST",
-						url: "ajax.php",
-						data: "email="+ email,
-						success: function(msg){
-							$("#status_email").ajaxComplete(function(event, request){
-								if(msg == 'OK'){
-									$("#email").removeClass("red");
-									$("#email").addClass("green");
-									msgbox.html('<font color="Green">Dostępny</font>');
-									return true;
-								}else if(msg == 'Niedostępny'){
-									$("#email").removeClass("green");
-									$("#email").addClass("red");
-									msgbox.html('<font color="Red">Niedostepny</font>');
-									return false;
-								}else{
-									$("#email").removeClass("green");
-									$("#email").addClass("red");
-									msgbox.html('<font color="Red">Niepoprawny</font>');
-									return false;
-								}
-							});
-						}
-					});
+                    var email = $("#email").val();
+                    if(email.length > 4){
+                    $("#status_email").html('Sprawdzanie dostępności.');
+                    $("#status_email").load("ajax.php",{ email:email },
+                                            function(responseTxt,statusTxt,xhr){
+                                                if(statusTxt=="success"){
+                                                    if(responseTxt == "OK"){
+                                                        $("#email").removeClass("red");
+                                                        $("#email").addClass("green");
+                                                        $("#status_email").html('<font color="Green">Dostępny</font>');
+                                                    }
+                                                    else if(responseTxt == 'Niedostępny'){
+                                                        $("#email").removeClass("green");
+                                                        $("#email").addClass("red");
+                                                        $("#status_email").html('<font color="Red">Niedostepny</font>');
+                                                    }
+                                                    else{
+                                                        $("#email").removeClass("green");
+                                                        $("#email").addClass("red");
+                                                        $("#status_email").html('<font color="Red">Niepoprawny</font>');			
+                                                    }
+                                                }
+                                                if(statusTxt=="error")
+                                                    alert("Error: "+xhr.status+": "+xhr.statusText);
+                                            });
 				}else{
 					$("#email").addClass("red");
 					$("#status_email").html('<font color="#cc0000">Za mało znaków</font>');
@@ -75,29 +71,29 @@
 		
 		function checkLogin(){
 				var login = $("#login").val();
-				var msgbox = $("#status_login");
 				if(login.length > 4){
 					$("#status_login").html('Sprawdzanie dostępności.');
-					$.ajax({
-						type: "POST",
-						url: "ajax.php",
-						data: "login="+ login,
-						success: function(msg){
-							$("#status_login").ajaxComplete(function(event, request){
-								if(msg == 'OK'){
-									$("#login").removeClass("red");
-									$("#login").addClass("green");
-									msgbox.html('<font color="Green">Dostępny</font>');
-									return true;
-								}else if(msg == 'Niedostępny'){
-									$("#login").removeClass("green");
-									$("#login").addClass("red");
-									msgbox.html('<font color="Red">Niedostepny</font>');
-									return false;
-								}
-							});
-						}
-					});
+                                        $("#status_login").load("ajax.php",{ login: login },
+                                            function(responseTxt,statusTxt,xhr){
+                                                if(statusTxt=="success"){
+                                                    if(responseTxt == "OK"){
+                                                        $("#login").removeClass("red");
+                                                        $("#login").addClass("green");
+                                                        $("#status_login").html('<font color="Green">Dostępny</font>');
+                                                    }
+                                                    else if(responseTxt == 'Niedostępny'){
+                                                        $("#login").removeClass("green");
+                                                        $("#login").addClass("red");
+                                                        $("#status_login").html('<font color="Red">Niedostepny</font>');
+                                                    }else{
+                                                        $("#login").removeClass("green");
+                                                        $("#login").addClass("red");
+                                                        $("#status_login").html('<font color="Red">Niepoprawny</font>');
+                                                    }
+                                                }
+                                                if(statusTxt=="error")
+                                                    alert("Error: "+xhr.status+": "+xhr.statusText);
+                                            });
 				}else{
 					$("#login").addClass("red");
 					$("#status_login").html('<font color="#cc0000">Za mało znaków</font>');

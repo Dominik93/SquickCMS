@@ -16,6 +16,7 @@ class Mysql{
 	
     public function Connect(){
         $this->baseLink = new mysqli($this->host, $this->user, $this->password, $this->name);
+        $this->baseLink->set_charset("utf8");
     }
 	
     public function Close(){

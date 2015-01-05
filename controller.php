@@ -5,8 +5,10 @@ class Controller{
     private $mysql;
 
     public function __construct(){
-        $this->mysql = new Mysql('localhost', 'dslusarz', 'kasztan', 'dslusarz_baza');
-	//$this->mysql = new Mysql('localhost', 'root', '', 'dslusarz_baza');
+        if($_SERVER['REMOTE_ADDR'] == "::1" || $_SERVER['REMOTE_ADDR'] == "127.0.0.1")
+            $this->mysql = new Mysql('localhost', 'root', '', 'dslusarz_baza');
+        else
+            $this->mysql = new Mysql('localhost', 'dslusarz', 'kasztan', 'dslusarz_baza');
     }
 
     public function doQuery($query){
@@ -37,7 +39,7 @@ class Controller{
             $query = $query.' ('.$arrayWhere[$i][0].' '.$arrayWhere[$i][1].'"'.$arrayWhere[$i][2].'") '.$arrayWhere[$i][3];
         }
         $query = $query.';';
-        //echo $query.'<br>';
+        echo $query.'<br>';
         mysqli_query($this->mysql->baseLink, $query) or die(mysqli_error($this->mysql->baseLink));
 	$this->mysql->Close();
     }
@@ -98,7 +100,7 @@ class Controller{
             }
         }
         $query = $query.';';
-        //echo $query.'<br>';
+        echo $query.'<br>';
 	mysqli_query($this->mysql->baseLink, $query) or die(mysqli_error($this->mysql->baseLink));
 	$this->mysql->Close();
     }
@@ -108,7 +110,9 @@ class Controller{
             $text = stripslashes($text);
 	}
 	$text = trim($text);
-	$text = mysql_real_escape_string($text);
+        $this->mysql->Connect();
+	$text = mysqli_real_escape_string($this->mysql->baseLink,$text) or die(mysqli_error($this->mysql->baseLink));
+        $this->mysql->Close();
 	$text = htmlspecialchars($text);
 	return $text;
     }

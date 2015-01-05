@@ -2,8 +2,27 @@
 include "controller.php";
 include "special_user.php";
 
+
+
 function Codepass($password) {
     return sha1(md5($password).'#!%Rgd64');
+}
+
+function CreateOwner(){
+	$controller = new Controller();
+	$result = $controller->selectTableWhatJoinWhereGroupOrderLimit("admins", array("admin_login"),null,array(array("admin_login","=","dslusarz","")));
+	if(mysqli_num_rows($result) == 0){
+            $result = $controller->selectTableWhatJoinWhereGroupOrderLimit("acces_rights",null,null,array(array("acces_right_name", "=", "admin","")));
+
+            if(mysqli_num_rows($result) == 0) {
+                die('Błąd');
+            }
+            $row = mysqli_fetch_assoc($result);
+
+            $controller->insertTableRecordValue("admins",
+                    array("admin_login", "admin_password", "admin_email", "admin_name", "admin_surname", "admin_acces_right_id"),
+                    array("dslusarz", Codepass('wiosna'), "slusarz.dominik@gmail.com", "Dominik", "Ślusarz", $row['acces_right_id']));
+        }
 }
 
 function templateTable($controller, $array, $arrayTable, $table, $tableStyle, $link = null, $join = null, $where = null){
@@ -39,7 +58,7 @@ function templateTable($controller, $array, $arrayTable, $table, $tableStyle, $l
         }
 
 session_start();
-
+CreateOwner();
 if(!isset($_SESSION['logged'])) {
 	$_SESSION['id'] = session_id();
         $_SESSION['logged'] = false;
@@ -48,15 +67,4 @@ if(!isset($_SESSION['logged'])) {
 	$_SESSION['acces_right'] = "user";
 	$_SESSION['user'] = serialize(new User(new Controller()));
 }
-
-/*
- * dodac w tabeli borrows 1 pola boolean na odebrano książke
- * przyciski do borrow odebrano(zmienia wartość) i oddano(usuwa borrow)
- * 
- * przegladanie swoich borrows
- * 
- * eventy na fees przy przekroczeniu czasu
- * 
- * dodanie edytowania użyrkowników
- */
 ?>

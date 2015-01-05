@@ -4,7 +4,8 @@
 	
 	function Content(){
 		$user = unserialize($_SESSION['user']);
-                if(isset($_POST['isbn'])){
+                if(isset($_POST['title'])){
+                    echo $_POST['isbn'];
                     echo '<div id="content">'.$user->search($_POST['isbn'], $_POST['title'], $_POST['publisher_house'], $_POST['edition'], $_POST['premiere'], $_POST['author']).'</div>';
                 }
                 else{    

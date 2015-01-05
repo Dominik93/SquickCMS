@@ -25,10 +25,10 @@ class User implements IUser{
 				</p>';
 	}
 	public function showSearch(){
-		return '<div id="search" align="center">
+            return '<div id="search" align="center">
 		<form action="search.php" method="post">
 			<table>
-				<tr> <td colspan = 2 align="center">Szukaj książki:</tf><tr>
+				<tr> <td colspan = 2 align="center">Szukaj książki:</td><tr>
 				<tr><td>ISBN:</td><td><input type="text" value="'.$_POST['isbn'].'" name="isbn" placeholder="ISBN"/></td></tr>
 				<tr><td>Tytuł:</td><td><input type="text" value="'.$_POST['title'].'" name="title" placeholder="Tytuł"/></td></tr>
 				<tr><td>Wydawca:</td><td><input type="text" value="'.$_POST['publisher_house'].'" name="publisher_house" placeholder="Wydawca"/></td></tr>
@@ -114,9 +114,6 @@ class User implements IUser{
 		$_SESSION['user_id'] = $row['reader_id'];
 		$_SESSION['acces_right'] = "reader";
 		$_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
-                /*
-                 * trzeba dopisać active w klasie, ma pobierać z bazy czy user jest active czy nie
-                 */
 		$_SESSION['user'] = serialize(new Reader($this->isActive($row['reader_id']), new Controller(), $u = $row['reader_id']));
                 $this->controller->insertTableRecordValue("sessions", 
                         array("session_id", "session_ip", "session_user", "session_logged", "session_acces_right"),
@@ -128,17 +125,21 @@ class User implements IUser{
 		}
             }
         }
-        public function search($isbn, $title, $publisher_house, $edition, $premiere, $author) {
+        public function search($isbn, $title, $publisher_house, $edition, $premiere, $author){
             $books = "";
             if(empty($isbn)) $isbn = "%";
+            else $isbn = '%'.$isbn.'%';
             if(empty($title)) $title = "%";
             else $title = '%'.$title.'%';
             if(empty($publisher_house)) $publisher_house = "%";
+            else $publisher_house = '%'.$publisher_house.'%';
             if(empty($edition)) $edition = "%";
+            else $edition = '%'.$edition.'%';
             if(empty($premiere)) $premiere = "%";
-            if(empty($author)) $author = "%";
+            else $premiere = '%'.$premiere.'%';
+            $author = "%";
             $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("books", 
-                    array("books.*", "publisher_houses.publisher_house_name", "authors.*" ),
+                    array("books.*", "publisher_houses.publisher_house_name" ),
                     array(
                         array("publisher_houses","publisher_houses.publisher_house_id","books.book_publisher_house_id"),
                         array("authors_books","authors_books.book_id","books.book_id"),
@@ -147,8 +148,9 @@ class User implements IUser{
                     array(
                         array("books.book_isbn","LIKE",$isbn,"AND"),
                         array("books.book_title","LIKE",$title,"AND"),
-                        array("publisher_houses.publisher_house_name","LIKE",$edition,"AND"),
-                        array("books.book_edition","LIKE",$premiere,"AND"),
+                        array("publisher_houses.publisher_house_name","LIKE",$publisher_house,"AND"),
+                        array("books.book_premiere","LIKE",$premiere,"AND"),
+                        array("books.book_edition","LIKE",$edition,"AND"),
                         array("authors.author_name","LIKE",$author,"")
                     ),
                     "books.book_id");
@@ -199,9 +201,6 @@ class User implements IUser{
             if($row['session_ip'] != $_SERVER['REMOTE_ADDR']){
                 return false;
             }
-            /*
-             * dopisac porownanie sesji, sesji w bazie danych, i danych z przegladarki
-             */
             return true;
         }
         public function session(){

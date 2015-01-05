@@ -58,13 +58,16 @@ if(isset($_POST['receive'])){
 
 if(isset($_POST['login'])){
 	$login = $_POST['login'];
-	$login = $controller->Clear($login);
+	$login = $controller->clear($login);
 	$dostepny = true;
-	$result = $controller->selectReaderLogin($login);
+	$result = $controller->selectTableWhatJoinWhereGroupOrderLimit("readers", null, null,
+                array(array("reader_login","=",$login,"")));
+	
 	if(mysqli_num_rows($result)){
 		$dostepny = false;
 	}
-	$result = $controller->selectAdminLogin($login);
+	$result = $controller->selectTableWhatJoinWhereGroupOrderLimit("admins", null, null,
+                array(array("admin_login","=",$login,"")));
 	if(mysqli_num_rows($result)){
 		$dostepny = false;
 	}
@@ -77,18 +80,20 @@ if(isset($_POST['login'])){
 
 if(isset($_POST['email'])){
 	$email = $_POST['email'];
-	$email = $controller->Clear($email);
+	$email = $controller->clear($email);
 	$dostepny = true;
 	$poprawny = true;
 	if (filter_var($email, FILTER_VALIDATE_EMAIL) == false){
 		echo '<span style="color: #cc0000;"><strong>'.$email.'</strong> jest niepoprawny.</span>';
 		$poprawny = false;
 	}
-	$result = $controller->selectReaderEmail($email);
+	$result = $controller->selectTableWhatJoinWhereGroupOrderLimit("readers", null, null,
+                array(array("reader_email","=",$email,"")));
 	if(mysqli_num_rows($result)){
 		$dostepny = false;
 	}
-	$result = $controller->selectAdminEmail($email);
+	$result = $controller->selectTableWhatJoinWhereGroupOrderLimit("admins", null, null,
+                array(array("admin_email","=",$email,"")));
 	if(mysqli_num_rows($result)){
 		$dostepny = false;
 	}
