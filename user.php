@@ -1,5 +1,5 @@
 <?php
-include "userInterface.php";
+include_once "Interface/userInterface.php";
 
 class User implements IUser{
 	protected $userID;
@@ -137,6 +137,12 @@ class User implements IUser{
             else $edition = '%'.$edition.'%';
             if(empty($premiere)) $premiere = "%";
             else $premiere = '%'.$premiere.'%';
+            
+            $isbn = $this->controller->clear($isbn);
+            $title = $this->controller->clear($title);
+            $publisher_house = $this->controller->clear($publisher_house);
+            $edition = $this->controller->clear($edition);
+            $premiere = $this->controller->clear($premiere);
             $author = "%";
             $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("books", 
                     array("books.*", "publisher_houses.publisher_house_name" ),
@@ -372,6 +378,9 @@ class User implements IUser{
              return 'Brak dostępu';
         }
         public function addNews($title, $text){
+            return "Brak dostępu";
+        }
+        public function deleteNews($id){
             return "Brak dostępu";
         }
         public function isActive($ID){

@@ -58,7 +58,7 @@ function templateTable($controller, $array, $arrayTable, $table, $tableStyle, $l
         }
 
 session_start();
-CreateOwner();
+//CreateOwner();
 if(!isset($_SESSION['logged'])) {
 	$_SESSION['id'] = session_id();
         $_SESSION['logged'] = false;

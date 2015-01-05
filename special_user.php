@@ -1,5 +1,5 @@
 <?php
-include "user.php";
+include_once "user.php";
 
 class Admin extends User{
 
@@ -26,7 +26,7 @@ class Admin extends User{
 				<li><a href="registration_reader.php">Zarejestruj czytelnika</a></li>
 				<li><a href="registration_admin.php">Utwórz administratora</a></li>
 				<li><a href="manage_admins.php">Zarządzaj adminami</a></li>
-				<li><a href="manage_users.php">Zarządzaj czytelnikami</a></li>
+				<li><a href="manage_readers.php">Zarządzaj czytelnikami</a></li>
 				<li><a href="manage_books.php">Zarządzaj ksiażkami</a></li>
 				<li><a href="manage_borrows.php">Zarządaj wypożyczeniami</a></li>
 				<li><a href="logged.php">Lista zalogowanych</a></li>
@@ -445,6 +445,9 @@ class Admin extends User{
                     return '<p>Czytelnik Został poprawnie zarejestrowany! Możesz się teraz wrócić na <a href="main_page.php">stronę główną</a>.</p>';
 		}
 	}
+    public function deleteNews($id){
+        $this->controller->deleteTableWhere("news", array(array("new_id","=",$id,"")));
+    }    
     public function getData($ID){
 	return $this->controller->getAdminData($ID);
     }
