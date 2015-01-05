@@ -200,13 +200,13 @@ class Admin extends User{
         return $borrow;
     }    
     public function showAllUsers() {
-        return '<p>'.$this->templateTable(array("ID", "Login", "Email", "Imie", "Nazwisko"),
+        return '<p>'.templateTable($this->controller, array("ID", "Login", "Email", "Imie", "Nazwisko"),
                                         array("reader_id", "reader_login", "reader_email", "reader_name", "reader_surname"),
                                         "readers", "usersTable", "profile_readers.php?id" ).
                 '<p><a href="registration_reader.php">Dodaj</a></p>';
         }
     public function showAllBorrows(){
-        return '<p>'.$this->templateTable(array('ID','ID książki','ID czytelnika', 'Data wypożycczenia', 'Data zwrotu'),
+        return '<p>'.templateTable($this->controller, array('ID','ID książki','ID czytelnika', 'Data wypożyczenia', 'Data zwrotu'),
                                     array('borrow_id','borrow_book_id','borrow_reader_id', 'borrow_date_borrow', 'borrow_return'),
                                     "borrows", "borrowsTable", "borrow.php?id");
     }
@@ -253,7 +253,7 @@ class Admin extends User{
             return $books;     
         }
     public function showAllAdmins(){
-        return '<p>'.$this->templateTable(array("ID", "Login", "Email", "Imie", "Nazwisko"),
+        return '<p>'.templateTable($this->controller, array("ID", "Login", "Email", "Imie", "Nazwisko"),
                                     array("admin_id", "admin_login", "admin_email", "admin_name", "admin_surname"),
                                     "admins", "usersTable", "profile_admins.php?id").
                 '<p><a href="registration_admin.php">Dodaj</a></p>';

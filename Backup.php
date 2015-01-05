@@ -109,8 +109,3 @@ class Backup{
     }
 }
 
-$controller = new Controller();
-$test = new Backup("C:/WebServ/httpd-users/dominik/Library/Backup/", "dslusarz_baza", "root", "");
-echo $test->dump();
-echo $test->recoverDataBase("2015_01_04");
-

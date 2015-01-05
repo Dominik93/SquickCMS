@@ -5,7 +5,8 @@ class Controller{
     private $mysql;
 
     public function __construct(){
-	$this->mysql = new Mysql('localhost', 'root', '', 'dslusarz_baza');
+        $this->mysql = new Mysql('localhost', 'dslusarz', 'kasztan', 'dslusarz_baza');
+	//$this->mysql = new Mysql('localhost', 'root', '', 'dslusarz_baza');
     }
 
     public function doQuery($query){
@@ -25,7 +26,7 @@ class Controller{
             $query = $query.'"'.$arrayValues[$i].'",';
         }
         $query = substr($query, 0 , strlen($query)-1).');';
-        //echo $query.'<br>';
+        echo $query.'<br>';
         mysqli_query($this->mysql->baseLink, $query) or die(mysqli_error($this->mysql->baseLink));
         $this->mysql->Close();
     }    
@@ -76,7 +77,7 @@ class Controller{
             $query = $query.' LIMIT '.$limit;
         }
         $query = $query.';';
-        //echo $query.'<br>';
+        echo $query.'<br>';
 	$result = mysqli_query($this->mysql->baseLink, $query)
                 or die(mysqli_error($this->mysql->baseLink));
 	$this->mysql->Close();

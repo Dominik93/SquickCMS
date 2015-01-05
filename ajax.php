@@ -3,6 +3,32 @@
 include 'config.php';
 
 $controller = new Controller();
+if(isset($_POST['borrows'])){
+    echo '<p>'.templateTable($controller, array('ID','ID książki','ID czytelnika', 'Data wypożyczenia', 'Data zwrotu'),
+                              array('borrow_id','borrow_book_id','borrow_reader_id', 'borrow_date_borrow', 'borrow_return'),
+                                    "borrows", "borrowsTable", "borrow.php?id", null,
+            array(
+                array("borrow_id", "like", $_POST["ID"], "and"),
+                array("borrow_book_id", "like", $_POST["IDK"], "and"),
+                array("borrow_reader_id", "like", $_POST["IDC"], "and"),
+                array("borrow_date_borrow", "like", $_POST["DW"], "and"),
+                array("borrow_return", "like", $_POST["DZ"], "")
+                ));
+}
+
+if (isset($_POST['users'])){
+    echo '<p>'.templateTable($controller, array("ID", "Login", "Email", "Imie", "Nazwisko"),
+                                        array("reader_id", "reader_login", "reader_email", "reader_name", "reader_surname"),
+                                        "readers", "usersTable", "profile_readers.php?id", null,
+            array(
+                array("reader_id","like",$_POST['ID'],"and"),
+                array("reader_login","like",$_POST['L'],"and"),
+                array("reader_email","like",$_POST['E'],"and"),
+                array("reader_name","like",$_POST['I'],"and"),
+                array("reader_surname","like",$_POST['N'],"")
+            )).
+                '<p><a href="registration_reader.php">Dodaj</a></p>';
+}
 
 if(isset($_POST['delete'])){
     $controller->deleteTableWhere("borrows", array(array("borrow_id", "=", $_POST['delete'], "")));

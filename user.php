@@ -224,7 +224,7 @@ class User implements IUser{
 					Nie jesteś zalogowany!
 				</p>
 				<ul>
-					<li><a href="login">Zaloguj się</a></li>
+					<li><a href="login.php">Zaloguj się</a></li>
 				</ul>
 			session id =
                         '.session_id().' logger = 
@@ -434,7 +434,7 @@ class User implements IUser{
             return $form;
         }
         public function templateTable($array, $arrayTable, $table, $tableStyle, $link = null, $join = null, $where = null){
-            $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit($table, $j = $join, $wh = $where);
+            $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit($table, null, $join, $where);
             if(mysqli_num_rows($result) == 0) {
 		return 'Brak danych';
             }
@@ -442,7 +442,7 @@ class User implements IUser{
                             <table>
                                 <tr>';
             foreach ($array as $s){
-                $return = $return.'<td align="center"><input style="width: '.(strlen($s)*15).'px;" type="text" id="'.$s.'">'.'</td>';
+                $return = $return.'<td align="center"><input placeholder="'.$s.'" style="width: 60%;" type="text" id="'.$s.'">'.'</td>';
             }
             $return = $return.'</tr><tr>';
             foreach ($array as $s){
