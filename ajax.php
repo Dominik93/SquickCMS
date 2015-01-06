@@ -1,8 +1,12 @@
 <?php
 // łączenie się z bazą danych
 include 'config.php';
-
+$user = unserialize($_SESSION['user']);
 $controller = new Controller();
+
+if(isset($_POST['editReader'])){
+    echo $user->showEditReader($_POST['id']);
+}
 if(isset($_POST['borrows'])){
     echo '<p>'.templateTable($controller, array('ID','ID książki','ID czytelnika', 'Data wypożyczenia', 'Data zwrotu'),
                               array('borrow_id','borrow_book_id','borrow_reader_id', 'borrow_date_borrow', 'borrow_return'),

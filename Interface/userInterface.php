@@ -16,7 +16,7 @@ interface IUser{
         public function search($isbn, $title, $publisher_house, $edition, $premiere, $author);
         public function checkSession();
         /*
-         * childs
+         * admin and reader
          */
 	public function showOptionPanel();
         public function showNews();
@@ -32,11 +32,13 @@ interface IUser{
         public function showAllBooks();
         public function showAdmin($adminID);
         public function showReader($readerID);
+        public function showEditReader($readerID);
         public function showBook($bookID);
         public function showBookLight($bookID);
         public function showBorrow($borrowID);
         public function showMyBorrows();
 	public function addReader($login, $email, $name, $surname, $password1, $password2, $adres);
+        public function editReader($login, $email, $name, $surname, $adres);
         public function addBook($isbn, $title, $publisher_house, $nr_page, $edition, $premiere, $number, $author);
         public function addAdmin($name, $surname, $password1, $password2, $email, $login);
         public function addNews($title, $text);

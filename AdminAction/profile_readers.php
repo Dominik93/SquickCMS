@@ -4,6 +4,19 @@
 	
     function Content(){
         $user = unserialize($_SESSION['user']);
+        echo "dd";
+        if(isset($_POST['name'])){
+            echo "cc";
+            $user->controller->updateTableRecordValuesWhere("readers",
+                        array(
+                            array("reader_login",$_POST['login']),
+                            array("reader_email",$_POST['email']),
+                            array("reader_name",$_POST['name']),
+                            array("reader_surname",$_POST['surname']),
+                            array("reader_address",$_POST['address'])
+                            ),
+                        array(array("reader_id","=",$_GET['id'],"")));
+        }
 	echo '<div id="content">'.$user->showReader($_GET[id]).'</div>';
     }
 ?>
@@ -18,9 +31,17 @@
                 <script>
                     
                     $(document).ready(function(){
-                       $("#editReader").click(function(){
-                           
-                       }); 
+                        $("#editReader").click(function(){
+                            var readerID = <?php echo json_encode($_GET); ?>;
+                            $("#content").load("../ajax.php", { editReader:1, id:readerID['id'] }, 
+                            function(responseTxt,statusTxt,xhr){
+                                if(statusTxt=="success"){
+                                }
+                                if(statusTxt=="error")
+                                    alert("Error: "+xhr.status+": "+xhr.statusText);
+                            });
+                        });
+                         
                        $("#deleteReader").click(function(){
                            var readerID = <?php echo json_encode($_GET); ?>;
                            $.ajax({

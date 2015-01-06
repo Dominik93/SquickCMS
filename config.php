@@ -104,7 +104,7 @@ function templateTable($controller, $array, $arrayTable, $table, $tableStyle, $l
                    $return = $return.'<tr>'.$row['reader_id'].'</tr>';
                 }
                 else{
-                    $return = $return.'<tr onClick="location.href=\'http://localhost/~dominik/Library/'.$link.'='.$row[0].'\'" />';
+                    $return = $return.'<tr onClick="location.href=\'http://torus.uck.pk.edu.pl/~dslusarz/Library/AdminAction/'.$link.'='.$row[0].'\'" />';
                 }
 		for($i = 0; $i< count($array); $i++){
                     $return = $return.'<td>'.$row[$arrayTable[$i]].'</td>';

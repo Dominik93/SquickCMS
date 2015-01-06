@@ -264,6 +264,9 @@ class User implements IUser{
         public function showReader($readerID){
             return "Brak dostepu";
         }
+        public function showEditReader($readerID){
+            return "Brak dostepu";
+        }
         public function showRegistrationReader(){
             return 'Brak dostępu';
 	}
@@ -372,6 +375,9 @@ class User implements IUser{
         public function addReader($login, $email, $name, $surname, $password1, $password2, $adres){
             return 'Brak dostępu';
 	}
+        public function editReader($login, $email, $name, $surname, $adres) {
+            return "Brak dostępu";
+        }
         public function addBook($isbn, $title, $publisher_house, $nr_page, $edition, $premiere, $number, $author) {
             return 'Brak dostepu';
         }

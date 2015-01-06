@@ -183,8 +183,25 @@ class Admin extends User{
             Konto aktywne do: '.$userData['reader_active_account'].'<br>
             Adres: '.$userData['reader_address'].'<br>	
             Prawa: '.$userData['acces_right_name'].'<br>
-            <button id="extendAccount">Przedłuż konto</button> <button id="deleteReader">Usuń czytelnika</button> <button id="editReader">Edytuj</button> 
+            <button id="extendAccount">Przedłuż konto</button>
+            <button id="deleteReader">Usuń czytelnika</button> 
+            <button id="editReader">Edytuj</button> 
+            <button id="newPassword">Wygeneruj nowe hasło</button> 
 	</p>';
+    }
+    public function showEditReader($readerID){
+        $userData = $this->controller->getReaderData($readerID);
+        return '<div align="center">
+            <form action="'.backToFuture().'../Library/AdminAction/profile_readers.php?id='.$userData['reader_id'].'" method="post">
+                <input type="text" id="name" name="imie" value="'.$userData['reader_name'].'"/><br>
+                <input type="text" id="surname" name="imie" value="'.$userData['reader_surname'].'"/><br>
+                <input type="text" id="login" name="imie" value="'.$userData['reader_login'].'"/><br>
+                <input type="email" id="email" name="imie" value="'.$userData['reader_email'].'"/><br>
+                <input type="text" id="adres" name="imie" value="'.$userData['reader_address'].'"/><br>	
+                <input type="hidden" id="edit" value="'.$userData['reader_id'].'"/>
+                <input type="submit" id="submit" value="Zapisz zmiany">
+            </form>'
+                .'</div>';
     }
     public function showBorrow($borrowID){
         $borrow = "";
@@ -445,6 +462,9 @@ class Admin extends User{
                     return '<p>Czytelnik Został poprawnie zarejestrowany! Możesz się teraz wrócić na <a href="'.backToFuture().'Library/index.php">stronę główną</a>.</p>';
 		}
 	}
+    public function editReader($login, $email, $name, $surname, $adres) {
+        parent::editReader($login, $email, $name, $surname, $adres);
+    }
     public function deleteNews($id){
         $this->controller->deleteTableWhere("news", array(array("new_id","=",$id,"")));
     }    

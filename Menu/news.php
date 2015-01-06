@@ -5,7 +5,7 @@
             $user = unserialize($_SESSION['user']);
             if(isset($_GET['id'])){
 		$user->deleteNews($_GET['id']);
-                echo '<div id="content">Usunięto news</div>';
+                echo '<div id="content"><p>Usunięto news</p></div>';
             }
             else{
                 echo '<div id="content">'.$user->showNews().'</div>';
