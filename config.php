@@ -2,8 +2,6 @@
 include "controller.php";
 include "special_user.php";
 
-
-
 function Codepass($password) {
     return sha1(md5($password).'#!%Rgd64');
 }
@@ -24,6 +22,47 @@ function CreateOwner(){
                     array("dslusarz", Codepass('wiosna'), "slusarz.dominik@gmail.com", "Dominik", "Ślusarz", $row['acces_right_id']));
         }
 }
+
+function templateForm($name, $arrayDiv, $arrayForm, $arrayTable, $arrayFormInput, $arraySubmit, $arraySpan = null){
+            $form = '<div';
+            for($i = 0; $i < count($arrayDiv); $i++){
+                $form = $form.' '.$arrayDiv[$i][0].' '.$arrayDiv[$i][1].'"'.$arrayDiv[$i][2].'"';
+            }
+            $form = $form.'><p>'.$name.'</p>';
+            $form = $form.'<form';
+            for($i = 0; $i < count($arrayForm); $i++){
+                $form = $form.' '.$arrayForm[$i][0].' '.$arrayForm[$i][1].'"'.$arrayForm[$i][2].'"';
+            }
+            $form = $form.'>';
+            // "isbn" ""
+            $form = $form.'<table';
+            for($i = 0; $i < count($arrayTable); $i++){
+                $form = $form.' '.$arrayTable[$i][0].' '.$arrayTable[$i][1].'"'.$arrayTable[$i][2].'"';
+            }
+            $form = $form.'>';
+            for($i = 0; $i < count($arrayFormInput); $i++){
+                $form = $form.'<tr>';
+                $form = $form.'<td><input';
+                for($j = 0; $j < count($arrayFormInput[$i]); $j++){
+                    $form = $form.' '.$arrayFormInput[$i][$j][0].''.$arrayFormInput[$i][$j][1].'"'.$arrayFormInput[$i][$j][2].'"';
+                }  
+                if($arraySpan != null){
+                    $form = $form.'/>'.$arraySpan[$i].'</td>';
+                }
+                else{
+                    $form = $form.'/></td>';
+                }    
+                $form = $form.'</tr>';
+            }
+            $form = $form.'</table>';
+            $form = $form.'<input';
+            for($i = 0; $i < count($arraySubmit); $i++){
+                $form = $form.' '.$arraySubmit[$i][0].' '.$arraySubmit[$i][1].'"'.$arraySubmit[$i][2].'"';
+            }
+            $form = $form.'/>';
+            $form = $form.'</form></div>';
+            return $form;
+        }
 
 function templateTable($controller, $array, $arrayTable, $table, $tableStyle, $link = null, $join = null, $where = null){
             $result = $controller->selectTableWhatJoinWhereGroupOrderLimit($table, null, $join, $where);
@@ -46,7 +85,7 @@ function templateTable($controller, $array, $arrayTable, $table, $tableStyle, $l
                    $return = $return.'<tr>'.$row['reader_id'].'</tr>';
                 }
                 else{
-                    $return = $return.'<tr onClick="location.href=\'http://localhost/~dominik/Library/'.$link.'='.$row[0].'\'" />';
+                    $return = $return.'<tr onClick="location.href=\'http://torus.uck.pk.edu.pl/~dslusarz/Library/'.$link.'='.$row[0].'\'" />';
                 }
 		for($i = 0; $i< count($array); $i++){
                     $return = $return.'<td>'.$row[$arrayTable[$i]].'</td>';

@@ -53,7 +53,7 @@ class Admin extends User{
 		return $news;
 	}
     public function showLogged(){
-        return '<p>'.$this->templateTable(array("Session ID", "IP", "User", "Logged", "Rights", "Last action"),
+        return '<p>'.templateTable($this->controller,array("Session ID", "IP", "User", "Logged", "Rights", "Last action"),
                                         array("session_id", "session_ip", "session_user", "session_logged", "session_acces_right", "session_last_action"),
                                         "sessions", "loggedTable", "" ).'</p>';
 	}
@@ -183,7 +183,9 @@ class Admin extends User{
             Konto aktywne do: '.$userData['reader_active_account'].'<br>
             Adres: '.$userData['reader_address'].'<br>	
             Prawa: '.$userData['acces_right_name'].'<br>
-            <button id="extendAccount">Przedłuż konto</button> <button id="deleteReader">Usuń czytelnika</button> <button id="editReader">Edytuj</button> 
+            <button id="extendAccount">Przedłuż konto</button>
+            <button id="deleteReader">Usuń czytelnika</button>
+            <button id="editReader">Edytuj</button> 
 	</p>';
     }
     public function showBorrow($borrowID){
@@ -303,20 +305,7 @@ class Admin extends User{
                 return "<p>Dodano admina</p>";
             }
         }
-    public function addNews($title, $text){
-	if(empty($title) ||
-            empty($text)){
-                return 'Nie wypełniono pól';
-        }	
-        else{
-            $czas = date('Y-m-d');
-            $title = $this->controller->clear($title);
-            $text =  $this->controller->clear($text);
-            $this->controller->insertTableRecordValue("news", array("new_title",
-							"new_text",
-							"new_date"),array($title, $text, $czas));
-            return '<p>Dodano news</p>';
-        }
+    public function editAdmin(){
     }
     public function addBook($isbn, $title, $publisher_house, $nr_page, $edition, $premiere, $number, $author) {
             if(empty($isbn) ||
@@ -418,18 +407,14 @@ class Admin extends User{
 			return '<p>Podany email jest nieprawidłowy.</p>';
 		}
                 else{
-                    $resultUser = $this->controller->selectExistingUser("readers", "reader", $login, $email);
-                    $rowU = mysqli_fetch_row($resultUser);
-                    if($rowU[0] > 0) {
-                    	return '<p>Już istnieje użytkownik z takim loginem lub adresem e-mail.</p>';
+                    if($this->controller->userExist("readers", "reader", $login, $email)){
+                        return '<p>Już istnieje użytkownik z takim loginem lub adresem e-mail.</p>';
+                    }
+                    elseif($this->controller->userExist("admins", "admin", $login, $email)){
+                        return '<p>Już istnieje użytkownik z takim loginem lub adresem e-mail.</p>';
                     }
                     if(strlen($login) < 4){
                     	return '<p>Za mało znaków.</p>';
-                    }
-                    $resultAdmin = $this->controller->selectExistingUser("admins", "admin", $login, $email);
-                    $rowA = mysqli_fetch_row($resultAdmin);
-                    if($rowA[0] > 0) {
-                    	return '<p>Już istnieje użytkownik z takim loginem lub adresem e-mail.</p>';
                     }
                     $resultAccessRgihts = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("acces_rights", 
                             array("*"),
@@ -445,6 +430,25 @@ class Admin extends User{
                     return '<p>Czytelnik Został poprawnie zarejestrowany! Możesz się teraz wrócić na <a href="main_page.php">stronę główną</a>.</p>';
 		}
 	}
+    public function editReader(){
+    }
+    public function addNews($title, $text){
+	if(empty($title) ||
+            empty($text)){
+                return 'Nie wypełniono pól';
+        }	
+        else{
+            $czas = date('Y-m-d');
+            $title = $this->controller->clear($title);
+            $text =  $this->controller->clear($text);
+            $this->controller->insertTableRecordValue("news", array("new_title",
+							"new_text",
+							"new_date"),array($title, $text, $czas));
+            return '<p>Dodano news</p>';
+        }
+    }
+    public function editNews(){
+    }
     public function deleteNews($id){
         $this->controller->deleteTableWhere("news", array(array("new_id","=",$id,"")));
     }    

@@ -3,6 +3,15 @@
 include 'config.php';
 
 $controller = new Controller();
+
+if(isset($_POST['edit'])){
+    echo '  ID: <br>
+            Imie: <br>
+            Nazwisko: <br>
+            Login: <br>
+            Email: <br>
+            Adres: <br>';
+}
 if(isset($_POST['borrows'])){
     echo '<p>'.templateTable($controller, array('ID','ID książki','ID czytelnika', 'Data wypożyczenia', 'Data zwrotu'),
                               array('borrow_id','borrow_book_id','borrow_reader_id', 'borrow_date_borrow', 'borrow_return'),
@@ -15,7 +24,6 @@ if(isset($_POST['borrows'])){
                 array("borrow_return", "like", $_POST["DZ"], "")
                 ));
 }
-
 if (isset($_POST['reader'])){
     echo '<p>'.templateTable($controller, array("ID", "Login", "Email", "Imie", "Nazwisko"),
                                         array("reader_id", "reader_login", "reader_email", "reader_name", "reader_surname"),
@@ -29,7 +37,6 @@ if (isset($_POST['reader'])){
             )).
                 '<p><a href="registration_reader.php">Dodaj</a></p>';
 }
-
 if (isset($_POST['admin'])){
     echo '<p>'.templateTable($controller, array("ID", "Login", "Email", "Imie", "Nazwisko"),
                                         array("admin_id", "admin_login", "admin_email", "admin_name", "admin_surname"),
@@ -43,12 +50,10 @@ if (isset($_POST['admin'])){
             )).
                 '<p><a href="registration_admin.php">Dodaj</a></p>';
 }
-
 if(isset($_POST['delete'])){
     $controller->deleteTableWhere("borrows", array(array("borrow_id", "=", $_POST['delete'], "")));
     echo "OK";
 }
-
 if(isset($_POST['deleteReader'])){
     $controller->deleteTableWhere("readers", array(array("reader_id", "=", $_POST['deleteReader'], "")));
     echo "OK";
@@ -62,14 +67,12 @@ if(isset($_POST['extendAccount'])){
             );
     echo "OK";
 }
-
 if(isset($_POST['receive'])){
     $controller->updateTableRecordValuesWhere("borrows",
             array(array("borrow_received", "1")),
             array(array("borrow_id", "=", $_POST['receive'], "")));
     echo "OK";
 }
-
 if(isset($_POST['login'])){
 	$login = $_POST['login'];
 	$login = $controller->clear($login);
@@ -91,7 +94,6 @@ if(isset($_POST['login'])){
 		echo 'OK';
 	}
 }
-
 if(isset($_POST['email'])){
 	$email = $_POST['email'];
 	$email = $controller->clear($email);

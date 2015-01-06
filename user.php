@@ -1,22 +1,23 @@
 <?php
 include_once "Interface/userInterface.php";
+include_once "config.php";
 
 class User implements IUser{
-	protected $userID;
-	protected $controller;
-	
-	public function __construct($c, $u = -1){
+    protected $userID;
+    protected $controller;
+
+    public function __construct($c, $u = -1){
 		$this->userID = $u;
 		$this->controller = $c;
 	}
-        public function showMainPage(){
+    public function showMainPage(){
 		return '
 			<p>
 				Witaj na stronie Biblioteki PAI!<br> Życzymy miłej zabawy z książkami☺
 			</p>
 		';
 	}
-	public function showHours(){
+    public function showHours(){
 		return '<p>
 					Godziny otwarcia:<br>
 					Pon - Pt: 7:00 - 18:00<br>
@@ -24,7 +25,7 @@ class User implements IUser{
 					Nd: Nieczynne
 				</p>';
 	}
-	public function showSearch(){
+    public function showSearch(){
             return '<div id="search" align="center">
 		<form action="search.php" method="post">
 			<table>
@@ -40,7 +41,7 @@ class User implements IUser{
 		</form>
 	</div>';
 	}
-        public function showContact(){
+    public function showContact(){
 		return '<p>
 					Biblioteka PAI<br>
 					Adres: ul. Ulica Miasto<br> 000-000 Miasto<br>
@@ -48,13 +49,13 @@ class User implements IUser{
 					E-mail: mail@bpai.com
 				</p>';
 	}
-        public function showRegulation(){
+    public function showRegulation(){
 		return '<p>
 					Tu bedzie regulamin!;p
 				</p>';
 	}
-        public function showLogin(){
-            return $this->templateForm("Logowanie",
+    public function showLogin(){
+            return templateForm("Logowanie",
                     array(
                         array("id", "=", "login"),
                         array("align", "=", "center")
@@ -86,11 +87,11 @@ class User implements IUser{
                         )
                     );
 	}
-        public function logout(){
+    public function logout(){
             $this->controller->deleteTableWhere("sessions", array(array("session_id","=", session_id(), "")));
             return '<p>Zostałeś wylogowany. Przejdz na <a href="index.php">strone główną</a>.</p>';
 	}
-        public function login($login, $password) {
+    public function login($login, $password) {
             $login = $this->controller->clear($login);
             $password = $this->controller->clear($password);
             $result = $this->controller->validationLoginAdmin($login, $password);
@@ -125,7 +126,7 @@ class User implements IUser{
 		}
             }
         }
-        public function search($isbn, $title, $publisher_house, $edition, $premiere, $author){
+    public function search($isbn, $title, $publisher_house, $edition, $premiere, $author){
             $books = "";
             if(empty($isbn)) $isbn = "%";
             else $isbn = '%'.$isbn.'%';
@@ -197,7 +198,7 @@ class User implements IUser{
             }
             return $books;
         }
-        public function checkSession(){
+    public function checkSession(){
             $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("sessions", null, null, 
                     array(array("session_id", "=" , session_id(),"")));
             if(mysqli_num_rows($result) != 1){
@@ -209,10 +210,10 @@ class User implements IUser{
             }
             return true;
         }
-        public function session(){
+    public function session(){
             
         }
-        public function timeOut(){
+    public function timeOut(){
             session_start();
             $_SESSION['id'] = session_id();
             $_SESSION['logged'] = false;
@@ -222,7 +223,7 @@ class User implements IUser{
             $_SESSION['user'] = serialize(new User(new Controller()));
         }
 
-        public function showOptionPanel(){
+    public function showOptionPanel(){
 		return '
 			<div id="panelName">Panel użytkownika</div>
 				<p align="center">
@@ -239,7 +240,7 @@ class User implements IUser{
 			'.$_SESSION['acces_right'].' class.userID =
                         '.$this->userID.'';
 	}
-        public function showNews(){
+    public function showNews(){
                 $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("news");
 		$news = '<p>';
 		if(mysqli_num_rows($result) == 0) {
@@ -254,43 +255,43 @@ class User implements IUser{
 		$news = $news.'</p>';
 		return $news;
 	}
-        public function showLogged(){
+    public function showLogged(){
 		return 'Brak dostepu';
 	}
-        public function showAdmin($adminID){
+    public function showAdmin($adminID){
             return "Brak dostepu";
         }
-        public function showReader($readerID){
+    public function showReader($readerID){
             return "Brak dostepu";
         }
-        public function showRegistrationReader(){
+    public function showRegistrationReader(){
 		return 'Brak dostępu';
 	}
-        public function showRegistrationAdmin() {
+    public function showRegistrationAdmin() {
              return 'Brak dostępu';
         }
-        public function showAccount(){
+    public function showAccount(){
 		return 'Brak dostępu';
 	}
-        public function showAddBookForm() {
+    public function showAddBookForm() {
             return 'Brak dostepu';
         }
-        public function showAddNewsForm(){
+    public function showAddNewsForm(){
             return "Brak dostępu";
         }
-        public function showAllUsers() {
+    public function showAllUsers() {
             return 'Brak dostępu';
         }
-	public function showAllBooks() {
+    public function showAllBooks() {
             return 'Brak dostepu';
         }
-        public function showAllAdmins() {
+    public function showAllAdmins() {
             return 'Brak dostępu';
         }
-        public function showAllBorrows(){
+    public function showAllBorrows(){
             return 'Brak dostepu';
         }
-        public function showBook($bookID, $active = "disabled") {
+    public function showBook($bookID, $active = "disabled") {
             $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("books", 
                     array("books.*", "publisher_houses.publisher_house_name"),
                     array(array("publisher_houses", "publisher_houses.publisher_house_id", "books.book_publisher_house_id")),
@@ -335,7 +336,7 @@ class User implements IUser{
 					</form>
 				</p>';
         }
-        public function showBookLight($bookID) {
+    public function showBookLight($bookID) {
             $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("books", 
                     array("books.*", "publisher_houses.publisher_house_name"),
                     array(array("publisher_houses", "publisher_houses.publisher_house_id", "books.book_publisher_house_id")),
@@ -362,28 +363,37 @@ class User implements IUser{
 					Ilość stron: '.$row['book_nr_page'].'<br>
 				</p>';
         }
-        public function showBorrow($borrowID){
+    public function showBorrow($borrowID){
             return 'Brak dostepu';
         }
-        public function showMyBorrows(){
+    public function showMyBorrows(){
             return "Brak dostepu";
         }
-        public function addReader($login, $email, $name, $surname, $password1, $password2, $adres){
+    public function addReader($login, $email, $name, $surname, $password1, $password2, $adres){
 		return 'Brak dostępu';
 	}
-        public function addBook($isbn, $title, $publisher_house, $nr_page, $edition, $premiere, $number, $author) {
+    public function editReader() {
+        return "Brak dostępu";
+    }
+    public function addBook($isbn, $title, $publisher_house, $nr_page, $edition, $premiere, $number, $author) {
             return 'Brak dostepu';
         }
-        public function addAdmin($name, $surname, $password1, $password2, $email, $login) {
+    public function addAdmin($name, $surname, $password1, $password2, $email, $login) {
              return 'Brak dostępu';
         }
-        public function addNews($title, $text){
+    public function editAdmin() {
+        return "Brak dostępu";
+    }
+    public function addNews($title, $text){
             return "Brak dostępu";
         }
-        public function deleteNews($id){
+    public function editNews() {
+        return "Brak dostępu";
+    }
+    public function deleteNews($id){
             return "Brak dostępu";
         }
-        public function isActive($ID){
+    public function isActive($ID){
             $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("readers",
                     array("acces_right_name"),
                     array(array("acces_rights", "acces_rights.acces_right_id", "readers.reader_acces_right_id")),
@@ -394,83 +404,11 @@ class User implements IUser{
             else
                 return 0;
         }
-        public function orderBook($bookID) {
+    public function orderBook($bookID) {
             die("Błąd");
         }
-        public function getData($ID){
+    public function getData($ID){
 		return $this->Data;
 	}
-        
-        public function templateForm($name, $arrayDiv, $arrayForm, $arrayTable, $arrayFormInput, $arraySubmit, $arraySpan = null){
-            $form = '<div';
-            for($i = 0; $i < count($arrayDiv); $i++){
-                $form = $form.' '.$arrayDiv[$i][0].' '.$arrayDiv[$i][1].'"'.$arrayDiv[$i][2].'"';
-            }
-            $form = $form.'><p>'.$name.'</p>';
-            $form = $form.'<form';
-            for($i = 0; $i < count($arrayForm); $i++){
-                $form = $form.' '.$arrayForm[$i][0].' '.$arrayForm[$i][1].'"'.$arrayForm[$i][2].'"';
-            }
-            $form = $form.'>';
-            // "isbn" ""
-            $form = $form.'<table';
-            for($i = 0; $i < count($arrayTable); $i++){
-                $form = $form.' '.$arrayTable[$i][0].' '.$arrayTable[$i][1].'"'.$arrayTable[$i][2].'"';
-            }
-            $form = $form.'>';
-            for($i = 0; $i < count($arrayFormInput); $i++){
-                $form = $form.'<tr>';
-                $form = $form.'<td><input';
-                for($j = 0; $j < count($arrayFormInput[$i]); $j++){
-                    $form = $form.' '.$arrayFormInput[$i][$j][0].''.$arrayFormInput[$i][$j][1].'"'.$arrayFormInput[$i][$j][2].'"';
-                }  
-                if($arraySpan != null){
-                    $form = $form.'/>'.$arraySpan[$i].'</td>';
-                }
-                else{
-                    $form = $form.'/></td>';
-                }    
-                $form = $form.'</tr>';
-            }
-            $form = $form.'</table>';
-            $form = $form.'<input';
-            for($i = 0; $i < count($arraySubmit); $i++){
-                $form = $form.' '.$arraySubmit[$i][0].' '.$arraySubmit[$i][1].'"'.$arraySubmit[$i][2].'"';
-            }
-            $form = $form.'/>';
-            $form = $form.'</form></div>';
-            return $form;
-        }
-        public function templateTable($array, $arrayTable, $table, $tableStyle, $link = null, $join = null, $where = null){
-            $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit($table, null, $join, $where);
-            if(mysqli_num_rows($result) == 0) {
-		return 'Brak danych';
-            }
-            $return = '<div id="'.$tableStyle.'" align="center">
-                            <table>
-                                <tr>';
-            foreach ($array as $s){
-                $return = $return.'<td align="center"><input placeholder="'.$s.'" style="width: 60%;" type="text" id="'.$s.'">'.'</td>';
-            }
-            $return = $return.'</tr><tr>';
-            foreach ($array as $s){
-                $return = $return.'<td>'.$s.'</td>';
-            }
-            $return = $return.'</tr>';
-            while($row = mysqli_fetch_array($result)) {
-                if($link == null){
-                   $return = $return.'<tr>'.$row['reader_id'].'</tr>';
-                }
-                else{
-                    $return = $return.'<tr onClick="location.href=\'http://localhost/~dominik/Library/'.$link.'='.$row[0].'\'" />';
-                }
-		for($i = 0; $i< count($array); $i++){
-                    $return = $return.'<td>'.$row[$arrayTable[$i]].'</td>';
-                }
-                $return = $return.'<tr>';
-            }
-            $return = $return.'</table></div>';
-            return $return;
-        }
 }
 ?>
