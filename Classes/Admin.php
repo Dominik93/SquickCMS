@@ -21,16 +21,16 @@ class Admin extends User{
 		$userData = $this->getData($this->userID);
 		return '<div id="panelName">Panel użytkownika</div><p align="center">Witamy '.$userData['admin_name'].'!</p>
 			<ul>
-				<li><a href="profile.php">Twój profil</a></li>
-				<li><a href="add_news.php">Dodaj news</a></li>
-				<li><a href="registration_reader.php">Zarejestruj czytelnika</a></li>
-				<li><a href="registration_admin.php">Utwórz administratora</a></li>
-				<li><a href="manage_admins.php">Zarządzaj adminami</a></li>
-				<li><a href="manage_readers.php">Zarządzaj czytelnikami</a></li>
-				<li><a href="manage_books.php">Zarządzaj ksiażkami</a></li>
-				<li><a href="manage_borrows.php">Zarządaj wypożyczeniami</a></li>
-				<li><a href="logged.php">Lista zalogowanych</a></li>
-				<li><a href="logout.php">Wyloguj</a></li>
+				<li><a href="'.backToFuture().'Library/profile.php">Twój profil</a></li>
+				<li><a href="'.backToFuture().'Library/AdminAction/add_news.php">Dodaj news</a></li>
+				<li><a href="'.backToFuture().'Library/AdminAction/registration_reader.php">Zarejestruj czytelnika</a></li>
+				<li><a href="'.backToFuture().'Library/AdminAction/registration_admin.php">Utwórz administratora</a></li>
+				<li><a href="'.backToFuture().'Library/Manage/manage_admins.php">Zarządzaj adminami</a></li>
+				<li><a href="'.backToFuture().'Library/Manage/manage_readers.php">Zarządzaj czytelnikami</a></li>
+				<li><a href="'.backToFuture().'Library/Manage/manage_books.php">Zarządzaj ksiażkami</a></li>
+				<li><a href="'.backToFuture().'Library/Manage/manage_borrows.php">Zarządaj wypożyczeniami</a></li>
+				<li><a href="'.backToFuture().'Library/Manage/manage_sessions.php">Lista zalogowanych</a></li>
+				<li><a href="'.backToFuture().'Library/UserAction/logout.php">Wyloguj</a></li>
 			</ul>
 			session id = '.session_id().' logger = '.$_SESSION['logged'].' userid = '.$_SESSION['user_id'].' ip =
 			'.$_SESSION['ip'].' access = 
@@ -46,14 +46,14 @@ class Admin extends User{
 		}else{
 			while($row = mysqli_fetch_assoc($result)) {
 				$news = $news.$row['new_title'].' '.$row['new_date'].' '.$row['new_text'];
-				$news = $news.' <a href="news.php?id='.$row['new_id'].'">Usuń</a><br>';
+				$news = $news.' <a href="'.backToFuture().'Library/Menu/news.php?id='.$row['new_id'].'">Usuń</a><br>';
 			}	
                 }
 		$news = $news.'</p>';
 		return $news;
 	}
     public function showLogged(){
-        return '<p>'.$this->templateTable(array("Session ID", "IP", "User", "Logged", "Rights", "Last action"),
+        return '<p>'.templateTable($this->controller, array("Session ID", "IP", "User", "Logged", "Rights", "Last action"),
                                         array("session_id", "session_ip", "session_user", "session_logged", "session_acces_right", "session_last_action"),
                                         "sessions", "loggedTable", "" ).'</p>';
 	}
@@ -70,7 +70,7 @@ class Admin extends User{
 	}
     public function showRegistrationReader(){
 		return '<div id="registration" align="center">
-			<form action="registration_reader.php" method="post">
+			<form action="'.backToFuture().'Library/AdminAction/registration_reader.php" method="post">
 				<table>
                                         <tr>Dodaj czytelnika</tr>
 					<tr>
@@ -108,7 +108,7 @@ class Admin extends User{
 	}  
     public function showRegistrationAdmin() {
              return '<div id="registration" align="center">
-			<form action="registration_admin.php" method="post">
+			<form action="'.backToFuture().'Library/AdminAction/registration_admin.php" method="post">
 				<table>
 					<tr>Dodaj admina</tr>
 					<tr><td>Login:</td><td><input id="login" type="text" value="'.$_POST['login'].'" name="login" placeholder="Login" required/><span id="status_login"></span></td></tr>
@@ -124,7 +124,7 @@ class Admin extends User{
         }
     public function showAddBookForm() {
             return '<div id="add_book" align="center">
-		<form action="add_book.php" method="post">
+		<form action="'.backToFuture().'Library/AdminAction/add_book.php" method="post">
 			<table>
 				<tr> <td colspan = 2 align="center">Dodaj książke:</tf><tr>
 				<tr><td>ISBN:</td><td><input type="text" value="'.$_POST['isbn'].'" name="isbn" placeholder="ISBN" required/></td></tr>
@@ -143,7 +143,7 @@ class Admin extends User{
     public function showAddNewsForm(){
        return '
             <div id="news" align="center">
-                <form action="add_news.php" method="post">
+                <form action="'.backToFuture().'Library/AdminAction/add_news.php" method="post">
                     <table>
 			<tr>
                             <td colspan = 2 align="center">Dodaj news:</td>
@@ -203,12 +203,12 @@ class Admin extends User{
         return '<p>'.templateTable($this->controller, array("ID", "Login", "Email", "Imie", "Nazwisko"),
                                         array("reader_id", "reader_login", "reader_email", "reader_name", "reader_surname"),
                                         "readers", "usersTable", "profile_readers.php?id" ).
-                '<p><a href="registration_reader.php">Dodaj</a></p>';
+                '<p><a href="'.backToFuture().'Library/AdminAction/registration_reader.php">Dodaj</a></p>';
         }
     public function showAllBorrows(){
         return '<p>'.templateTable($this->controller, array('ID','ID książki','ID czytelnika', 'Data wypożyczenia', 'Data zwrotu'),
                                     array('borrow_id','borrow_book_id','borrow_reader_id', 'borrow_date_borrow', 'borrow_return'),
-                                    "borrows", "borrowsTable", "borrow.php?id");
+                                    "borrows", "borrowsTable", backToFuture().'Library/AdminAction/borrow.php?id');
     }
     public function showAllBooks() {
             $books = "";
@@ -248,15 +248,15 @@ class Admin extends User{
                                                     . ' <td>'.$row['book_number'].'</td>'
                                                 . ' </tr>';
 			}
-			$books = $books.'</table><p><a href="add_book.php">Dodaj</a></p></div>';
+			$books = $books.'</table><p><a href="'.backToFuture().'Library/AdminAction/add_book.php">Dodaj</a></p></div>';
 		}     
             return $books;     
         }
     public function showAllAdmins(){
         return '<p>'.templateTable($this->controller, array("ID", "Login", "Email", "Imie", "Nazwisko"),
                                     array("admin_id", "admin_login", "admin_email", "admin_name", "admin_surname"),
-                                    "admins", "usersTable", "profile_admins.php?id").
-                '<p><a href="registration_admin.php">Dodaj</a></p>';
+                                    "admins", "usersTable", backToFuture().'Library/AdminAction/profile_admins.php?id').
+                '<p><a href="'.backToFuture().'Library/AdminAction/registration_admin.php">Dodaj</a></p>';
         }
     public function addAdmin($name, $surname, $password1, $password2, $email, $login) {
             $name = $this->controller->clear($name);
@@ -442,7 +442,7 @@ class Admin extends User{
                     $this->controller->insertTableRecordValue("readers", 
                             array("reader_name", "reader_surname", "reader_login", "reader_password", "reader_email", "reader_address", "reader_active_account", "reader_acces_right_id"),
                             array($name, $surname, $login, Codepass($password1), $email, $adres, date('Y-m-d'), $rowAR['acces_right_id']));
-                    return '<p>Czytelnik Został poprawnie zarejestrowany! Możesz się teraz wrócić na <a href="main_page.php">stronę główną</a>.</p>';
+                    return '<p>Czytelnik Został poprawnie zarejestrowany! Możesz się teraz wrócić na <a href="'.backToFuture().'Library/index.php">stronę główną</a>.</p>';
 		}
 	}
     public function deleteNews($id){

@@ -25,9 +25,9 @@ class Reader extends User{
 				Witamy '.$userData['reader_name'].'!
 			</p>
 			<ul>
-				<li><a href="profile.php">Twój profil</a></li>
-				<li><a href="my_borrows.php">Twoje wypożyczenia</a></li>
-				<li><a href="logout.php">Wyloguj</a></li>
+				<li><a href="'.backToFuture().'Library/profile.php">Twój profil</a></li>
+				<li><a href="'.backToFuture().'Library/UserAction/my_borrows.php">Twoje wypożyczenia</a></li>
+				<li><a href="'.backToFuture().'Library/UserAction/logout.php">Wyloguj</a></li>
 			</ul>
                         session id =
                         '.session_id().' logger = 

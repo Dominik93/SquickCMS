@@ -1,6 +1,6 @@
 <?php
-	include "layout.php";
-	include "config.php";	
+	
+	include "../config.php";	
 	
     function Content(){
         $user = unserialize($_SESSION['user']);
@@ -25,7 +25,7 @@
                            var readerID = <?php echo json_encode($_GET); ?>;
                            $.ajax({
 				type: "POST",
-				url: "ajax.php",
+				url: "../ajax.php",
 				data: "deleteReader="+ readerID['id'],
 				success: function(msg){
                                     $("#content").ajaxComplete(function(event, request){
@@ -46,7 +46,7 @@
                            var readerID = <?php echo json_encode($_GET); ?>;
                            $.ajax({
 				type: "POST",
-				url: "ajax.php",
+				url: "../ajax.php",
 				data: "extendAccount="+ readerID['id'],
 				success: function(msg){
                                     $("#content").ajaxComplete(function(event, request){

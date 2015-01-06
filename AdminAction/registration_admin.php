@@ -1,23 +1,18 @@
 <?php
-
-	include "config.php";
-	include "layout.php";
+	include "../config.php";
+	
 	
 	function Content(){
             $user = unserialize($_SESSION['user']);
-            if(isset($_POST['login'])) {
-                echo '<div id="content">'.$user->addReader($_POST['login'],
-					$_POST['email'],
-					$_POST['name'],
-					$_POST['surname'],
-					$_POST['password1'],
-					$_POST['password2'],
-					$_POST['adres']).'</div>';			
+            echo '<div id="content">';
+            echo $user->showRegistrationAdmin();
+            if(isset($_POST['login'])){
+                echo $user->addAdmin($_POST['name'], $_POST['surname'], $_POST['password1'], $_POST['password2'], $_POST['email'], $_POST['login']);
             }
-            else{
-                echo '<div id="content">'.$user->showRegistrationReader().'</div>';
-            }
+            
+            echo '</div>';
 	}
+
 ?>
 
 <!DOCTYPE html>
@@ -36,7 +31,6 @@
 				document.getElementById("login").value != "" &&
 				document.getElementById("password1").value != "" &&
 				document.getElementById("password2").value != "" &&
-				document.getElementById("adres").value != "" &&
 				document.getElementById("email").value != "" 
 				) return true;
 			return false;
@@ -46,7 +40,7 @@
                     var email = $("#email").val();
                     if(email.length > 4){
                     $("#status_email").html('Sprawdzanie dostępności.');
-                    $("#status_email").load("ajax.php",{ email:email },
+                    $("#status_email").load("../ajax.php",{ email:email },
                                             function(responseTxt,statusTxt,xhr){
                                                 if(statusTxt=="success"){
                                                     if(responseTxt == "OK"){
@@ -79,7 +73,7 @@
 				var login = $("#login").val();
 				if(login.length > 4){
 					$("#status_login").html('Sprawdzanie dostępności.');
-                                        $("#status_login").load("ajax.php",{ login: login },
+                                        $("#status_login").load("../ajax.php",{ login: login },
                                             function(responseTxt,statusTxt,xhr){
                                                 if(statusTxt=="success"){
                                                     if(responseTxt == "OK"){

@@ -29,7 +29,59 @@
                         if(imie == "") imie = "%";
                         var nazwisko = $("#Nazwisko").val();
                         if(nazwisko == "") nazwisko = "%";
-                        $("#content").load("ajax.php", {reader:1, ID: id, L : login, E: email, I: imie, N: nazwisko},function(responseTxt,statusTxt,xhr){});
+                        $("#content").load("../ajax.php", {reader:1, ID: id, L : login, E: email, I: imie, N: nazwisko},function(responseTxt,statusTxt,xhr){});
+                    });
+                    $("#Login").change(function(){
+                        var id = $("#ID").val();
+                        if(id == "") id = "%";
+                        var login = $("#Login").val();
+                        if(login == "") login = "%";
+                        var email = $("#Email").val();
+                        if(email == "") email = "%";
+                        var imie = $("#Imie").val();
+                        if(imie == "") imie = "%";
+                        var nazwisko = $("#Nazwisko").val();
+                        if(nazwisko == "") nazwisko = "%";
+                        $("#content").load("../ajax.php", {reader:1, ID: id, L : login, E: email, I: imie, N: nazwisko},function(responseTxt,statusTxt,xhr){});
+                    });
+                    $("#Email").change(function(){
+                        var id = $("#ID").val();
+                        if(id == "") id = "%";
+                        var login = $("#Login").val();
+                        if(login == "") login = "%";
+                        var email = $("#Email").val();
+                        if(email == "") email = "%";
+                        var imie = $("#Imie").val();
+                        if(imie == "") imie = "%";
+                        var nazwisko = $("#Nazwisko").val();
+                        if(nazwisko == "") nazwisko = "%";
+                        $("#content").load("../ajax.php", {reader:1, ID: id, L : login, E: email, I: imie, N: nazwisko},function(responseTxt,statusTxt,xhr){});
+                    });
+                    $("#Imie").change(function(){
+                        var id = $("#ID").val();
+                        if(id == "") id = "%";
+                        var login = $("#Login").val();
+                        if(login == "") login = "%";
+                        var email = $("#Email").val();
+                        if(email == "") email = "%";
+                        var imie = $("#Imie").val();
+                        if(imie == "") imie = "%";
+                        var nazwisko = $("#Nazwisko").val();
+                        if(nazwisko == "") nazwisko = "%";
+                        $("#content").load("../ajax.php", {reader:1, ID: id, L : login, E: email, I: imie, N: nazwisko},function(responseTxt,statusTxt,xhr){});
+                    });
+                    $("#Nazwisko").change(function(){
+                        var id = $("#ID").val();
+                        if(id == "") id = "%";
+                        var login = $("#Login").val();
+                        if(login == "") login = "%";
+                        var email = $("#Email").val();
+                        if(email == "") email = "%";
+                        var imie = $("#Imie").val();
+                        if(imie == "") imie = "%";
+                        var nazwisko = $("#Nazwisko").val();
+                        if(nazwisko == "") nazwisko = "%";
+                        $("#content").load("../ajax.php", {reader:1, ID: id, L : login, E: email, I: imie, N: nazwisko},function(responseTxt,statusTxt,xhr){});
                     });
 		});
                 </script>

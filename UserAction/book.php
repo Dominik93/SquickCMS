@@ -1,24 +1,17 @@
 <?php
-	include "layout.php";
-	include "config.php";	
+
+	include "../config.php";	
+	
 	
 	function Content(){
             $user = unserialize($_SESSION['user']);
-            if(isset($_POST['title'])){
-                echo '
-                    <div id="content">
-                    '.$user->addNews($_POST['title'],$_POST['text']).'
-                    </div>
-                ';
+            if($_POST['orderHidden'] == 1){
+                echo '<div id="content">'.$user->orderBook($_GET['book']).'</div>';
             }
             else{
-                echo '
-                    <div id="content">
-                    '.$user->showAddNewsForm().'
-                    </div>
-                ';
+                echo '<div id="content">'.$user->showBook($_GET['book']).'</div>';
             }
-	}
+        }
 ?>
 
 <!DOCTYPE html>

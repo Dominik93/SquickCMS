@@ -1,7 +1,7 @@
 <?php
 
 include "config.php";	
-include "layout.php";
+
 
 function Content(){
     $user = unserialize($_SESSION['user']);

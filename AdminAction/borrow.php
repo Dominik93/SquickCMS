@@ -1,10 +1,6 @@
 <?php
 
-	include "config.php";	
-	include "layout.php";
-        
-        
-        
+	include "../config.php";
 	function Content(){
 		$user = unserialize($_SESSION['user']);
                 echo '<div id="content">'.$user->showBorrow($_GET['id']).'</div>';
@@ -25,7 +21,7 @@
                         var borrowID = <?php echo json_encode($_GET); ?>;
                         $.ajax({
                             type: "POST",
-                            url: "ajax.php",
+                            url: "../ajax.php",
                             data: "delete="+borrowID['id'],
                             success: function(msg){
 				$("#content").ajaxComplete(function(event, request){
@@ -44,7 +40,7 @@
                         var borrowID = <?php echo json_encode($_GET); ?>;
                         $.ajax({
                             type: "POST",
-                            url: "ajax.php",
+                            url: ".../ajax.php",
                             data: "receive="+borrowID['id'],
                             success: function(msg){
 				$("#content").ajaxComplete(function(event, request){

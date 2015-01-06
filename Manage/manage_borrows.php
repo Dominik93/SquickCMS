@@ -29,7 +29,7 @@
                         if(dateW == "") dateW = "%";
                         var dateZ = $("#Datazwrotu").val();
                         if(dateZ == "") dateZ = "%";
-                        $("#content").load("ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
+                        $("#content").load("../ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
                     });
                     $("#IDksiążki").change(function(){
                         var id = $("#ID").val();
@@ -42,7 +42,7 @@
                         if(dateW == "") dateW = "%";
                         var dateZ = $("#Datazwrotu").val();
                         if(dateZ == "") dateZ = "%";
-                        $("#content").load("ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
+                        $("#content").load("../ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
                     });
                     $("#IDczytelnika").change(function(){
                         var id = $("#ID").val();
@@ -55,7 +55,7 @@
                         if(dateW == "") dateW = "%";
                         var dateZ = $("#Datazwrotu").val();
                         if(dateZ == "") dateZ = "%";
-                        $("#content").load("ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
+                        $("#content").load("../ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
                     });
                     $("#Datawypożyczenia").change(function(){
                         var id = $("#ID").val();
@@ -68,7 +68,7 @@
                         if(dateW == "") dateW = "%";
                         var dateZ = $("#Datazwrotu").val();
                         if(dateZ == "") dateZ = "%";
-                        $("#content").load("ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
+                        $("#content").load("../ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
                     });
                     $("#Datazwrotu").change(function(){
                         var id = $("#ID").val();
@@ -81,7 +81,7 @@
                         if(dateW == "") dateW = "%";
                         var dateZ = $("#Datazwrotu").val();
                         if(dateZ == "") dateZ = "%";
-                        $("#content").load("ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
+                        $("#content").load("../ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
                     });
 		});
                 </script>

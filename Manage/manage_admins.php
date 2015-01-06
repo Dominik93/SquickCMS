@@ -47,7 +47,7 @@
                         if(imie == "") imie = "%";
                         var nazwisko = $("#Nazwisko").val();
                         if(nazwisko == "") nazwisko = "%";
-                        $("#content").load("ajax.php", {admin:1, ID: id, L : login, E: email, I: imie, N: nazwisko},function(responseTxt,statusTxt,xhr){});
+                        $("#content").load("../ajax.php", {admin:1, ID: id, L : login, E: email, I: imie, N: nazwisko},function(responseTxt,statusTxt,xhr){});
                     });
 		});
                 </script>

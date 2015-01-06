@@ -1,17 +1,18 @@
 <?php
 
-	include 'config.php';
-
+	include "../config.php";
+	
+	session_start();
+	$_SESSION['id'] = session_id();
+	$_SESSION['logged'] = false;
+	$_SESSION['user_id'] = -1;
+	$_SESSION['acces_right'] = "user";
+	$_SESSION['ip'] = null;
+	$_SESSION['user'] = serialize(new User(new Controller()));
+	
 	function Content(){
 		$user = unserialize($_SESSION['user']);
-		
-                if(isset($_POST['login'])){
-                    echo '<div id="content">'.$user->login($_POST['login'], $_POST['password']).'</div>';
-                }
-                else {
-                    echo '<div id="content">'.$user->showLogin().'</div>';
-                }
-                
+		echo '<div id="content">'.$user->logout().'</div>';
 	}
 ?>
 

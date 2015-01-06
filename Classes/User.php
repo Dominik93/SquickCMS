@@ -27,7 +27,7 @@ class User implements IUser{
 	}
 	public function showSearch(){
             return '<div id="search" align="center">
-		<form action="search.php" method="post">
+		<form action="'.backToFuture().'Library/Menu/search.php" method="post">
 			<table>
 				<tr> <td colspan = 2 align="center">Szukaj książki:</td><tr>
 				<tr><td>ISBN:</td><td><input type="text" value="'.$_POST['isbn'].'" name="isbn" placeholder="ISBN"/></td></tr>
@@ -55,13 +55,13 @@ class User implements IUser{
 				</p>';
 	}
         public function showLogin(){
-            return $this->templateForm("Logowanie",
+            return templateForm("Logowanie",
                     array(
                         array("id", "=", "login"),
                         array("align", "=", "center")
                     ),
                     array(
-                        array("action", "=", "login.php"),
+                        array("action", "=", backToFuture().'Library/UserAction/login.php'),
                         array("method", "=", "post")
                     ),
                     array(),
@@ -89,7 +89,7 @@ class User implements IUser{
 	}
         public function logout(){
             $this->controller->deleteTableWhere("sessions", array(array("session_id","=", session_id(), "")));
-            return '<p>Zostałeś wylogowany. Przejdz na <a href="index.php">strone główną</a>.</p>';
+            return '<p>Zostałeś wylogowany. Przejdz na <a href="'.backToFuture().'Library/index.php">strone główną</a>.</p>';
 	}
         public function login($login, $password) {
             $login = $this->controller->clear($login);
@@ -105,7 +105,7 @@ class User implements IUser{
                 $this->controller->insertTableRecordValue("sessions", 
                         array("session_id", "session_ip", "session_user", "session_logged", "session_acces_right"),
                         array(session_id(), $_SERVER['REMOTE_ADDR'], $row['admin_id'], 1, "admin" ));
-                return '<p>Witaj jesteś adminem, zostałeś poprawnie zalogowany! Możesz teraz przejść na <a href="index.php">stronę główną</a>.</p>';
+                return '<p>Witaj jesteś adminem, zostałeś poprawnie zalogowany! Możesz teraz przejść na <a href="'.backToFuture().'Library/index.php">stronę główną</a>.</p>';
             }
             else{
 		$result = $this->controller->validationLoginReader($login, $password);
@@ -119,7 +119,7 @@ class User implements IUser{
                 $this->controller->insertTableRecordValue("sessions", 
                         array("session_id", "session_ip", "session_user", "session_logged", "session_acces_right"),
                         array(session_id(), $_SERVER['REMOTE_ADDR'], $row['reader_id'], 1, "reader" ));
-                return '<p>Witaj jesteś czytelnikiem, zostałeś poprawnie zalogowany! Możesz teraz przejść na <a href="index.php">stronę główną</a>.</p>';
+                return '<p>Witaj jesteś czytelnikiem, zostałeś poprawnie zalogowany! Możesz teraz przejść na <a href="'.backToFuture().'Library/index.php">stronę główną</a>.</p>';
 		}
                 else{
                     return '<p>Podany login i/lub hasło jest nieprawidłowe.</p>';
@@ -191,7 +191,7 @@ class User implements IUser{
 							Wydanie: '.$row['book_edition'].'<br>
 							Rok wydania: '.$row['book_premiere'].'<br>
 							Ilość sztuk: '.$row['book_number'].'<br>
-							<a href="book.php?book='.$row['book_id'].'">Przejdź do książki</a>
+							<a href="'.backToFuture().'Library/UserAction/book.php?book='.$row['book_id'].'">Przejdź do książki</a>
 						</p>';
                         }
                 }
@@ -230,7 +230,7 @@ class User implements IUser{
 					Nie jesteś zalogowany!
 				</p>
 				<ul>
-					<li><a href="login.php">Zaloguj się</a></li>
+					<li><a href="'.  backToFuture().'Library/UserAction/login.php">Zaloguj się</a></li>
 				</ul>
 			session id =
                         '.session_id().' logger = 
@@ -256,7 +256,7 @@ class User implements IUser{
 		return $news;
 	}
         public function showLogged(){
-		return 'Brak dostepu';
+            return 'Brak dostepu';
 	}
         public function showAdmin($adminID){
             return "Brak dostepu";
@@ -265,13 +265,13 @@ class User implements IUser{
             return "Brak dostepu";
         }
         public function showRegistrationReader(){
-		return 'Brak dostępu';
+            return 'Brak dostępu';
 	}
         public function showRegistrationAdmin() {
-             return 'Brak dostępu';
+            return 'Brak dostępu';
         }
         public function showAccount(){
-		return 'Brak dostępu';
+            return 'Brak dostępu';
 	}
         public function showAddBookForm() {
             return 'Brak dostepu';
@@ -330,7 +330,7 @@ class User implements IUser{
 					Wydanie: '.$row['book_edition'].'<br>
 					Ilość stron: '.$row['book_nr_page'].'<br>
 					Ilość dostępnych egzemplarzy: '.$freeBook.'<br>
-					<form align="center" action="book.php?book='.$row['book_id'].'" method="post">
+					<form align="center" action="'.backToFuture().'/Library/UserAction/book.php?book='.$row['book_id'].'" method="post">
                                         <p><input type="hidden" name="orderHidden" value="1" />		
                                         <input type="submit" name="order" '.$active.' value="Zamów">
 					</form>
@@ -370,7 +370,7 @@ class User implements IUser{
             return "Brak dostepu";
         }
         public function addReader($login, $email, $name, $surname, $password1, $password2, $adres){
-		return 'Brak dostępu';
+            return 'Brak dostępu';
 	}
         public function addBook($isbn, $title, $publisher_house, $nr_page, $edition, $premiere, $number, $author) {
             return 'Brak dostepu';
@@ -401,77 +401,5 @@ class User implements IUser{
         public function getData($ID){
 		return $this->Data;
 	}
-        
-        public function templateForm($name, $arrayDiv, $arrayForm, $arrayTable, $arrayFormInput, $arraySubmit, $arraySpan = null){
-            $form = '<div';
-            for($i = 0; $i < count($arrayDiv); $i++){
-                $form = $form.' '.$arrayDiv[$i][0].' '.$arrayDiv[$i][1].'"'.$arrayDiv[$i][2].'"';
-            }
-            $form = $form.'><p>'.$name.'</p>';
-            $form = $form.'<form';
-            for($i = 0; $i < count($arrayForm); $i++){
-                $form = $form.' '.$arrayForm[$i][0].' '.$arrayForm[$i][1].'"'.$arrayForm[$i][2].'"';
-            }
-            $form = $form.'>';
-            // "isbn" ""
-            $form = $form.'<table';
-            for($i = 0; $i < count($arrayTable); $i++){
-                $form = $form.' '.$arrayTable[$i][0].' '.$arrayTable[$i][1].'"'.$arrayTable[$i][2].'"';
-            }
-            $form = $form.'>';
-            for($i = 0; $i < count($arrayFormInput); $i++){
-                $form = $form.'<tr>';
-                $form = $form.'<td><input';
-                for($j = 0; $j < count($arrayFormInput[$i]); $j++){
-                    $form = $form.' '.$arrayFormInput[$i][$j][0].''.$arrayFormInput[$i][$j][1].'"'.$arrayFormInput[$i][$j][2].'"';
-                }  
-                if($arraySpan != null){
-                    $form = $form.'/>'.$arraySpan[$i].'</td>';
-                }
-                else{
-                    $form = $form.'/></td>';
-                }    
-                $form = $form.'</tr>';
-            }
-            $form = $form.'</table>';
-            $form = $form.'<input';
-            for($i = 0; $i < count($arraySubmit); $i++){
-                $form = $form.' '.$arraySubmit[$i][0].' '.$arraySubmit[$i][1].'"'.$arraySubmit[$i][2].'"';
-            }
-            $form = $form.'/>';
-            $form = $form.'</form></div>';
-            return $form;
-        }
-        public function templateTable($array, $arrayTable, $table, $tableStyle, $link = null, $join = null, $where = null){
-            $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit($table, null, $join, $where);
-            if(mysqli_num_rows($result) == 0) {
-		return 'Brak danych';
-            }
-            $return = '<div id="'.$tableStyle.'" align="center">
-                            <table>
-                                <tr>';
-            foreach ($array as $s){
-                $return = $return.'<td align="center"><input placeholder="'.$s.'" style="width: 60%;" type="text" id="'.$s.'">'.'</td>';
-            }
-            $return = $return.'</tr><tr>';
-            foreach ($array as $s){
-                $return = $return.'<td>'.$s.'</td>';
-            }
-            $return = $return.'</tr>';
-            while($row = mysqli_fetch_array($result)) {
-                if($link == null){
-                   $return = $return.'<tr>'.$row['reader_id'].'</tr>';
-                }
-                else{
-                    $return = $return.'<tr onClick="location.href=\'http://localhost/~dominik/Library/'.$link.'='.$row[0].'\'" />';
-                }
-		for($i = 0; $i< count($array); $i++){
-                    $return = $return.'<td>'.$row[$arrayTable[$i]].'</td>';
-                }
-                $return = $return.'<tr>';
-            }
-            $return = $return.'</table></div>';
-            return $return;
-        }
 }
 ?>
