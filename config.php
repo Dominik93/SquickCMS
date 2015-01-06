@@ -1,8 +1,24 @@
 <?php
-include "controller.php";
-include "special_user.php";
 
+function backToFuture(){
+    $path = getcwd();
+    $future= "";
+    $pathExplode = explode("/", $path);
+    $i = count($pathExplode) - 1;
+    
+    while($pathExplode[$i] != "public_html"){
+        array_pop($pathExplode);
+        $future.="../";
+        $i--;
+    }
+    $path = implode("/", $pathExplode);
+    return $future;
+}
 
+include backToFuture()."Library/Layout/layout.php";
+include backToFuture()."Library/Classes/Controller.php";
+include backToFuture()."Library/Classes/Admin.php";
+include backToFuture()."Library/Classes/Reader.php";
 
 function Codepass($password) {
     return sha1(md5($password).'#!%Rgd64');
@@ -58,7 +74,7 @@ function templateTable($controller, $array, $arrayTable, $table, $tableStyle, $l
         }
 
 session_start();
-CreateOwner();
+//CreateOwner();
 if(!isset($_SESSION['logged'])) {
 	$_SESSION['id'] = session_id();
         $_SESSION['logged'] = false;

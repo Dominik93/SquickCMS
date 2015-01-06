@@ -1,6 +1,5 @@
 <?php
     include "../config.php";
-    setStartLocation();
     function Content(){
 	$user = unserialize($_SESSION['user']);
 	echo '<div id="content">'.$user->showContact().'</div>';
@@ -11,7 +10,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html" charset="utf-8">
-		<link rel="stylesheet" type="text/css" href="Layout/layout.css">
+		<link rel="stylesheet" type="text/css" href="<?php echo backToFuture() ?>Library/Layout/layout.css">
 		<title>Biblioteka PAI</title>
 	</head>
 	<body>
