@@ -18,31 +18,16 @@ class Backup{
         $this->password = $password;
         $this->tables = array("acces_rights", "admins", "authors", "authors_books", "books", "borrows", "logs_readers", "news", "publisher_houses", "readers", "sessions");
         $this->views = array();
-        
     }
-    
     public function toString(){
         return 'path= '.$this->path.' database= '.$this->dataBase.' username= '.$this->userName;
     }
-
-    /*
-     * walic event shedule zróbny crona !
-     */
-    public function setCron($path){
-         $exec = '59 23 01 * * root /usr/bin/php '.$path.'/backup.php';
-         return $exec;
-    }
-    
     /*
      * Metoda zwraca string który należy wprowadzić do zapytania mysqli
      * zapytanie stowrzy event backup który co interwał będzie tworzył backup
      * jezeli nie wprowadzimy listy tabel automatycznie przeprowadzi backup wszystkich
-     * 
-     * !!!!
-     * trzeba dopisać zeby tworzył katalog z datą, za ciula tego nie moge ogarnąć żeby mysql sam to robił
-     * i jeszcze to coś nie zwraca struktury tabeli tylko same dane sic!
      */
-    public function createEventBackup($interval, $arrayTable = null){
+    public function createEventBackup($interval = "1 MONTH", $arrayTable = null){
         if($arrayTable == null){
             $arrayTable = $this->arrayTable;
         }
@@ -55,8 +40,7 @@ class Backup{
         for($i = 0; $i < count($arrayTable); $i++){
             $query = $query.'SELECT * INTO OUTFILE "'.$this->path.$arrayTable[$i].'.sql" FROM '.$this->dataBase.'.'.$arrayTable[$i].'; ';
         }   
-        $query = $query.'
-            END';
+        $query = $query.'END';
         return $query;
     }
     /*
@@ -68,12 +52,25 @@ class Backup{
         return $query;
     }
     /*
+     * Metoda odzyskująca baze dancyh
+     * zwraca string który jest zapytaniem sql
+     */
+    public function recoverLast(){
+        $query = "";
+        if($handle = opendir($this->path)){
+            while (false !== ($file = readdir($handle))){
+		if ($file != "." && $file != ".."){
+                    $query = $query.fread(fopen($file, "r"), filesize($file));
+		}
+            }
+            closedir($handle);
+	}
+        return $query;
+    }
+    /*
      * Metoda robiąca backup na rządanie,
      * zwraca true jeżeli backup się powiódł
      * zwraca false jeżeli backup się nie udał
-     * 
-     * !!!
-     * w teorii exec jest poprawnie napisany, ale w praktyce nie działa
      */
     public function doBackup(){
         $filename = $this->path.'database_backup.sql';
@@ -88,22 +85,8 @@ class Backup{
         }
     }
     /*
-     * Metoda odzyskująca baze dancyh
-     * zwraca string który jest zapytaniem sql
+     * medota recoverująca baze z poleceania mysqldump
      */
-    public function recoverLast($date){
-        $query = "";
-        if($handle = opendir($this->path)){
-            while (false !== ($file = readdir($handle))){
-		if ($file != "." && $file != ".."){
-                    $query = $query.fread(fopen($file, "r"), filesize($file));
-		}
-            }
-            closedir($handle);
-	}
-        return $query;
-    }
-    
     public function recoverDatabase($date){
         $exec ='mysql --host='.$this->dataBase.' -u '.$this->userName .' -p < '.$this->path.$date.'/database_backup.sql';
         echo $exec;
@@ -116,14 +99,12 @@ class Backup{
         }
         
     }
-    
     /*
      * jeżeli to cholerstwo myslqdump nie będzie działac to tu jest coś zamiast tego
-     * zapisuje to do pliku 
+     * zapisuje to do pliku cała strukture tabeli wraz z wartościami w nich
      */
     public function dump(){
         $con = mysqli_connect ( "localhost", $this->userName, $this->password, $this->dataBase );
-        // cycle through the tables
         foreach ( $this->tables as $table ) {
             $result = mysqli_query ( $con, "SELECT * FROM `$table`");
             $num_fields = mysqli_num_fields ( $result );
@@ -175,6 +156,7 @@ class Backup{
             $row2 = mysqli_fetch_array ( mysqli_query ( $con, "SHOW CREATE TABLE `$view`" ) );
             $return .= "\n\n" . $row2 [1] . ";\n\n";
         }
+        mysqli_close($con);
         $file = $this->path.'backup_'.date("Y_m_d").'.sql';
         $fp = fopen($file, "a");
         flock($fp, 2);
@@ -183,11 +165,14 @@ class Backup{
         fclose($fp); 
         return $return; 
     }
-    
+    /*
+     * metoda wczytująca backup stworzony metodą dump
+     */
     public function recoverDataBase($date){
-        $query = "";
-        $query = $query.fread(fopen($this->path.'backup_'.$date.'.sql', "r"), filesize($this->path.'backup_'.$date.'.sql'));
-        return $query;
+        $query = fread(fopen($this->path.'backup_'.$date.'.sql', "r"), filesize($this->path.'backup_'.$date.'.sql'));
+        $con = mysqli_connect ( "localhost", $this->userName, $this->password, $this->dataBase );
+        mysqli_query($con, $query) or die(mysqli_error($con));
+        mysqli_close($con);
     }
 }
 
