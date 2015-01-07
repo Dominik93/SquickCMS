@@ -61,14 +61,12 @@ class Controller{
                 $query = $query.'JOIN '.$arrayJ[$i][0].' ON '.$arrayJ[$i][1].' = '.$arrayJ[$i][2].' ';
             }
         }
-        
         if($arrayWh != null){
             $query = $query.' WHERE ';
             for($i = 0; $i< count($arrayWh); $i++){
                 $query = $query.' ('.$arrayWh[$i][0].' '.$arrayWh[$i][1].' "'.$arrayWh[$i][2].'") '.$arrayWh[$i][3];
             }
         }
-        
         if($groupBy != null){
             $query = $query.' GROUP BY '.$groupBy;
         }

@@ -25,7 +25,7 @@ class Reader extends User{
 				Witamy '.$userData['reader_name'].'!
 			</p>
 			<ul>
-				<li><a href="'.backToFuture().'Library/profile.php">Twój profil</a></li>
+				<li><a href="'.backToFuture().'Library/UserAction/profile.php">Twój profil</a></li>
 				<li><a href="'.backToFuture().'Library/UserAction/my_borrows.php">Twoje wypożyczenia</a></li>
 				<li><a href="'.backToFuture().'Library/UserAction/logout.php">Wyloguj</a></li>
 			</ul>

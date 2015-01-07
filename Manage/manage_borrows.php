@@ -18,70 +18,70 @@
                 <script type="text/javascript">
                
                 $(document).ready(function(){
-                    $("#ID").change(function(){
-                        var id = $("#ID").val();
+                    $("#id").change(function(){
+                        var id = $("#id").val();
                         if(id == "") id = "%";
-                        var idK = $("#IDksiążki").val();
+                        var idK = $("#id_book").val();
                         if(idK == "") idK = "%";
-                        var idC = $("#IDczytelnika").val();
+                        var idC = $("#id_reader").val();
                         if(idC == "") idC = "%";
-                        var dateW = $("#Datawypożyczenia").val();
+                        var dateW = $("#date_borrow").val();
                         if(dateW == "") dateW = "%";
-                        var dateZ = $("#Datazwrotu").val();
+                        var dateZ = $("#date_return").val();
                         if(dateZ == "") dateZ = "%";
-                        $("#content").load("../ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
+                        $("#borrowsTable").load("../ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
                     });
-                    $("#IDksiążki").change(function(){
-                        var id = $("#ID").val();
+                    $("#id_book").change(function(){
+                        var id = $("#id").val();
                         if(id == "") id = "%";
-                        var idK = $("#IDksiążki").val();
+                        var idK = $("#id_book").val();
                         if(idK == "") idK = "%";
-                        var idC = $("#IDczytelnika").val();
+                        var idC = $("#id_reader").val();
                         if(idC == "") idC = "%";
-                        var dateW = $("#Datawypożyczenia").val();
+                        var dateW = $("#date_borrow").val();
                         if(dateW == "") dateW = "%";
-                        var dateZ = $("#Datazwrotu").val();
+                        var dateZ = $("#date_return").val();
                         if(dateZ == "") dateZ = "%";
-                        $("#content").load("../ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
+                        $("#borrowsTable").load("../ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
                     });
-                    $("#IDczytelnika").change(function(){
-                        var id = $("#ID").val();
+                    $("#id_reader").change(function(){
+                        var id = $("#id").val();
                         if(id == "") id = "%";
-                        var idK = $("#IDksiążki").val();
+                        var idK = $("#id_book").val();
                         if(idK == "") idK = "%";
-                        var idC = $("#IDczytelnika").val();
+                        var idC = $("#id_reader").val();
                         if(idC == "") idC = "%";
-                        var dateW = $("#Datawypożyczenia").val();
+                        var dateW = $("#date_borrow").val();
                         if(dateW == "") dateW = "%";
-                        var dateZ = $("#Datazwrotu").val();
+                        var dateZ = $("#date_return").val();
                         if(dateZ == "") dateZ = "%";
-                        $("#content").load("../ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
+                        $("#borrowsTable").load("../ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
                     });
-                    $("#Datawypożyczenia").change(function(){
-                        var id = $("#ID").val();
+                    $("#date_borrow").change(function(){
+                        var id = $("#id").val();
                         if(id == "") id = "%";
-                        var idK = $("#IDksiążki").val();
+                        var idK = $("#id_book").val();
                         if(idK == "") idK = "%";
-                        var idC = $("#IDczytelnika").val();
+                        var idC = $("#id_reader").val();
                         if(idC == "") idC = "%";
-                        var dateW = $("#Datawypożyczenia").val();
+                        var dateW = $("#date_borrow").val();
                         if(dateW == "") dateW = "%";
-                        var dateZ = $("#Datazwrotu").val();
+                        var dateZ = $("#date_return").val();
                         if(dateZ == "") dateZ = "%";
-                        $("#content").load("../ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
+                        $("#borrowsTable").load("../ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
                     });
-                    $("#Datazwrotu").change(function(){
-                        var id = $("#ID").val();
+                    $("#date_return").change(function(){
+                        var id = $("#id").val();
                         if(id == "") id = "%";
-                        var idK = $("#IDksiążki").val();
+                        var idK = $("#id_book").val();
                         if(idK == "") idK = "%";
-                        var idC = $("#IDczytelnika").val();
+                        var idC = $("#id_reader").val();
                         if(idC == "") idC = "%";
-                        var dateW = $("#Datawypożyczenia").val();
+                        var dateW = $("#date_borrow").val();
                         if(dateW == "") dateW = "%";
-                        var dateZ = $("#Datazwrotu").val();
+                        var dateZ = $("#date_return").val();
                         if(dateZ == "") dateZ = "%";
-                        $("#content").load("../ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
+                        $("#borrowsTable").load("../ajax.php", {borrows:1, ID: id, IDK : idK, IDC: idC, DW: dateW, DZ: dateZ},function(responseTxt,statusTxt,xhr){});
                     });
 		});
                 </script>

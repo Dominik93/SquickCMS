@@ -82,16 +82,12 @@ function templateForm($name, $arrayDiv, $arrayForm, $arrayTable, $arrayFormInput
             return $form;
         }
 
-
-function templateTable($controller, $array, $arrayTable, $table, $tableStyle, $link = null, $join = null, $where = null){
-            $result = $controller->selectTableWhatJoinWhereGroupOrderLimit($table, null, $join, $where);
-            $return = '<div id="'.$tableStyle.'" align="center">
-                            <table>
-                                <tr>';
-            foreach ($array as $s){
-                $return = $return.'<td align="center"><input placeholder="'.$s.'" style="width: 60%;" type="text" id="'.str_replace(' ', '', $s).'">'.'</td>';
-            }
-            $return = $return.'</tr><tr>';
+function templateTable($controller, $array, $arrayTable, $table, $tableStyle, $link = null, $what = null, $join = null, $where = null){
+            $result = $controller->selectTableWhatJoinWhereGroupOrderLimit($table, $what, $join, $where);
+            $return = "";
+            $return .= '<div id="'.$tableStyle.'" align="center">
+                            <table>';
+            $return = $return.'<tr>';
             foreach ($array as $s){
                 $return = $return.'<td>'.$s.'</td>';
             }

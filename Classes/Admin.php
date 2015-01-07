@@ -217,18 +217,41 @@ class Admin extends User{
         return $borrow;
     }    
     public function showAllUsers() {
-        return '<p>'.templateTable($this->controller, array("ID", "Login", "Email", "Imie", "Nazwisko"),
+        return '<p><div id="search" align="center"><table><tr>'
+                . '<td><input placeholder="ID" style="width: 60%;" type="text" id="id"></td>'
+                . '<td><input placeholder="Login" style="width: 60%;" type="text" id="login"></td>'
+                . '<td><input placeholder="Email" style="width: 60%;" type="text" id="email"></td>'
+                . '<td><input placeholder="Imie" style="width: 60%;" type="text" id="name"></td>'
+                . '<td><input placeholder="Nazwisko" style="width: 60%;" type="text" id="surname"></td>'
+                . '</tr></table></div>'.templateTable($this->controller, array("ID", "Login", "Email", "Imie", "Nazwisko"),
                                         array("reader_id", "reader_login", "reader_email", "reader_name", "reader_surname"),
                                         "readers", "usersTable", "profile_readers.php?id" ).
                 '<p><a href="'.backToFuture().'Library/AdminAction/registration_reader.php">Dodaj</a></p>';
         }
     public function showAllBorrows(){
-        return '<p>'.templateTable($this->controller, array('ID','ID książki','ID czytelnika', 'Data wypożyczenia', 'Data zwrotu'),
+        return '<p><div id="search" align="center"><table><tr>'
+                . '<td><input placeholder="ID" style="width: 60%;" type="text" id="id"></td>'
+                . '<td><input placeholder="ID książki" style="width: 60%;" type="text" id="id_book"></td>'
+                . '<td><input placeholder="ID czytelnika" style="width: 60%;" type="text" id="id_reader"></td>'
+                . '<td><input placeholder="Data wypożyczenia" style="width: 60%;" type="text" id="date_borrow"></td>'
+                . '<td><input placeholder="Data zwrotu" style="width: 60%;" type="text" id="date_return"></td>'
+                . '</tr></table></div>'.templateTable($this->controller, array('ID','ID książki','ID czytelnika', 'Data wypożyczenia', 'Data zwrotu'),
                                     array('borrow_id','borrow_book_id','borrow_reader_id', 'borrow_date_borrow', 'borrow_return'),
                                     "borrows", "borrowsTable", backToFuture().'Library/AdminAction/borrow.php?id');
     }
     public function showAllBooks() {
             $books = "";
+            $books .= '<div id="search" align="center"><table><tr>'
+                . '<td><input placeholder="ID" style="width: 60%;" type="text" id="id"></td>'
+                . '<td><input placeholder="ISBN" style="width: 60%;" type="text" id="isbn"></td>'
+                . '<td><input placeholder="Tytuł" style="width: 60%;" type="text" id="title"></td>'
+                . '<td><input placeholder="Autorzy" style="width: 60%;" type="text" id="authors"></td>'
+                . '<td><input placeholder="Wydawca" style="width: 60%;" type="text" id="publisher_house"></td>'
+                . '<td><input placeholder="Ilość stron" style="width: 60%;" type="text" id="number_page"></td>'
+                . '<td><input placeholder="Wydanie" style="width: 60%;" type="text" id="edition"></td>'
+                . '<td><input placeholder="Premiera" style="width: 60%;" type="text" id="premiere"></td>'
+                . '<td><input placeholder="Ilość egzemlarzy" style="width: 60%;" type="text" id="number"></td>' 
+                . '</tr></table></div>';
             $this->session();
             $result = $this->controller->selectTableWhatJoinWhereGroupOrderLimit("books",
                     array("*"),
@@ -267,10 +290,16 @@ class Admin extends User{
 			}
 			$books = $books.'</table><p><a href="'.backToFuture().'Library/AdminAction/add_book.php">Dodaj</a></p></div>';
 		}     
-            return $books;     
+            return $books; 
         }
     public function showAllAdmins(){
-        return '<p>'.templateTable($this->controller, array("ID", "Login", "Email", "Imie", "Nazwisko"),
+        return '<p><div id="search" align="center"><table><tr>'
+                . '<td><input placeholder="ID" style="width: 60%;" type="text" id="id"></td>'
+                . '<td><input placeholder="Login" style="width: 60%;" type="text" id="login"></td>'
+                . '<td><input placeholder="Email" style="width: 60%;" type="text" id="email"></td>'
+                . '<td><input placeholder="Imie" style="width: 60%;" type="text" id="name"></td>'
+                . '<td><input placeholder="Nazwisko" style="width: 60%;" type="text" id="surname"></td>'
+                . '</tr></table></div>'.templateTable($this->controller, array("ID", "Login", "Email", "Imie", "Nazwisko"),
                                     array("admin_id", "admin_login", "admin_email", "admin_name", "admin_surname"),
                                     "admins", "usersTable", backToFuture().'Library/AdminAction/profile_admins.php?id').
                 '<p><a href="'.backToFuture().'Library/AdminAction/registration_admin.php">Dodaj</a></p>';

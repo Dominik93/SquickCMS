@@ -18,70 +18,89 @@
                 <script type="text/javascript">
                
                 $(document).ready(function(){
-                    $("#ID").change(function(){
-                        var id = $("#ID").val();
+                    $("#id").change(function(){
+                        var id = $("#id").val();
                         if(id == "") id = "%";
-                        var login = $("#Login").val();
+                        var login = $("#login").val();
                         if(login == "") login = "%";
-                        var email = $("#Email").val();
+                        var email = $("#email").val();
                         if(email == "") email = "%";
-                        var imie = $("#Imie").val();
+                        var imie = $("#name").val();
                         if(imie == "") imie = "%";
-                        var nazwisko = $("#Nazwisko").val();
+                        var nazwisko = $("#surname").val();
                         if(nazwisko == "") nazwisko = "%";
-                        $("#content").load("../ajax.php", {reader:1, ID: id, L : login, E: email, I: imie, N: nazwisko},function(responseTxt,statusTxt,xhr){});
+                        $("#usersTable").load("../ajax.php", {reader:1, ID: id, L : login, E: email, I: imie, N: nazwisko},
+                        function(responseTxt,statusTxt,xhr){
+                            if(statusTxt=="success"){
+                                
+                            }
+                            if(statusTxt=="error")
+                                alert("Error: "+xhr.status+": "+xhr.statusText);
+                        });
                     });
-                    $("#Login").change(function(){
-                        var id = $("#ID").val();
+                    $("#login").change(function(){
+                        var id = $("#id").val();
                         if(id == "") id = "%";
-                        var login = $("#Login").val();
+                        var login = $("#login").val();
                         if(login == "") login = "%";
-                        var email = $("#Email").val();
+                        var email = $("#email").val();
                         if(email == "") email = "%";
-                        var imie = $("#Imie").val();
+                        var imie = $("#name").val();
                         if(imie == "") imie = "%";
-                        var nazwisko = $("#Nazwisko").val();
+                        var nazwisko = $("#surname").val();
                         if(nazwisko == "") nazwisko = "%";
-                        $("#content").load("../ajax.php", {reader:1, ID: id, L : login, E: email, I: imie, N: nazwisko},function(responseTxt,statusTxt,xhr){});
+                        $("#usersTable").load("../ajax.php", {reader:1, ID: id, L : login, E: email, I: imie, N: nazwisko},
+                        function(responseTxt,statusTxt,xhr){
+                            
+                        });
                     });
-                    $("#Email").change(function(){
-                        var id = $("#ID").val();
+                    $("#email").change(function(){
+                        var id = $("#id").val();
                         if(id == "") id = "%";
-                        var login = $("#Login").val();
+                        var login = $("#login").val();
                         if(login == "") login = "%";
-                        var email = $("#Email").val();
+                        var email = $("#email").val();
                         if(email == "") email = "%";
-                        var imie = $("#Imie").val();
+                        var imie = $("#name").val();
                         if(imie == "") imie = "%";
-                        var nazwisko = $("#Nazwisko").val();
+                        var nazwisko = $("#surname").val();
                         if(nazwisko == "") nazwisko = "%";
-                        $("#content").load("../ajax.php", {reader:1, ID: id, L : login, E: email, I: imie, N: nazwisko},function(responseTxt,statusTxt,xhr){});
+                        $("#usersTable").load("../ajax.php", {reader:1, ID: id, L : login, E: email, I: imie, N: nazwisko},
+                        function(responseTxt,statusTxt,xhr){
+                            
+                        });
                     });
-                    $("#Imie").change(function(){
-                        var id = $("#ID").val();
+                    $("#name").change(function(){
+                        var id = $("#id").val();
                         if(id == "") id = "%";
-                        var login = $("#Login").val();
+                        var login = $("#login").val();
                         if(login == "") login = "%";
-                        var email = $("#Email").val();
+                        var email = $("#email").val();
                         if(email == "") email = "%";
-                        var imie = $("#Imie").val();
+                        var imie = $("#name").val();
                         if(imie == "") imie = "%";
-                        var nazwisko = $("#Nazwisko").val();
+                        var nazwisko = $("#surname").val();
                         if(nazwisko == "") nazwisko = "%";
-                        $("#content").load("../ajax.php", {reader:1, ID: id, L : login, E: email, I: imie, N: nazwisko},function(responseTxt,statusTxt,xhr){});
+                        $("#usersTable").load("../ajax.php", {reader:1, ID: id, L : login, E: email, I: imie, N: nazwisko},
+                        function(responseTxt,statusTxt,xhr){
+                            
+                        });
                     });
-                    $("#Nazwisko").change(function(){
-                        var id = $("#ID").val();
+                    $("#surname").change(function(){
+                        var id = $("#id").val();
                         if(id == "") id = "%";
-                        var login = $("#Login").val();
+                        var login = $("#login").val();
                         if(login == "") login = "%";
-                        var email = $("#Email").val();
+                        var email = $("#email").val();
                         if(email == "") email = "%";
-                        var imie = $("#Imie").val();
+                        var imie = $("#name").val();
                         if(imie == "") imie = "%";
-                        var nazwisko = $("#Nazwisko").val();
+                        var nazwisko = $("#surname").val();
                         if(nazwisko == "") nazwisko = "%";
-                        $("#content").load("../ajax.php", {reader:1, ID: id, L : login, E: email, I: imie, N: nazwisko},function(responseTxt,statusTxt,xhr){});
+                        $("#usersTable").load("../ajax.php", {reader:1, ID: id, L : login, E: email, I: imie, N: nazwisko},
+                        function(responseTxt,statusTxt,xhr){
+                            
+                        });
                     });
 		});
                 </script>

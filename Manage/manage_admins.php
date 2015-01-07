@@ -1,24 +1,6 @@
 <?php
     include "../config.php";
-	
-	function ShowAdmins(){
-		$result = $controller->selectAdmins();
-		if(mysqli_num_rows($result) == 0) {
-			echo 'Brak użytkowników<br>';
-		}else{
-			echo '
-				<div id="usersTable" align="center">
-				<table>
-					<tr> <td>ID</td> <td>Login</td> <td>Email</td> <td>Imie</td> <td>Nazwisko</td> </tr>
-				';
-			while($row = mysqli_fetch_assoc($result)) {
-				echo '<tr onClick="location.href=\'http://localhost/~dominik/Library/profile_admins.php?id='.$row['admin_id'].'\'" /> <td>'.$row['admin_id'].'</td> <td>'.$row['admin_login'].'</td> <td>'.$row['admin_email'].'</td> <td>'.$row['admin_name'].'</td> <td>'.$row['admin_surname'].'</td> </tr>';
-			}
-			echo '<tr> <td align="center" colspan = 5 ><a href="registration_admin.php">Dodaj</a></td> </tr></table>';
-		}
-	}
-	
-	
+		
 	function Content(){
             $user = unserialize($_SESSION['user']);
 		echo '<div id="content">'.$user->showAllAdmins().'</div>';
@@ -36,18 +18,89 @@
                 <script type="text/javascript">
                
                 $(document).ready(function(){
-                    $("#ID").change(function(){
-                        var id = $("#ID").val();
+                    $("#id").change(function(){
+                        var id = $("#id").val();
                         if(id == "") id = "%";
-                        var login = $("#Login").val();
+                        var login = $("#login").val();
                         if(login == "") login = "%";
-                        var email = $("#Email").val();
+                        var email = $("#email").val();
                         if(email == "") email = "%";
-                        var imie = $("#Imie").val();
+                        var imie = $("#name").val();
                         if(imie == "") imie = "%";
-                        var nazwisko = $("#Nazwisko").val();
+                        var nazwisko = $("#surname").val();
                         if(nazwisko == "") nazwisko = "%";
-                        $("#content").load("../ajax.php", {admin:1, ID: id, L : login, E: email, I: imie, N: nazwisko},function(responseTxt,statusTxt,xhr){});
+                        $("#usersTable").load("../ajax.php", {admin:1, ID: id, L : login, E: email, I: imie, N: nazwisko},
+                        function(responseTxt,statusTxt,xhr){
+                            if(statusTxt=="success"){
+                                
+                            }
+                            if(statusTxt=="error")
+                                alert("Error: "+xhr.status+": "+xhr.statusText);
+                        });
+                    });
+                    $("#login").change(function(){
+                        var id = $("#id").val();
+                        if(id == "") id = "%";
+                        var login = $("#login").val();
+                        if(login == "") login = "%";
+                        var email = $("#email").val();
+                        if(email == "") email = "%";
+                        var imie = $("#name").val();
+                        if(imie == "") imie = "%";
+                        var nazwisko = $("#surname").val();
+                        if(nazwisko == "") nazwisko = "%";
+                        $("#usersTable").load("../ajax.php", {admin:1, ID: id, L : login, E: email, I: imie, N: nazwisko},
+                        function(responseTxt,statusTxt,xhr){
+                            
+                        });
+                    });
+                    $("#email").change(function(){
+                        var id = $("#id").val();
+                        if(id == "") id = "%";
+                        var login = $("#login").val();
+                        if(login == "") login = "%";
+                        var email = $("#email").val();
+                        if(email == "") email = "%";
+                        var imie = $("#name").val();
+                        if(imie == "") imie = "%";
+                        var nazwisko = $("#surname").val();
+                        if(nazwisko == "") nazwisko = "%";
+                        $("#usersTable").load("../ajax.php", {admin:1, ID: id, L : login, E: email, I: imie, N: nazwisko},
+                        function(responseTxt,statusTxt,xhr){
+                            
+                        });
+                    });
+                    $("#name").change(function(){
+                        var id = $("#id").val();
+                        if(id == "") id = "%";
+                        var login = $("#login").val();
+                        if(login == "") login = "%";
+                        var email = $("#email").val();
+                        if(email == "") email = "%";
+                        var imie = $("#name").val();
+                        if(imie == "") imie = "%";
+                        var nazwisko = $("#surname").val();
+                        if(nazwisko == "") nazwisko = "%";
+                        $("#usersTable").load("../ajax.php", {admin:1, ID: id, L : login, E: email, I: imie, N: nazwisko},
+                        function(responseTxt,statusTxt,xhr){
+                            
+                        });
+                    });
+                    $("#surname").change(function(){
+                        var id = $("#id").val();
+                        if(id == "") id = "%";
+                        var login = $("#login").val();
+                        if(login == "") login = "%";
+                        var email = $("#email").val();
+                        if(email == "") email = "%";
+                        var imie = $("#name").val();
+                        if(imie == "") imie = "%";
+                        var nazwisko = $("#surname").val();
+                        if(nazwisko == "") nazwisko = "%";
+                        $("#usersTable").load("../ajax.php", {admin:1, ID: id, L : login, E: email, I: imie, N: nazwisko},
+                        function(responseTxt,statusTxt,xhr){
+                            
+                        });
                     });
 		});
                 </script>
