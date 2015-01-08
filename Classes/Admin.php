@@ -17,11 +17,13 @@ class Admin extends User{
     public function showOptionPanel(){
         if(!$this->checkSession()){
             $this->timeOut();
+            return parent::showOptionPanel();
         }
+        $this->session();
 		$userData = $this->getData($this->userID);
 		return '<div id="panelName">Panel użytkownika</div><p align="center">Witamy '.$userData['admin_name'].'!</p>
 			<ul>
-				<li><a href="'.backToFuture().'Library/profile.php">Twój profil</a></li>
+				<li><a href="'.backToFuture().'Library/UserAction/profile.php">Twój profil</a></li>
 				<li><a href="'.backToFuture().'Library/AdminAction/add_news.php">Dodaj news</a></li>
 				<li><a href="'.backToFuture().'Library/AdminAction/registration_reader.php">Zarejestruj czytelnika</a></li>
 				<li><a href="'.backToFuture().'Library/AdminAction/registration_admin.php">Utwórz administratora</a></li>
@@ -30,7 +32,8 @@ class Admin extends User{
 				<li><a href="'.backToFuture().'Library/Manage/manage_books.php">Zarządzaj ksiażkami</a></li>
 				<li><a href="'.backToFuture().'Library/Manage/manage_borrows.php">Zarządaj wypożyczeniami</a></li>
 				<li><a href="'.backToFuture().'Library/Manage/manage_sessions.php">Lista zalogowanych</a></li>
-				<li><a href="'.backToFuture().'Library/UserAction/logout.php">Wyloguj</a></li>
+                                <li><a href="'.backToFuture().'Library/Classes/Backup.php">Backup</a></li>
+                                <li><a href="'.backToFuture().'Library/UserAction/logout.php">Wyloguj</a></li>
 			</ul>
 			session id = '.session_id().' logger = '.$_SESSION['logged'].' userid = '.$_SESSION['user_id'].' ip =
 			'.$_SESSION['ip'].' access = 

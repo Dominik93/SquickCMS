@@ -17,8 +17,10 @@ class Reader extends User{
     }
     public function showOptionPanel(){
         if(!$this->checkSession()){
-                $this->timeOut();
-            }
+            $this->timeOut();
+            return parent::showOptionPanel();
+        }
+        $this->session();
 		$userData = $this->getData($this->userID);
 		return '<div id="panelName">Panel użytkownika</div>
 			<p align="center">
